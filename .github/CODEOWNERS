@@ -1,0 +1,4 @@
+* @EdxT0
+
+# Protect the CODEOWNERS file itself
+/.github/CODEOWNERS @EdxT0
