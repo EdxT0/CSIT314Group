@@ -1,0 +1,139 @@
+# =========================
+# Visual Studio temporary files
+# =========================
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Visual Studio cache/options
+*.vcxproj.user
+*.aps
+*.ncb
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+
+# =========================
+# Build results
+# =========================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+ARM/
+ARM64/
+bld/
+[Bb]uild/
+[Bb]uild[Ll]og.*
+
+# Published output
+publish/
+*.publishproj
+
+# =========================
+# .NET / C# generated files
+# =========================
+*.dll
+*.exe
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+*.pdb
+*.cache
+*.mdb
+*.ipch
+*.obj
+*.ilk
+*.log
+*.tlog
+*.tmp
+*.tmp_proj
+*.pidb
+*.svclog
+*.scc
+
+# =========================
+# NuGet
+# =========================
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+!packages/repositories.config
+.nuget.props
+.nuget.targets
+
+# Ignore NuGet package restore output
+project.assets.json
+project.nuget.cache
+
+# =========================
+# Test results
+# =========================
+[Tt]est[Rr]esult*/
+[Tt]est[Rr]esults/
+*.trx
+*.coverage
+*.coveragexml
+
+# =========================
+# Rider / ReSharper
+# =========================
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# =========================
+# JetBrains Rider
+# =========================
+.idea/
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+
+# =========================
+# Azure / publish / local config
+# =========================
+PublishScripts/
+*.pubxml
+*.publishsettings
+
+# Keep if your team wants shared publish profiles:
+#!Properties/PublishProfiles/*.pubxml
+
+# =========================
+# SQL / LocalDB / database files
+# =========================
+*.mdf
+*.ldf
+*.ndf
+
+# =========================
+# ASP.NET / web tools
+# =========================
+wwwroot/dist/
+wwwroot/lib/
+
+# =========================
+# Logs and diagnostics
+# =========================
+*.log
+logs/
+Log/
+App_Data/*.log
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini

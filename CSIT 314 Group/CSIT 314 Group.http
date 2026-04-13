@@ -1,0 +1,6 @@
+@CSIT_314_Group_HostAddress = http://localhost:5135
+
+GET {{CSIT_314_Group_HostAddress}}/FRA/
+Accept: application/json
+
+###
