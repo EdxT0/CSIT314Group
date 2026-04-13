@@ -20,13 +20,19 @@ namespace CSIT_314_Group
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var databaseInitialiser = scope.ServiceProvider.GetRequiredService<DatabaseInitialiser>();
+                databaseInitialiser.InitialiseDatabase();
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
             }
 
-            app.UseHttpsRedirection();
+           // app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

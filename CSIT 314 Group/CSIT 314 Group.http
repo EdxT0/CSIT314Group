@@ -4,3 +4,22 @@ GET {{CSIT_314_Group_HostAddress}}/FRA/
 Accept: application/json
 
 ###
+
+POST {{CSIT_314_Group_HostAddress}}/UserAccount/CreateUser
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": "Edwin",
+  "Email": "edwin@example.com",
+  "PhoneNumber": "91234567",
+  "Password": "MySecret123!"
+}
+
+###
+
+
+GET {{CSIT_314_Group_HostAddress}}/UserAccount/Ping
+Accept: application/json
+
+###

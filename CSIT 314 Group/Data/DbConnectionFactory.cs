@@ -13,7 +13,7 @@ namespace CSIT_314_Group.Data
 
         public SqliteConnection CreateConnection()
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            string? connectionString = _configuration.GetConnectionString("DefaultConnection");
             return new SqliteConnection(connectionString);
         }
 
