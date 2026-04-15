@@ -12,7 +12,7 @@ namespace CSIT_314_Group.Authentication
             _jwtOptions = jwtOptions;
         }
 
-        public string GenerateJwtToken(UserAccountEntity userAccount)
+        public string GenerateJwtToken(UserAccount userAccount)
         {
             if (string.IsNullOrWhiteSpace(_jwtOptions.Key))
             {
@@ -23,7 +23,7 @@ namespace CSIT_314_Group.Authentication
                 new Claim(ClaimTypes.NameIdentifier , userAccount.id.ToString()),
                 new Claim(ClaimTypes.Name, userAccount.Name),
                 new Claim(ClaimTypes.Email, userAccount.Email),
-                new Claim(ClaimTypes.Role, userAccount.Role)
+                new Claim(ClaimTypes.Role, userAccount.Profile)
             };
 
             var signingKey = new SymmetricSecurityKey(

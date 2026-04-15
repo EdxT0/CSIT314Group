@@ -5,22 +5,40 @@ Accept: application/json
 
 ###
 
-POST {{CSIT_314_Group_HostAddress}}/UserAccount/CreateUser
+POST {{CSIT_314_Group_HostAddress}}/CreateUserAccount
 Content-Type: application/json
 Accept: application/json
-
 {
-  "Name": "Edwin",
-  "Email": "edwin@example.com",
-  "PhoneNumber": "91234567",
-  "Password": "MySecret123!"
-  "Role" : "admin"
+  "Name": "fAbiAn",
+  "Email": "fabian@example.com",
+  "PhoneNumber": "92342342",
+  "Password": "MySecret123!",
+  "Profile" : "admin"
 }
 
 ###
 
+POST {{CSIT_314_Group_HostAddress}}/Auth/Login
+Content-Type : application/json
+Accept: application/json
+{
+    "Email": "fabian@example.com",
+     "Password": "MySecret123!"
+}
+###
 
-GET {{CSIT_314_Group_HostAddress}}/UserAccount/Ping
+
+GET {{CSIT_314_Group_HostAddress}}/ViewUserAccount?nameOrEmail=Fabian
+Content-Type : application/json
+
+###
+
+GET {{CSIT_314_Group_HostAddress}}/Auth/Logout
+Content-Type : application/json
+
+
+###
+GET {{CSIT_314_Group_HostAddress}}/CreateUserAccount/Ping
 Accept: application/json
 
 ###

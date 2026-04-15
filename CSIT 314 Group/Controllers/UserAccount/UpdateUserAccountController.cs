@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CSIT_314_Group.Controllers
+namespace CSIT_314_Group.Controllers.UserAccount
 {
-    public class Login : Controller
+    public class UpdateUserAccountController : Controller
     {
         public IActionResult Index()
         {
