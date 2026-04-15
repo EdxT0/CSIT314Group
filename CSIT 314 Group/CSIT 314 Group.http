@@ -14,6 +14,7 @@ Accept: application/json
   "Email": "edwin@example.com",
   "PhoneNumber": "91234567",
   "Password": "MySecret123!"
+  "Role" : "admin"
 }
 
 ###

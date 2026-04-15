@@ -14,6 +14,36 @@ namespace CSIT_314_Group.Data
             _dbConnectionFactory = dbConnectionFactory;
         }
 
+        public async Task<int?> GetIdByEmail(string email)
+        {
+            var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            SqliteTransaction transaction = connection.BeginTransaction();
+
+            try
+            {
+                string getIdByEmailQuery = @"SELECT id FROM user WHERE Email = @email";
+
+                await using var getIdByEmailQueryCommand = new SqliteCommand(getIdByEmailQuery, connection, transaction);
+                getIdByEmailQueryCommand.Parameters.AddWithValue("@email", email);
+
+                object? result = await getIdByEmailQueryCommand.ExecuteScalarAsync();
+                
+                if (result is null){
+                    return null;
+                }
+                
+                    return Convert.ToInt32(result);
+                
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            
+        } 
+
         public async Task<CreateUserResultEnum> CreateUser(UserAccountEntity userDetails)
         {
             var connection = _dbConnectionFactory.CreateConnection();
