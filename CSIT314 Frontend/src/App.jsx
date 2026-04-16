@@ -1,20 +1,61 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import AdminPage from "./pages/AdminPage";
 import DoneePage from "./pages/DoneePage";
 import FundraiserPage from "./pages/FundraiserPage";
 import PlatformManagerPage from "./pages/PlatformManagerPage";
 
+function RoleRouter() {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+
+  const routes = {
+    admin: "/admin",
+    donee: "/donee",
+    fundraiser: "/fundraiser",
+    platform_manager: "/platform",
+  };
+
+  return <Navigate to={routes[user.role] ?? "/login"} replace />;
+}
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/donee" element={<DoneePage />} />
-        <Route path="/fundraiser" element={<FundraiserPage />} />
-        <Route path="/platform-manager" element={<PlatformManagerPage />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<RoleRouter />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/donee" element={
+            <ProtectedRoute allowedRoles={["donee"]}>
+              <DoneePage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/fundraiser" element={
+            <ProtectedRoute allowedRoles={["fundraiser"]}>
+              <FundraiserPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/platform" element={
+            <ProtectedRoute allowedRoles={["platform_manager"]}>
+              <PlatformManagerPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/unauthorized" element={<div>Access denied.</div>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
