@@ -2,6 +2,7 @@
 using CSIT_314_Group.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CSIT_314_Group.Controllers.UserAccount
 {
@@ -16,21 +17,21 @@ namespace CSIT_314_Group.Controllers.UserAccount
         {
             _userAccountRepository = userAccountRepository;
         }
-
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ViewUserAccount([FromQuery] string nameOrEmail)
+        public async Task<IActionResult> ViewUserAccount()
         {
-            object? result = await _userAccountRepository.GetIdWithNameOrEmail(nameOrEmail.ToLower());
-
-            if(result== null)
+            var user = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if( user == null)
             {
-                return NotFound("User Not Found");
+                return Unauthorized();
             }
-            int userId = Convert.ToInt32(result);
+            
+            int userId = Convert.ToInt32(user);
 
-            UserAccountDTO user = await _userAccountRepository.GetById(userId);
+            UserAccountDTO userDTO = await _userAccountRepository.GetById(userId);
 
-            return Ok(user);
+            return Ok(userDTO);
         }
     }
 }

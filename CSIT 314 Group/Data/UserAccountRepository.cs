@@ -153,7 +153,7 @@ namespace CSIT_314_Group.Data
             return null;
         }
 
-        public async Task<int?> GetIdWithNameOrEmail(string nameOrEmail)
+        public async Task<int?> GetIdWithNameOrEmailOrPhone(string nameOrEmailOrPhone)
         {
             object? result = null;
             using var connection = _dbConnectionFactory.CreateConnection();
@@ -163,7 +163,7 @@ namespace CSIT_314_Group.Data
             string getIdWithNameQuery = @"SELECT id FROM user WHERE Name = @name";
 
             using var getIdWithNameQueryCommand = new SqliteCommand(getIdWithNameQuery, connection);
-            getIdWithNameQueryCommand.Parameters.AddWithValue("@name", nameOrEmail);
+            getIdWithNameQueryCommand.Parameters.AddWithValue("@name", nameOrEmailOrPhone);
 
             result = await getIdWithNameQueryCommand.ExecuteScalarAsync();
 
@@ -175,7 +175,19 @@ namespace CSIT_314_Group.Data
             string getIdWithEmailQuery = @"SELECT id FROM user WHERE Email = @email";
 
             using var getIdWithEmailQueryCommand = new SqliteCommand(getIdWithEmailQuery, connection);
-            getIdWithEmailQueryCommand.Parameters.AddWithValue("@email", nameOrEmail);
+            getIdWithEmailQueryCommand.Parameters.AddWithValue("@email", nameOrEmailOrPhone);
+
+            result = await getIdWithEmailQueryCommand.ExecuteScalarAsync();
+
+            if (result != null)
+            {
+                return Convert.ToInt32(result);
+            }
+
+            string getIdWithPhoneQuery = @"SELECT id FROM user WHERE PhoneNumber = @phone";
+
+            using var getIdWithPhoneQueryCommand = new SqliteCommand(getIdWithPhoneQuery, connection);
+            getIdWithEmailQueryCommand.Parameters.AddWithValue("@phone", nameOrEmailOrPhone);
 
             result = await getIdWithEmailQueryCommand.ExecuteScalarAsync();
 
