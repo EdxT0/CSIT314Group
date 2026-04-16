@@ -1,96 +1,50 @@
 import { useState } from "react";
+import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
+import "../styles/loginpage.css";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  function handleLogin() {
-    const role = username.trim();
-
-    if (role === "Admin") {
-      navigate("/admin");
-    } else if (role === "Donee") {
-      navigate("/donee");
-    } else if (role === "Fundraiser") {
-      navigate("/fundraiser");
-    } else if (role === "PlatformManager") {
-      navigate("/platform-manager");
-    } else {
-      alert("Invalid demo username");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login(email, password);
+      navigate("/"); // RoleRouter will redirect to the right dashboard
+    } catch (err) {
+      setError(err.message);
     }
-  }
+  };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Login</h2>
+    <div className="login-page">
+      <div className="login-card">
+        <h2>Welcome back</h2>
+        <p>Sign in to your account</p>
 
-        <input
-          type="text"
-          placeholder="Enter role name"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={styles.input}
-        />
+        {error && <div className="login-error">{error}</div>}
 
-        <input
-          type="password"
-          placeholder="Password"
-          style={styles.input}
-        />
+        <div className="login-field">
+          <label>Email address</label>
+          <input type="email" placeholder="you@example.com"
+            value={email} onChange={e => setEmail(e.target.value)} />
+        </div>
 
-        <button onClick={handleLogin} style={styles.button}>
-          Login
-        </button>
+        <div className="login-field">
+          <label>Password</label>
+          <input type="password" placeholder="••••••••"
+            value={password} onChange={e => setPassword(e.target.value)} />
+          {/* <a className="login-forgot" href="#">Forgot password?</a> */}
+        </div>
 
-        <p style={styles.help}>
-          Demo usernames: Admin, Donee, Fundraiser, PlatformManager
-        </p>
+        <button className="login-btn" onClick={handleSubmit}>Sign in</button>
+
       </div>
     </div>
   );
-}
 
-const styles = {
-  page: {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f3f4f6",
-  },
-  card: {
-    width: "320px",
-    padding: "25px",
-    backgroundColor: "#fff",
-    borderRadius: "10px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-  },
-  title: {
-    textAlign: "center",
-    margin: 0,
-    color: "black",
-  },
-  input: {
-    padding: "10px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-  },
-  button: {
-    padding: "10px",
-    border: "none",
-    borderRadius: "6px",
-    backgroundColor: "#2563eb",
-    color: "white",
-    cursor: "pointer",
-  },
-  help: {
-    fontSize: "13px",
-    color: "#555",
-    marginTop: "8px",
-  },
-};
+}
