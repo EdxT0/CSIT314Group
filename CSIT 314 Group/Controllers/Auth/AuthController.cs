@@ -22,7 +22,7 @@ namespace CSIT_314_Group.Controllers.Auth
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            var user = await _userAccountRepository.GetByEmail(loginDto.email);
+            var user = await _userAccountRepository.GetByEmail(loginDto.email.ToLower());
 
             if (user == null)
             {
@@ -33,6 +33,10 @@ namespace CSIT_314_Group.Controllers.Auth
             if (verifyPassword == PasswordVerificationResult.Failed)
             {
                 return Unauthorized("invalid email or password");
+            }
+            if( user.IsSuspended == true)
+            {
+                return Unauthorized("User suspended");
             }
 
             var claims = new List<Claim>{

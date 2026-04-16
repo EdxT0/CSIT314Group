@@ -34,7 +34,8 @@ namespace CSIT_314_Group.Data
                     Name = reader.GetString(reader.GetOrdinal("Name")),
                     PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
                     Email = reader.GetString(reader.GetOrdinal("Email")),
-                    Profile = reader.GetString(reader.GetOrdinal("Profile"))
+                    Profile = reader.GetString(reader.GetOrdinal("Profile")),
+                    IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
                 };
             }
             return null;
@@ -63,7 +64,8 @@ namespace CSIT_314_Group.Data
                         Profile = reader.GetString(reader.GetOrdinal("Profile")),
                         Email = reader.GetString(reader.GetOrdinal("Email")),
                         PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
-                        HashedPassword = reader.GetString(reader.GetOrdinal("HashedPassword"))
+                        HashedPassword = reader.GetString(reader.GetOrdinal("HashedPassword")),
+                        IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
                     };
                 }
                 return null;
@@ -84,7 +86,7 @@ namespace CSIT_314_Group.Data
             using SqliteTransaction transaction = connection.BeginTransaction();
             try
             {
-                string createUserQuery = @"INSERT INTO user ( Name, PhoneNumber, Email, HashedPassword, Profile) VALUES ( @Name, @PhoneNumber, @Email, @HashedPassword, @Profile)";
+                string createUserQuery = @"INSERT INTO user ( Name, PhoneNumber, Email, HashedPassword, Profile, IsSuspended) VALUES ( @Name, @PhoneNumber, @Email, @HashedPassword, @Profile, @IsSuspended)";
 
                 await using var createUserQueryCommand = new SqliteCommand(createUserQuery, connection, transaction);
 
@@ -93,6 +95,7 @@ namespace CSIT_314_Group.Data
                 createUserQueryCommand.Parameters.AddWithValue("@Email", userDetails.Email);
                 createUserQueryCommand.Parameters.AddWithValue("@HashedPassword", userDetails.HashedPassword);
                 createUserQueryCommand.Parameters.AddWithValue("@Profile", userDetails.Profile);
+                createUserQueryCommand.Parameters.AddWithValue("@IsSuspended", userDetails.IsSuspended);
 
 
                 int rowsAffected = await createUserQueryCommand.ExecuteNonQueryAsync();
@@ -147,10 +150,46 @@ namespace CSIT_314_Group.Data
                     Name = reader.GetString(reader.GetOrdinal("Name")),
                     PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
                     Email = reader.GetString(reader.GetOrdinal("Email")),
-                    Profile = reader.GetString(reader.GetOrdinal("Profile"))
+                    Profile = reader.GetString(reader.GetOrdinal("Profile")),
+                    IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
                 };
             }
             return null;
+        }
+        public async Task<bool> SuspendUserWithId(int id, bool suspendUser)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string suspendUserWithIdQuery = @"UPDATE user SET IsSuspended = @suspendUser WHERE Id = @id";
+            using var suspendUserWithIdQueryCommand = new SqliteCommand(suspendUserWithIdQuery, connection, transaction);
+            suspendUserWithIdQueryCommand.Parameters.AddWithValue("@suspendUser", suspendUser);
+            suspendUserWithIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            int rowsAffected = await suspendUserWithIdQueryCommand.ExecuteNonQueryAsync();
+
+            if(rowsAffected != 1)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+            await transaction.CommitAsync();
+            return true;
+        }
+
+
+        public async Task<bool> GetSuspendStatusWithId(int id)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            string getSuspendStatusWithIdQuery = @"SELECT IsSuspended FROM user WHERE Id = @id";
+            using var getSuspendStatusWithIdQueryCommand = new SqliteCommand(getSuspendStatusWithIdQuery, connection);
+            getSuspendStatusWithIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            var result = await getSuspendStatusWithIdQueryCommand.ExecuteScalarAsync();
+            bool isSuspended = Convert.ToBoolean(result);
+            return isSuspended;
         }
 
         public async Task<int?> GetIdWithNameOrEmailOrPhone(string nameOrEmailOrPhone)

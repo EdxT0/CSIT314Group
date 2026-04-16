@@ -8,6 +8,7 @@
         public string PhoneNumber { get; set; } = "";
         public string HashedPassword { get; set; } = "";
         public string Profile { get; set; } = "User";
+        public bool IsSuspended { get; set; } = false;
     }
 
 }

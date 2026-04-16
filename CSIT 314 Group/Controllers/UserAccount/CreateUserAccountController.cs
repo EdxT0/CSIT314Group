@@ -29,7 +29,8 @@ namespace CSIT_314_Group.Controllers.UserAccount
                 Name = createUserRequest.Name.ToLower(),
                 Email = createUserRequest.Email.ToLower(),
                 PhoneNumber = createUserRequest.PhoneNumber.ToLower(),
-                Profile = createUserRequest.Profile.ToLower()
+                Profile = createUserRequest.Profile.ToLower(),
+                IsSuspended = createUserRequest.IsSuspended
             };
             userDetails.HashedPassword = hasher.HashPassword(userDetails, createUserRequest.Password);
 

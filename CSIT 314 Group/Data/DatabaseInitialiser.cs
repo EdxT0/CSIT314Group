@@ -27,6 +27,7 @@ namespace CSIT_314_Group.Data
                                                      Profile TEXT NOT NULL,
                                                      PhoneNumber TEXT NOT NULL UNIQUE,
                                                      Email TEXT NOT NULL UNIQUE,
+                                                     IsSuspended BOOL NOT NULL,
                                                      HashedPassword TEXT NOT NULL
                                                     )";
                 using (var createUserAccountTableQueryCommand = new SqliteCommand(createUserAccountTableQuery, connection, transaction))
@@ -38,6 +39,7 @@ namespace CSIT_314_Group.Data
                 string createUserProfileTableQuery = @"CREATE TABLE IF NOT EXISTS userprofile(
                                             Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                             ProfileName TEXT NOT NULL UNIQUE
+                                            
                                             )";
                 using (var createUserProfileTableQueryCommand = new SqliteCommand(createUserProfileTableQuery, connection, transaction))
                 {
