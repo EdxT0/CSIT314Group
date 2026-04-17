@@ -4,42 +4,40 @@ using CSIT_314_Group.Entity;
 using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
-namespace CSIT_314_Group.Controllers
+namespace CSIT_314_Group.Controllers.UserAccount
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserAccountController : ControllerBase
+    public class CreateUserAccountController : ControllerBase
     {
         private readonly UserAccountRepository _userAccountRepository;
 
-        public UserAccountController(UserAccountRepository userAccountRepository)
+        public CreateUserAccountController(UserAccountRepository userAccountRepository)
         {
             _userAccountRepository = userAccountRepository;
         }
 
-        [HttpGet("Ping")]
-        public IActionResult Ping()
-        {
-            return Ok("pong");
-        }
-
-        [HttpPost("CreateUser")]
+        //[Authorize(Roles ="admin")]
+        [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO createUserRequest)
         {
-            var hasher = new PasswordHasher<UserAccountEntity>();
-            var userDetails = new UserAccountEntity
+            var hasher = new PasswordHasher<Entity.UserAccount>();
+            var userDetails = new Entity.UserAccount
             {
-                Name = createUserRequest.Name,
-                Email = createUserRequest.Email,
-                PhoneNumber = createUserRequest.PhoneNumber,
+                Name = createUserRequest.Name.ToLower(),
+                Email = createUserRequest.Email.ToLower(),
+                PhoneNumber = createUserRequest.PhoneNumber.ToLower(),
+                Profile = createUserRequest.Profile.ToLower(),
+                IsSuspended = createUserRequest.IsSuspended
             };
             userDetails.HashedPassword = hasher.HashPassword(userDetails, createUserRequest.Password);
 
             CreateUserResultEnum result = await _userAccountRepository.CreateUser(userDetails);
             return result switch
             {
-                CreateUserResultEnum.Success => Ok(),
+                CreateUserResultEnum.Success => Ok($"User {userDetails.Name} Created"),
                 CreateUserResultEnum.DuplicateEmail => Conflict("Email already exists"),
                 CreateUserResultEnum.DuplicatePhoneNumber => Conflict("Phone number already exists"),
                 CreateUserResultEnum.DuplicatePhoneNumberAndEmail => Conflict("Email or phone number already exist."),
@@ -47,5 +45,6 @@ namespace CSIT_314_Group.Controllers
                 _ => StatusCode(500, "Could not create user.")
             };
         }
+
     }
 }

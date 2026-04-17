@@ -5,21 +5,52 @@ Accept: application/json
 
 ###
 
-POST {{CSIT_314_Group_HostAddress}}/UserAccount/CreateUser
+POST {{CSIT_314_Group_HostAddress}}/CreateUserAccount
 Content-Type: application/json
 Accept: application/json
-
 {
-  "Name": "Edwin",
-  "Email": "edwin@example.com",
-  "PhoneNumber": "91234567",
-  "Password": "MySecret123!"
+  "Name": "testNonAdmin",
+  "Email": "testNonAdmin@example.com",
+  "PhoneNumber": "61234567",
+  "Password": "MySecret345!",
+  "Profile" : "user",
+  "IsSuspended" : false
 }
 
 ###
 
-
-GET {{CSIT_314_Group_HostAddress}}/UserAccount/Ping
+POST {{CSIT_314_Group_HostAddress}}/Auth/Login
+Content-Type : application/json
 Accept: application/json
+{
+    "Email": "testNonAdmin@example.com",
+     "Password": "MySecret345!"
+}
+###
 
+
+GET {{CSIT_314_Group_HostAddress}}/ViewUserAccount
+Content-Type : application/json
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6peI31n3NPEreMQCpmp3ftpX2nrgU91enzKgwVE06Jmu6kH2Lhr2oiDImDLWhKvwjFhwNmPTtpU33YcNX4Ik2kF8KlKU2MtTRmq-vy04TaxNPhX4sUtFkAXaI4R4NG5LpvIcRmFWShGIDIwlfd0M1hszAU5H3g99C2XIU-WDuWcWq00sZ_CnDzEVC9jXjr03fvmL7zX1QizJq_uNSJJSZCeHDj1iPdHvmJexfpjTz_L94QhTWuITJWk6keA08cywjZln_pTk7yA1MrN8bt4xsvu2Wr1NnsxXcKmyK6mmJdVXxjFXYun7bdT9MJ6wz8DkJ-9QS6wdLSJtUIDgcDnx6cMJUVEDaPvrvaZTXr2041gp_3Wuuhdj2l2mStnI-iDFZgWbzi8LKKIKtY68IB7o_hMofSjykwyGHco8_SpwBdjSStpVjg3OI8ou_FwWXAsjtWVItBAYj8jz7UnOQPMLh0UJzZGdgHACt2KwFipTn0mgI8vFS1SVKdoVL6PGUWYvI_17f1ZiFb3_QSY2FSz7vDzd8JoyWjFAAZepFJyjLvXTCqyIrFOxrKhmV5QMdpKA5s6JtxStvVIIDJNCPbz1bJEYzfAo_gunPT8cGEDSdkF7hpDAKTrl3yPqJIqrxI4lfI
+###
+
+GET {{CSIT_314_Group_HostAddress}}/SearchUserAccount?nameOrEmailOrPhone=testNonAdmin@example.com
+Content-Type : application/json
+
+###
+
+GET {{CSIT_314_Group_HostAddress}}/Auth/Logout
+Content-Type : application/json
+
+
+###
+PUT {{CSIT_314_Group_HostAddress}}/SuspendUserAccount
+Content-Type : application/json
+Accept: application/json
+Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6peI31n3NPEreMQCpmp3ftpX2nrgU91enzKgwVE06Jmu6kH2Lhr2oiDImDLWhKvwjFhwNmPTtpU33YcNX4Ik2kF8KlKU2MtTRmq-vy04TaxNPhX4sUtFkAXaI4R4NG5LpvIcRmFWShGIDIwlfd0M1hszAU5H3g99C2XIU-WDuWcWq00sZ_CnDzEVC9jXjr03fvmL7zX1QizJq_uNSJJSZCeHDj1iPdHvmJexfpjTz_L94QhTWuITJWk6keA08cywjZln_pTk7yA1MrN8bt4xsvu2Wr1NnsxXcKmyK6mmJdVXxjFXYun7bdT9MJ6wz8DkJ-9QS6wdLSJtUIDgcDnx6cMJUVEDaPvrvaZTXr2041gp_3Wuuhdj2l2mStnI-iDFZgWbzi8LKKIKtY68IB7o_hMofSjykwyGHco8_SpwBdjSStpVjg3OI8ou_FwWXAsjtWVItBAYj8jz7UnOQPMLh0UJzZGdgHACt2KwFipTn0mgI8vFS1SVKdoVL6PGUWYvI_17f1ZiFb3_QSY2FSz7vDzd8JoyWjFAAZepFJyjLvXTCqyIrFOxrKhmV5QMdpKA5s6JtxStvVIIDJNCPbz1bJEYzfAo_gunPT8cGEDSdkF7hpDAKTrl3yPqJIqrxI4lfI
+
+{
+  "Email" : "testNonAdmin@example.com",
+  "suspendUser" : true
+}
 ###

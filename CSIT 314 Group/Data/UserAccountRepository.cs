@@ -3,6 +3,9 @@ using CSIT_314_Group.Entity;
 using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using System.Data;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace CSIT_314_Group.Data
 {
@@ -14,26 +17,91 @@ namespace CSIT_314_Group.Data
             _dbConnectionFactory = dbConnectionFactory;
         }
 
-        public async Task<CreateUserResultEnum> CreateUser(UserAccountEntity userDetails)
+        public async Task<UserAccountDTO> GetById(int id)
         {
-            var connection = _dbConnectionFactory.CreateConnection();
+            using var connection = _dbConnectionFactory.CreateConnection();
+            connection.Open();
+
+            string getByIdQuery = @"SELECT * FROM user WHERE Id = @id";
+            using var getByIdQueryCommand = new SqliteCommand(getByIdQuery, connection);
+            getByIdQueryCommand.Parameters.AddWithValue("@id", id);
+            var reader = await getByIdQueryCommand.ExecuteReaderAsync();
+
+            if(await reader.ReadAsync())
+            {
+                return new UserAccountDTO
+                {
+                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                    PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                    Email = reader.GetString(reader.GetOrdinal("Email")),
+                    Profile = reader.GetString(reader.GetOrdinal("Profile")),
+                    IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
+                };
+            }
+            return null;
+        }
+
+        public async Task<UserAccount>? GetByEmail(string email)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
-            SqliteTransaction transaction = connection.BeginTransaction();
+
             try
             {
-                string createUserQuery = @"INSERT INTO user ( Name, PhoneNumber, Email, HashedPassword) VALUES ( @Name, @PhoneNumber, @Email, @HashedPassword)";
+                string getByEmailQuery = @"SELECT * FROM user WHERE Email = @email";
+
+                await using var getByEmailQueryCommand = new SqliteCommand(getByEmailQuery, connection);
+                getByEmailQueryCommand.Parameters.AddWithValue("@email", email);
+
+                var reader = await getByEmailQueryCommand.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    return new UserAccount
+                    {
+                        id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        Name = reader.GetString(reader.GetOrdinal("Name")),
+                        Profile = reader.GetString(reader.GetOrdinal("Profile")),
+                        Email = reader.GetString(reader.GetOrdinal("Email")),
+                        PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                        HashedPassword = reader.GetString(reader.GetOrdinal("HashedPassword")),
+                        IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
+                    };
+                }
+                return null;
+
+            }
+            catch
+            {
+               
+                throw;
+            }
+
+        }
+
+        public async Task<CreateUserResultEnum> CreateUser(UserAccount userDetails)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using SqliteTransaction transaction = connection.BeginTransaction();
+            try
+            {
+                string createUserQuery = @"INSERT INTO user ( Name, PhoneNumber, Email, HashedPassword, Profile, IsSuspended) VALUES ( @Name, @PhoneNumber, @Email, @HashedPassword, @Profile, @IsSuspended)";
 
                 await using var createUserQueryCommand = new SqliteCommand(createUserQuery, connection, transaction);
-                
-                    createUserQueryCommand.Parameters.AddWithValue("@Name", userDetails.Name);
-                    createUserQueryCommand.Parameters.AddWithValue("@PhoneNumber", userDetails.PhoneNumber);
-                    createUserQueryCommand.Parameters.AddWithValue("@Email", userDetails.Email);
-                    createUserQueryCommand.Parameters.AddWithValue("@HashedPassword", userDetails.HashedPassword);
 
-                    int rowsAffected = await createUserQueryCommand.ExecuteNonQueryAsync();
+                createUserQueryCommand.Parameters.AddWithValue("@Name", userDetails.Name);
+                createUserQueryCommand.Parameters.AddWithValue("@PhoneNumber", userDetails.PhoneNumber);
+                createUserQueryCommand.Parameters.AddWithValue("@Email", userDetails.Email);
+                createUserQueryCommand.Parameters.AddWithValue("@HashedPassword", userDetails.HashedPassword);
+                createUserQueryCommand.Parameters.AddWithValue("@Profile", userDetails.Profile);
+                createUserQueryCommand.Parameters.AddWithValue("@IsSuspended", userDetails.IsSuspended);
 
-                
-                if( rowsAffected != 1)
+
+                int rowsAffected = await createUserQueryCommand.ExecuteNonQueryAsync();
+
+
+                if (rowsAffected != 1)
                 {
                     await transaction.RollbackAsync();
                     return CreateUserResultEnum.Failed;
@@ -41,7 +109,7 @@ namespace CSIT_314_Group.Data
                 await transaction.CommitAsync();
                 return CreateUserResultEnum.Success;
             }
-            catch(SqliteException ex) when (ex.SqliteExtendedErrorCode == 2067)
+            catch (SqliteException ex) when (ex.SqliteExtendedErrorCode == 2067)
             {
                 if (ex.Message.Contains("user.email", StringComparison.OrdinalIgnoreCase))
                 {
@@ -58,6 +126,115 @@ namespace CSIT_314_Group.Data
                 await transaction.RollbackAsync();
                 return CreateUserResultEnum.Failed;
             }
+
+        }
+
+        public async Task<UserAccountDTO> ViewUserAccount(int id)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            using SqliteTransaction transaction = connection.BeginTransaction();
+
+            string viewUserAccountQuery = @"SELECT * FROM user WHERE id = @id";
+
+            using var viewUserAccountQueryCommand = new SqliteCommand(viewUserAccountQuery,connection,transaction);
+            viewUserAccountQueryCommand.Parameters.AddWithValue("@id", id);
+
+            var reader = await viewUserAccountQueryCommand.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return new UserAccountDTO
+                {
+                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                    PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                    Email = reader.GetString(reader.GetOrdinal("Email")),
+                    Profile = reader.GetString(reader.GetOrdinal("Profile")),
+                    IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
+                };
+            }
+            return null;
+        }
+        public async Task<bool> SuspendUserWithId(int id, bool suspendUser)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string suspendUserWithIdQuery = @"UPDATE user SET IsSuspended = @suspendUser WHERE Id = @id";
+            using var suspendUserWithIdQueryCommand = new SqliteCommand(suspendUserWithIdQuery, connection, transaction);
+            suspendUserWithIdQueryCommand.Parameters.AddWithValue("@suspendUser", suspendUser);
+            suspendUserWithIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            int rowsAffected = await suspendUserWithIdQueryCommand.ExecuteNonQueryAsync();
+
+            if(rowsAffected != 1)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+            await transaction.CommitAsync();
+            return true;
+        }
+
+
+        public async Task<bool> GetSuspendStatusWithId(int id)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            string getSuspendStatusWithIdQuery = @"SELECT IsSuspended FROM user WHERE Id = @id";
+            using var getSuspendStatusWithIdQueryCommand = new SqliteCommand(getSuspendStatusWithIdQuery, connection);
+            getSuspendStatusWithIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            var result = await getSuspendStatusWithIdQueryCommand.ExecuteScalarAsync();
+            bool isSuspended = Convert.ToBoolean(result);
+            return isSuspended;
+        }
+
+        public async Task<int?> GetIdWithNameOrEmailOrPhone(string nameOrEmailOrPhone)
+        {
+            object? result = null;
+            using var connection = _dbConnectionFactory.CreateConnection();
+            connection.Open();
+          
+
+            string getIdWithNameQuery = @"SELECT id FROM user WHERE Name = @name";
+
+            using var getIdWithNameQueryCommand = new SqliteCommand(getIdWithNameQuery, connection);
+            getIdWithNameQueryCommand.Parameters.AddWithValue("@name", nameOrEmailOrPhone);
+
+            result = await getIdWithNameQueryCommand.ExecuteScalarAsync();
+
+            if (result != null)
+            {
+                return Convert.ToInt32(result);
+            }
+
+            string getIdWithEmailQuery = @"SELECT id FROM user WHERE Email = @email";
+
+            using var getIdWithEmailQueryCommand = new SqliteCommand(getIdWithEmailQuery, connection);
+            getIdWithEmailQueryCommand.Parameters.AddWithValue("@email", nameOrEmailOrPhone);
+
+            result = await getIdWithEmailQueryCommand.ExecuteScalarAsync();
+
+            if (result != null)
+            {
+                return Convert.ToInt32(result);
+            }
+
+            string getIdWithPhoneQuery = @"SELECT id FROM user WHERE PhoneNumber = @phone";
+
+            using var getIdWithPhoneQueryCommand = new SqliteCommand(getIdWithPhoneQuery, connection);
+            getIdWithEmailQueryCommand.Parameters.AddWithValue("@phone", nameOrEmailOrPhone);
+
+            result = await getIdWithEmailQueryCommand.ExecuteScalarAsync();
+
+            if (result != null)
+            {
+                return Convert.ToInt32(result);
+            }
+            return null;
 
         }
     }

@@ -1,5 +1,9 @@
-
+using CSIT_314_Group.Authentication;
 using CSIT_314_Group.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace CSIT_314_Group
 {
@@ -14,6 +18,18 @@ namespace CSIT_314_Group
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                            .AddCookie(options =>
+                            {
+                                options.Cookie.HttpOnly = true;
+                                options.Cookie.SameSite = SameSiteMode.Lax;
+                                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                            });
+
+            builder.Services.AddAuthorization();
+
             builder.Services.AddSingleton<DbConnectionFactory>();
             builder.Services.AddScoped<UserAccountRepository>();
             builder.Services.AddScoped<DatabaseInitialiser>();
@@ -32,8 +48,9 @@ namespace CSIT_314_Group
                 app.MapOpenApi();
             }
 
-           // app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
