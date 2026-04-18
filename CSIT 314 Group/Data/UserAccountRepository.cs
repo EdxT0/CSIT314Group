@@ -1,4 +1,4 @@
-﻿using CSIT_314_Group.DTO;
+﻿using CSIT_314_Group.DTO.UserDTO;
 using CSIT_314_Group.Entity;
 using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ namespace CSIT_314_Group.Data
             using var connection = _dbConnectionFactory.CreateConnection();
             connection.Open();
 
-            string getByIdQuery = @"SELECT * FROM user WHERE Id = @id";
+            string getByIdQuery = @"SELECT * FROM UserAccount WHERE Id = @id";
             using var getByIdQueryCommand = new SqliteCommand(getByIdQuery, connection);
             getByIdQueryCommand.Parameters.AddWithValue("@id", id);
             var reader = await getByIdQueryCommand.ExecuteReaderAsync();
@@ -48,7 +48,7 @@ namespace CSIT_314_Group.Data
 
             try
             {
-                string getByEmailQuery = @"SELECT * FROM user WHERE Email = @email";
+                string getByEmailQuery = @"SELECT * FROM UserAccount WHERE Email = @email";
 
                 await using var getByEmailQueryCommand = new SqliteCommand(getByEmailQuery, connection);
                 getByEmailQueryCommand.Parameters.AddWithValue("@email", email);
@@ -86,7 +86,7 @@ namespace CSIT_314_Group.Data
             using SqliteTransaction transaction = connection.BeginTransaction();
             try
             {
-                string createUserQuery = @"INSERT INTO user ( Name, PhoneNumber, Email, HashedPassword, Profile, IsSuspended) VALUES ( @Name, @PhoneNumber, @Email, @HashedPassword, @Profile, @IsSuspended)";
+                string createUserQuery = @"INSERT INTO UserAccount ( Name, PhoneNumber, Email, HashedPassword, Profile, IsSuspended) VALUES ( @Name, @PhoneNumber, @Email, @HashedPassword, @Profile, @IsSuspended)";
 
                 await using var createUserQueryCommand = new SqliteCommand(createUserQuery, connection, transaction);
 
@@ -111,11 +111,11 @@ namespace CSIT_314_Group.Data
             }
             catch (SqliteException ex) when (ex.SqliteExtendedErrorCode == 2067)
             {
-                if (ex.Message.Contains("user.email", StringComparison.OrdinalIgnoreCase))
+                if (ex.Message.Contains("UserAccount.email", StringComparison.OrdinalIgnoreCase))
                 {
                     return CreateUserResultEnum.DuplicateEmail;
                 }
-                if (ex.Message.Contains("user.phoneNumber", StringComparison.OrdinalIgnoreCase))
+                if (ex.Message.Contains("UserAccount.phoneNumber", StringComparison.OrdinalIgnoreCase))
                 {
                     return CreateUserResultEnum.DuplicatePhoneNumber;
                 }
@@ -136,7 +136,7 @@ namespace CSIT_314_Group.Data
 
             using SqliteTransaction transaction = connection.BeginTransaction();
 
-            string viewUserAccountQuery = @"SELECT * FROM user WHERE id = @id";
+            string viewUserAccountQuery = @"SELECT * FROM UserAccount WHERE id = @id";
 
             using var viewUserAccountQueryCommand = new SqliteCommand(viewUserAccountQuery,connection,transaction);
             viewUserAccountQueryCommand.Parameters.AddWithValue("@id", id);
@@ -162,7 +162,7 @@ namespace CSIT_314_Group.Data
             await connection.OpenAsync();
             using var transaction = connection.BeginTransaction();
 
-            string suspendUserWithIdQuery = @"UPDATE user SET IsSuspended = @suspendUser WHERE Id = @id";
+            string suspendUserWithIdQuery = @"UPDATE UserAccount SET IsSuspended = @suspendUser WHERE Id = @id";
             using var suspendUserWithIdQueryCommand = new SqliteCommand(suspendUserWithIdQuery, connection, transaction);
             suspendUserWithIdQueryCommand.Parameters.AddWithValue("@suspendUser", suspendUser);
             suspendUserWithIdQueryCommand.Parameters.AddWithValue("@id", id);
@@ -183,7 +183,7 @@ namespace CSIT_314_Group.Data
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
-            string getSuspendStatusWithIdQuery = @"SELECT IsSuspended FROM user WHERE Id = @id";
+            string getSuspendStatusWithIdQuery = @"SELECT IsSuspended FROM UserAccount WHERE Id = @id";
             using var getSuspendStatusWithIdQueryCommand = new SqliteCommand(getSuspendStatusWithIdQuery, connection);
             getSuspendStatusWithIdQueryCommand.Parameters.AddWithValue("@id", id);
 
@@ -199,7 +199,7 @@ namespace CSIT_314_Group.Data
             connection.Open();
           
 
-            string getIdWithNameQuery = @"SELECT id FROM user WHERE Name = @name";
+            string getIdWithNameQuery = @"SELECT id FROM UserAccount WHERE Name = @name";
 
             using var getIdWithNameQueryCommand = new SqliteCommand(getIdWithNameQuery, connection);
             getIdWithNameQueryCommand.Parameters.AddWithValue("@name", nameOrEmailOrPhone);
@@ -211,7 +211,7 @@ namespace CSIT_314_Group.Data
                 return Convert.ToInt32(result);
             }
 
-            string getIdWithEmailQuery = @"SELECT id FROM user WHERE Email = @email";
+            string getIdWithEmailQuery = @"SELECT id FROM UserAccount WHERE Email = @email";
 
             using var getIdWithEmailQueryCommand = new SqliteCommand(getIdWithEmailQuery, connection);
             getIdWithEmailQueryCommand.Parameters.AddWithValue("@email", nameOrEmailOrPhone);
@@ -223,7 +223,7 @@ namespace CSIT_314_Group.Data
                 return Convert.ToInt32(result);
             }
 
-            string getIdWithPhoneQuery = @"SELECT id FROM user WHERE PhoneNumber = @phone";
+            string getIdWithPhoneQuery = @"SELECT id FROM UserAccount WHERE PhoneNumber = @phone";
 
             using var getIdWithPhoneQueryCommand = new SqliteCommand(getIdWithPhoneQuery, connection);
             getIdWithEmailQueryCommand.Parameters.AddWithValue("@phone", nameOrEmailOrPhone);

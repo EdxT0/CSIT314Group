@@ -1,4 +1,4 @@
-﻿namespace CSIT_314_Group.DTO
+﻿namespace CSIT_314_Group.DTO.UserDTO
 {
     public class CreateUserDTO
     {

@@ -1,12 +1,13 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CSIT_314_Group.DTO.UserDTO;
+
 
 namespace CSIT_314_Group.Controllers.UserAccount
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[controller]")]
     public class SuspendUserAccountController : ControllerBase
     {
         private readonly UserAccountRepository _userAccountRepository;

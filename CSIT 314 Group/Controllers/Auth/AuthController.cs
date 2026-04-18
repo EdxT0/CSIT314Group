@@ -1,16 +1,15 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO;
-using CSIT_314_Group.Entity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using CSIT_314_Group.DTO.UserDTO;
 
 namespace CSIT_314_Group.Controllers.Auth
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly UserAccountRepository _userAccountRepository;
