@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace CSIT_314_Group.Controllers.UserAccount
+namespace CSIT_314_Group.Controllers.UserAccountControllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -17,6 +17,7 @@ namespace CSIT_314_Group.Controllers.UserAccount
         {
             _userAccountRepository = userAccountRepository;
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ViewUserAccount()

@@ -7,35 +7,39 @@ using Microsoft.AspNetCore.Authorization;
 using CSIT_314_Group.DTO.UserDTO;
 
 
-namespace CSIT_314_Group.Controllers.UserAccount
+namespace CSIT_314_Group.Controllers.UserAccountControllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class CreateUserAccountController : ControllerBase
     {
         private readonly UserAccountRepository _userAccountRepository;
+        private readonly UserProfileRepository _userProfileRepository;
 
-        public CreateUserAccountController(UserAccountRepository userAccountRepository)
+
+        public CreateUserAccountController(UserAccountRepository userAccountRepository, UserProfileRepository userProfileRepository)
         {
             _userAccountRepository = userAccountRepository;
+            _userProfileRepository = userProfileRepository;
         }
 
-        [Authorize(Roles ="admin")]
+        //[Authorize(Roles ="admin")]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO createUserRequest)
         {
-            string profileInputLowerCase = createUserRequest.Profile.ToLower();
-            if(profileInputLowerCase != "admin" && profileInputLowerCase != "donee" && profileInputLowerCase != "fundraiser" && profileInputLowerCase != "platform manager")
+            string profileInputLowerCase = createUserRequest.ProfileName.ToLower();
+            int? ProfileId = await _userProfileRepository.getIdWithProfileName(profileInputLowerCase);
+            if (ProfileId == null)
             {
-                return BadRequest($"Invalid Profile {createUserRequest.Profile}");
+                return BadRequest($"Invalid Profile {createUserRequest.ProfileName}");
             }
-                var hasher = new PasswordHasher<Entity.UserAccount>();
-            var userDetails = new Entity.UserAccount
+                var hasher = new PasswordHasher<UserAccount>();
+            var userDetails = new UserAccount
             {
                 Name = createUserRequest.Name.ToLower(),
                 Email = createUserRequest.Email.ToLower(),
                 PhoneNumber = createUserRequest.PhoneNumber.ToLower(),
-                Profile = profileInputLowerCase,
+                ProfileId = ProfileId,
                 IsSuspended = createUserRequest.IsSuspended
             };
             userDetails.HashedPassword = hasher.HashPassword(userDetails, createUserRequest.Password);

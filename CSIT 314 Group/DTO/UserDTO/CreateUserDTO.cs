@@ -7,6 +7,6 @@
         public string PhoneNumber { get; set; } = "";
         public string Password { get; set; } = "";
         public bool IsSuspended { get; set; } = false;
-        public string Profile { get; set; } = "user";
+        public string ProfileName { get; set; } = "profile Not Given";
     }
 }

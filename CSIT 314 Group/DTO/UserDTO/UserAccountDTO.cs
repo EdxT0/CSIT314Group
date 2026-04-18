@@ -2,10 +2,11 @@
 {
     public class UserAccountDTO
     {
+        public int id { get; set; }
         public string Name { get; set; } = "";
         public string Email { get; set; } = "";
         public string PhoneNumber { get; set; } = "";
-        public string Profile { get; set; } = "user";
+        public string ProfileName { get; set; } 
         public bool IsSuspended { get; set; } = false;
 
 

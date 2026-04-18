@@ -1,5 +1,5 @@
 using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserDTO;
+using CSIT_314_Group.DTO.UserProfileDTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSIT_314_Group.Controllers.ProfileController;

@@ -6,38 +6,37 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "Name": "edwin",
-  "Email": "edwin@example.com",
-  "PhoneNumber": "81234567",
-  "Password": "MySecret456!",
-  "Profile" : "admin",
+  "Name": "zhang yue",
+  "Email": "zhangyue@example.com",
+  "PhoneNumber": "9234567",
+  "Password": "MySecret123!",
+  "ProfileName" : "fundraiser manager",
   "IsSuspended" : false
 }
 
 ###
 
-<<<<<<< Updated upstream
 POST {{CSIT_314_Group_HostAddress}}/api/Auth/Login
-Content-Type : application/json
-=======
-POST {{CSIT_314_Group_HostAddress}}/Auth/Login
 Content-Type: application/json
->>>>>>> Stashed changes
 Accept: application/json
 
 {
     "Email": "edwin@example.com",
-     "Password": "MySecret456!"
+     "Password": "MySecret123!"
 }
 ###
 
+GET {{CSIT_314_Group_HostAddress}}/api/ViewAllUserAccount
+Accept : application/json
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtcyldyKSL8s41fcO8RpM4ih-wfgJiCed2JnytgrngQE94Ha4YW3FWxU11v9H9cBwPn4zkT9MnD1CLA-ZxG1Wyx_EqEQiSRNvpCL7bpVIAu4IVOm6ZSoeisuBGdvqeLtYd3EInf6_PTrXSbftOQYNPKOZwXP0gBsB1IX_tss4KtuFFPdw2LBi-1WfnB7swh28RDigzbo5gEE64jFVJUDtXuYkrQ4jXRXn6hGbOWtOJUKLkIkydUsQagbHvfUPfZrEUNZ3BZymgy3tWRuzFcuuhbFtYsv8IXd5LNPeAh2HBTU4XtkyIKDtu9I-CKvFo7Ywwu-MYMB1nIVUXQwzdG5MVZuDnLsHhOa_rAw2Bc2_7x_cYvtdn8fXwE7xgYwFG24zHGYz6R3e3LfZzJxpCjXvWiv0Sk5WwVVQEsIC8QC27Zp1ZAL8kZr9FIZ_Ds_PMDIqVgVUY-RkrqEgMBpl9cHnWTLytTFb47wR4Msy-UEJLsjxSd7nO3bXl7UX2Uwfz-5ccjot7RNEKwlx1Q8KkXOoD-OR1b8tBn_vEdOsxqFPfcffHHQsJ0zkhG-vCw-fd5G3b1Xss7eQqeCBpQVa8kw
 
-<<<<<<< Updated upstream
-GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount
-Content-Type : application/json
-Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6peI31n3NPEreMQCpmp3ftpX2nrgU91enzKgwVE06Jmu6kH2Lhr2oiDImDLWhKvwjFhwNmPTtpU33YcNX4Ik2kF8KlKU2MtTRmq-vy04TaxNPhX4sUtFkAXaI4R4NG5LpvIcRmFWShGIDIwlfd0M1hszAU5H3g99C2XIU-WDuWcWq00sZ_CnDzEVC9jXjr03fvmL7zX1QizJq_uNSJJSZCeHDj1iPdHvmJexfpjTz_L94QhTWuITJWk6keA08cywjZln_pTk7yA1MrN8bt4xsvu2Wr1NnsxXcKmyK6mmJdVXxjFXYun7bdT9MJ6wz8DkJ-9QS6wdLSJtUIDgcDnx6cMJUVEDaPvrvaZTXr2041gp_3Wuuhdj2l2mStnI-iDFZgWbzi8LKKIKtY68IB7o_hMofSjykwyGHco8_SpwBdjSStpVjg3OI8ou_FwWXAsjtWVItBAYj8jz7UnOQPMLh0UJzZGdgHACt2KwFipTn0mgI8vFS1SVKdoVL6PGUWYvI_17f1ZiFb3_QSY2FSz7vDzd8JoyWjFAAZepFJyjLvXTCqyIrFOxrKhmV5QMdpKA5s6JtxStvVIIDJNCPbz1bJEYzfAo_gunPT8cGEDSdkF7hpDAKTrl3yPqJIqrxI4lfI
 ###
 
+GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount
+Content-Type : application/json
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtcyldyKSL8s41fcO8RpM4ih-wfgJiCed2JnytgrngQE94Ha4YW3FWxU11v9H9cBwPn4zkT9MnD1CLA-ZxG1Wyx_EqEQiSRNvpCL7bpVIAu4IVOm6ZSoeisuBGdvqeLtYd3EInf6_PTrXSbftOQYNPKOZwXP0gBsB1IX_tss4KtuFFPdw2LBi-1WfnB7swh28RDigzbo5gEE64jFVJUDtXuYkrQ4jXRXn6hGbOWtOJUKLkIkydUsQagbHvfUPfZrEUNZ3BZymgy3tWRuzFcuuhbFtYsv8IXd5LNPeAh2HBTU4XtkyIKDtu9I-CKvFo7Ywwu-MYMB1nIVUXQwzdG5MVZuDnLsHhOa_rAw2Bc2_7x_cYvtdn8fXwE7xgYwFG24zHGYz6R3e3LfZzJxpCjXvWiv0Sk5WwVVQEsIC8QC27Zp1ZAL8kZr9FIZ_Ds_PMDIqVgVUY-RkrqEgMBpl9cHnWTLytTFb47wR4Msy-UEJLsjxSd7nO3bXl7UX2Uwfz-5ccjot7RNEKwlx1Q8KkXOoD-OR1b8tBn_vEdOsxqFPfcffHHQsJ0zkhG-vCw-fd5G3b1Xss7eQqeCBpQVa8kw
+
+###
 GET {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount?nameOrEmailOrPhone=testNonAdmin@example.com
 Content-Type : application/json
 
@@ -60,9 +59,9 @@ Content-Type: application/json
 PUT {{CSIT_314_Group_HostAddress}}/api/SuspendUserAccount
 Content-Type : application/json
 Accept: application/json
-Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qsoRQ2_KqSsceMqcSELHEZLGYV9wEaZrHjMgTZ6l-49ER6nHcKUF7q9P7yLdD0WQrC84Jar_7C979FOMRoqn_puX3L4fSiF9ZTUSRs3ZIn8Hs7EbdwaozMeR-lstpNvuJ75WDlI5j_qg85REJLMqKpi6zwtSJ8azMbqfxof0gNyQbsHrHz9dMsRZN-nYUbKY851cNqWR0alvQnF8_TM1Tf0TFU3RyNYzj4zm3zeFiueSFWLDUo2Pn_qfttcOpgFvuSwD2vTS-rD3FqED9_urHNyFF5HxQHRZkofAKT-cfA7-lfPTJIFITJYGSPLIjz6BI_EIOCTj85-mtAYcOULAbiyGlSOJ2Gno9Ue_4jfmdD_ApBzvB2OHOukPuH6quZLHCLU4sM-j-GSTAtilUkIAb56Oys4MbMnPnedGWM0hKGhLEyrgwJkHRzWthzQGNkk3bz_OYjDZHFsN3J7Gqt6aJwgJjss3vf_KGsWKRwlF6jqqgfj6FLCB1rO0mmk2Vf7et7NIUEIIRWsok79TElOiEU1jTlbTzTBqDegjMQOYcL9UxgZQXyvdtxtsuhnnabvOnPvd6pf3eO0o05LLW3NXG4msrKg3BQVEOwV_ABd_HnUQ
+Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6rKTGDZM93lqHN_q_Pe7RDo6KB6dh13CxkFUF14Na5ZYkKoPxAEfyUHPpKRoa8G0YQ020NQdzpLXbXkcn6J1H7YsYodW7wib29lNpwdYsUpGcP_UVbg0I3lpFy8b0yERA6fUr2ArySiLH8TX5NSk-Zb-0mC9XPOq7Uh2RaGNn6P3ZxGEyaQDCYB7xFIgIz3cdnzbiM-kv6Ko0QBKYdex3I5h5rhiR49f6LyBDpgySgSzI3nxgk4g0qdtkKG4AKJOIvsuGw9KWiplHMMVUk6dM966LZRozdXUYxCJQL0orterEjR_yM9BY64iWP3kohO44y9ZvYeyFvWtQzinCm2msDx-v5hyBoxpLmS-ZvO-tPZlswrZLpY83NWnvg6wJNR87pDdDklztDCV0SeSIeUUmj_lM9Ptu7E-Biej_UwmyMRYMuP2jKZKk1g8HWw8esRNjggjCAX3qPxHJWZPsaAigCF_v12hFhUraPXU91UVU-EMoVLA39njRRwtv4XMN5ZqAOW9FghklsvgcKuqBOvxYzVF1VV8WOAfysVPRdAqqND6ntPNX49gkCX8Bk4VnZsjwskT8ILBLxAQlDTXgZ1AJSvD9yL7xlavzX_5JwHtn0V1_UeYHDsvfXw3iUz3hT5W00
 {
-  "Email" : "testNonAdmin@example.com",
+  "Email" : "efabian@example.com",
   "suspendUser" : false
 }
 ###

@@ -1,6 +1,6 @@
 using CSIT_314_Group.Entity;
 
-namespace CSIT_314_Group.DTO.UserDTO;
+namespace CSIT_314_Group.DTO.UserProfileDTO;
 
 public class CreateUserProfileDTO
 {

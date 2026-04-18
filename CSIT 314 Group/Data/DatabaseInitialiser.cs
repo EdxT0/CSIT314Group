@@ -21,6 +21,8 @@ namespace CSIT_314_Group.Data
 
             try
             {
+                using var pragma = new SqliteCommand("PRAGMA foreign_keys = ON;", connection, transaction);
+                pragma.ExecuteNonQuery();
 
                 string createUserProfileTableQuery = @"CREATE TABLE IF NOT EXISTS UserProfile(
                                             Id INTEGER PRIMARY KEY,
@@ -40,7 +42,7 @@ namespace CSIT_314_Group.Data
                                                      Email TEXT NOT NULL UNIQUE,
                                                      IsSuspended BOOL NOT NULL,
                                                      HashedPassword TEXT NOT NULL,
-                                                     ProfileId TEXT NOT NULL,
+                                                     ProfileId INTEGER NOT NULL,
                                                      FOREIGN KEY (ProfileId) References UserProfile(Id)
                                                     )";
                 using (var createUserAccountTableQueryCommand = new SqliteCommand(createUserAccountTableQuery, connection, transaction))
@@ -112,9 +114,9 @@ namespace CSIT_314_Group.Data
             object? result = checkIfTableHasAnyValueCommand.ExecuteScalar();
             if(result == null)
             {
-                string seedProfileTableQuery = @"INSERT INTO userProfile ( ProfileName, Description ) VALUES (@Name, @Desc)";
+                string seedProfileTableQuery = @"INSERT INTO userProfile ( ProfileName, Description, IsRoleSuspended ) VALUES (@Name, @Desc, @isRoleSuspended)";
 
-                string[] UserProfileNameList = { "admin","Platform Manager", "Donee", "Fundraiser Manager" };
+                string[] UserProfileNameList = { "admin","platform manager", "donee", "fundraiser manager" };
                 string[] UserProfileDescList = { "To manage account", "To manage fundraiser categories", "To contribute to fundraisers", "To manage fundraisers" };
 
 
@@ -122,12 +124,13 @@ namespace CSIT_314_Group.Data
                 {
                     seedProfileTableQueryCommand.Parameters.Add("@Name", SqliteType.Text);
                     seedProfileTableQueryCommand.Parameters.Add("@Desc", SqliteType.Text);
-
+                    seedProfileTableQueryCommand.Parameters.Add("@isRoleSuspended", SqliteType.Integer);
 
                     for (int i = 0; i < UserProfileNameList.Length; i++) 
                     {
                         seedProfileTableQueryCommand.Parameters["@Name"].Value = UserProfileNameList[i];
                         seedProfileTableQueryCommand.Parameters["@Desc"].Value = UserProfileNameList[i];
+                        seedProfileTableQueryCommand.Parameters["@isRoleSuspended"].Value = 1;
                         seedProfileTableQueryCommand.ExecuteNonQuery();
                     }
                 }

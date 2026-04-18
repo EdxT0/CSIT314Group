@@ -7,7 +7,7 @@
         public string Email { get; set; } = "";
         public string PhoneNumber { get; set; } = "";
         public string HashedPassword { get; set; } = "";
-        public string Profile { get; set; } = "User";
+        public int? ProfileId { get; set; } 
         public bool IsSuspended { get; set; } = false;
     }
 

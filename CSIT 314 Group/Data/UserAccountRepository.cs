@@ -22,7 +22,7 @@ namespace CSIT_314_Group.Data
             using var connection = _dbConnectionFactory.CreateConnection();
             connection.Open();
 
-            string getByIdQuery = @"SELECT * FROM UserAccount WHERE Id = @id";
+            string getByIdQuery = @"SELECT UA.NAME, UA.PhoneNumber, UA.Email, UP.ProfileName, UA.IsSuspended FROM UserAccount UA JOIN UserProfile UP on UA.ProfileId = UP.Id WHERE UA.Id = @id";
             using var getByIdQueryCommand = new SqliteCommand(getByIdQuery, connection);
             getByIdQueryCommand.Parameters.AddWithValue("@id", id);
             var reader = await getByIdQueryCommand.ExecuteReaderAsync();
@@ -34,7 +34,7 @@ namespace CSIT_314_Group.Data
                     Name = reader.GetString(reader.GetOrdinal("Name")),
                     PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
                     Email = reader.GetString(reader.GetOrdinal("Email")),
-                    Profile = reader.GetString(reader.GetOrdinal("Profile")),
+                    ProfileName = reader.GetString(reader.GetOrdinal("ProfileName")),
                     IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
                 };
             }
@@ -61,7 +61,7 @@ namespace CSIT_314_Group.Data
                     {
                         id = reader.GetInt32(reader.GetOrdinal("Id")),
                         Name = reader.GetString(reader.GetOrdinal("Name")),
-                        Profile = reader.GetString(reader.GetOrdinal("Profile")),
+                        ProfileId = reader.GetInt32(reader.GetOrdinal("ProfileId")),
                         Email = reader.GetString(reader.GetOrdinal("Email")),
                         PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
                         HashedPassword = reader.GetString(reader.GetOrdinal("HashedPassword")),
@@ -86,7 +86,7 @@ namespace CSIT_314_Group.Data
             using SqliteTransaction transaction = connection.BeginTransaction();
             try
             {
-                string createUserQuery = @"INSERT INTO UserAccount ( Name, PhoneNumber, Email, HashedPassword, Profile, IsSuspended) VALUES ( @Name, @PhoneNumber, @Email, @HashedPassword, @Profile, @IsSuspended)";
+                string createUserQuery = @"INSERT INTO UserAccount ( Name, PhoneNumber, Email, HashedPassword, ProfileId, IsSuspended) VALUES ( @Name, @PhoneNumber, @Email, @HashedPassword, @ProfileId, @IsSuspended)";
 
                 await using var createUserQueryCommand = new SqliteCommand(createUserQuery, connection, transaction);
 
@@ -94,7 +94,7 @@ namespace CSIT_314_Group.Data
                 createUserQueryCommand.Parameters.AddWithValue("@PhoneNumber", userDetails.PhoneNumber);
                 createUserQueryCommand.Parameters.AddWithValue("@Email", userDetails.Email);
                 createUserQueryCommand.Parameters.AddWithValue("@HashedPassword", userDetails.HashedPassword);
-                createUserQueryCommand.Parameters.AddWithValue("@Profile", userDetails.Profile);
+                createUserQueryCommand.Parameters.AddWithValue("@ProfileId", userDetails.ProfileId);
                 createUserQueryCommand.Parameters.AddWithValue("@IsSuspended", userDetails.IsSuspended);
 
 
@@ -121,8 +121,9 @@ namespace CSIT_314_Group.Data
                 }
                 return CreateUserResultEnum.DuplicatePhoneNumberAndEmail;
             }
-            catch
+            catch(SqliteException ex)
             {
+                Console.WriteLine(ex);
                 await transaction.RollbackAsync();
                 return CreateUserResultEnum.Failed;
             }
@@ -136,7 +137,7 @@ namespace CSIT_314_Group.Data
 
             using SqliteTransaction transaction = connection.BeginTransaction();
 
-            string viewUserAccountQuery = @"SELECT * FROM UserAccount WHERE id = @id";
+            string viewUserAccountQuery = @"SELECT UA.Id, UA.Name, UA.Email, UA.PhoneNumber, UP.ProfileName, UA.IsSuspended FROM UserAccount UA Join UserProfile UP ON UA.ProfileId = UP.Id  WHERE UA.id = @id";
 
             using var viewUserAccountQueryCommand = new SqliteCommand(viewUserAccountQuery,connection,transaction);
             viewUserAccountQueryCommand.Parameters.AddWithValue("@id", id);
@@ -147,14 +148,40 @@ namespace CSIT_314_Group.Data
             {
                 return new UserAccountDTO
                 {
+                    id = reader.GetInt32(reader.GetOrdinal("Id")),
                     Name = reader.GetString(reader.GetOrdinal("Name")),
                     PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
                     Email = reader.GetString(reader.GetOrdinal("Email")),
-                    Profile = reader.GetString(reader.GetOrdinal("Profile")),
+                    ProfileName = reader.GetString(reader.GetOrdinal("ProfileName")),
                     IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
                 };
             }
             return null;
+        }
+
+        public async Task<List<UserAccountDTO>> ViewAllUserAccount()
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string viewAllUserAccountQuery = @"SELECT UA.Id, UA.Name, UA.Email, UA.PhoneNumber, UP.ProfileName, UA.IsSuspended FROM UserAccount UA JOIN USERPROFILE UP ON UA.ProfileID = UP.Id";
+            var viewAllUserAccountQueryCommand = new SqliteCommand(viewAllUserAccountQuery, connection);
+            using var reader = await viewAllUserAccountQueryCommand.ExecuteReaderAsync();
+            List<UserAccountDTO> listOfAllUserAccount = new List<UserAccountDTO>();
+
+            while (await reader.ReadAsync())
+            {
+                listOfAllUserAccount.Add(new UserAccountDTO
+                {
+                    id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                    PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                    Email = reader.GetString(reader.GetOrdinal("Email")),
+                    ProfileName = reader.GetString(reader.GetOrdinal("ProfileName")),
+                    IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
+                });
+            }
+            return listOfAllUserAccount;
         }
         public async Task<bool> SuspendUserWithId(int id, bool suspendUser)
         {

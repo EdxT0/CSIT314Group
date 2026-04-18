@@ -13,9 +13,11 @@ namespace CSIT_314_Group.Controllers.Auth
     public class AuthController : ControllerBase
     {
         private readonly UserAccountRepository _userAccountRepository;
-        public AuthController(UserAccountRepository userAccountRepository)
+        private readonly UserProfileRepository _userProfileRepository;
+        public AuthController(UserAccountRepository userAccountRepository, UserProfileRepository userProfileRepository)
         {
             _userAccountRepository = userAccountRepository;
+            _userProfileRepository = userProfileRepository;
         }
 
         [HttpPost("Login")]
@@ -42,7 +44,7 @@ namespace CSIT_314_Group.Controllers.Auth
                 new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Profile)
+                new Claim(ClaimTypes.Role, await _userProfileRepository.getProfileNameWithId(user.ProfileId))
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -54,7 +56,17 @@ namespace CSIT_314_Group.Controllers.Auth
                 IsPersistent = false
             });
 
-            return Ok("Logged in");
+            return Ok(new
+            {
+                message = "Logged in",
+                user = new
+                {
+                    id = user.id,
+                    name = user.Name,
+                    email = user.Email,
+                    role = await _userProfileRepository.getProfileNameWithId(user.ProfileId)
+                }
+            });
         }
 
         [HttpGet("Logout")]

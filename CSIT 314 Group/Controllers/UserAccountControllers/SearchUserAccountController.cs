@@ -2,7 +2,7 @@
 using CSIT_314_Group.DTO.UserDTO;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSIT_314_Group.Controllers.UserAccount
+namespace CSIT_314_Group.Controllers.UserAccountControllers
 {
     [ApiController]
     [Route("api/[controller]")]

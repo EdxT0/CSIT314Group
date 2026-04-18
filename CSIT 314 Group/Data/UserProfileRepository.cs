@@ -50,6 +50,35 @@ public class UserProfileRepository
         }
     }
 
+    public async Task<int?> getIdWithProfileName(string profileName)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+        await connection.OpenAsync();
+
+        string getIdWithProfileNameQuery = @"SELECT Id from UserProfile WHERE ProfileName = @profileName";
+        using var getIdWithProfileNameQueryCommand = new SqliteCommand(getIdWithProfileNameQuery, connection);
+        getIdWithProfileNameQueryCommand.Parameters.AddWithValue("@profileName", profileName);
+        var result = await  getIdWithProfileNameQueryCommand.ExecuteScalarAsync();
+        if (result == null)
+        {
+            return null;
+        }
+        return Convert.ToInt32(result);
+    }
+
+    public async Task<string> getProfileNameWithId(int? id)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+        await connection.OpenAsync();
+
+        string getProfileNameWithIdQuery = @"SELECT ProfileName from UserProfile WHERE Id = @id";
+        using var getProfileNameWithIdQueryCommand = new SqliteCommand(getProfileNameWithIdQuery, connection);
+        getProfileNameWithIdQueryCommand.Parameters.AddWithValue("@id", id);
+        var result = await getProfileNameWithIdQueryCommand.ExecuteScalarAsync();
+
+        return Convert.ToString(result);
+    }
+
 
     // View Profile
     public async Task<UserProfile?> GetUserProfile(int id)
