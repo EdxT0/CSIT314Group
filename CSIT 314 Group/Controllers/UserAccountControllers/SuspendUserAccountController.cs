@@ -19,25 +19,25 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
         [HttpPut]
         public async Task<IActionResult> SuspendUserAccount([FromBody] SuspendUserDTO suspendUserDTO)
         {
-            var userIdResult = await _userAccountRepository.GetIdWithNameOrEmailOrPhone(suspendUserDTO.email.ToLower());
+            var userIdResult = await _userAccountRepository.GetIdWithNameOrEmailOrPhone(suspendUserDTO.Email.ToLower());
             if(userIdResult == null)
             {
                 return NotFound("User dont exist");
             }
             int userId = Convert.ToInt32(userIdResult);
             var isSuspended = await _userAccountRepository.GetSuspendStatusWithId(userId);
-            if (Convert.ToBoolean(isSuspended) == true && suspendUserDTO.suspendUser == true)
+            if (Convert.ToBoolean(isSuspended) == true && suspendUserDTO.SuspendUser == true)
             {
                 return Conflict($"User already suspended");
-            }else if (Convert.ToBoolean(isSuspended) == false && suspendUserDTO.suspendUser == false)
+            }else if (Convert.ToBoolean(isSuspended) == false && suspendUserDTO.SuspendUser == false)
             {
                 return Conflict($"User already unsuspended");
             }
-            var boolResult = await _userAccountRepository.SuspendUserWithId(userId, suspendUserDTO.suspendUser);
-            if (Convert.ToBoolean(boolResult) && suspendUserDTO.suspendUser == true)
+            var boolResult = await _userAccountRepository.SuspendUserWithId(userId, suspendUserDTO.SuspendUser);
+            if (Convert.ToBoolean(boolResult) && suspendUserDTO.SuspendUser == true)
             {
                 return Ok("User suspended");
-            }else if (Convert.ToBoolean(boolResult) && suspendUserDTO.suspendUser == false)
+            }else if (Convert.ToBoolean(boolResult) && suspendUserDTO.SuspendUser == false)
             {
                 return Ok("User unsuspended");
             }

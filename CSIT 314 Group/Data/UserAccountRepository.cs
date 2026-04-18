@@ -264,5 +264,160 @@ namespace CSIT_314_Group.Data
             return null;
 
         }
+
+        public async Task<bool> UpdateEmailById(int id, string email)
+        {
+            using SqliteConnection connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string updateEmailByIdQuery = @"UPDATE UserAccount Set Email = @email Where Id = @id";
+            using var updateEmailByIdQueryCommand = new SqliteCommand(updateEmailByIdQuery, connection, transaction);
+            updateEmailByIdQueryCommand.Parameters.AddWithValue("@email", email);
+            updateEmailByIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            int rowsAffected = await updateEmailByIdQueryCommand.ExecuteNonQueryAsync();
+
+            if (rowsAffected > 0)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+
+            await transaction.RollbackAsync();
+            return false;
+
+
+
+        }
+        public async Task<bool> UpdatePhoneNumberById(int id, string phoneNumber)
+        {
+            using SqliteConnection connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string UpdatePhoneNumberByIdQuery = @"UPDATE UserAccount Set PhoneNumber = @phoneNumber Where Id = @id";
+            using var UpdatePhoneNumberByIdQueryCommand = new SqliteCommand(UpdatePhoneNumberByIdQuery, connection, transaction);
+            UpdatePhoneNumberByIdQueryCommand.Parameters.AddWithValue("@phoneNumber", phoneNumber);
+            UpdatePhoneNumberByIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            int rowsAffected = await UpdatePhoneNumberByIdQueryCommand.ExecuteNonQueryAsync();
+
+            if (rowsAffected > 0)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+
+            await transaction.RollbackAsync();
+            return false;
+
+
+        }
+        public async Task<bool> UpdateNameById(int id, string name)
+        {
+            using SqliteConnection connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string UpdateNameByIdQuery = @"UPDATE UserAccount Set Name = @name Where Id = @id";
+            using var UpdateNameByIdCommand = new SqliteCommand(UpdateNameByIdQuery, connection, transaction);
+            UpdateNameByIdCommand.Parameters.AddWithValue("@name", name);
+            UpdateNameByIdCommand.Parameters.AddWithValue("@id", id);
+
+            int rowsAffected = await UpdateNameByIdCommand.ExecuteNonQueryAsync();
+
+            if (rowsAffected > 0)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+
+            await transaction.RollbackAsync();
+            return false;
+
+        }
+        public async Task<bool> UpdatePasswordById(int id, string password)
+        {
+            using SqliteConnection connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string UpdatePasswordByIdQuery = @"UPDATE UserAccount Set HashedPassword = @password Where Id = @id";
+            using var UpdatePasswordByIdQueryCommand = new SqliteCommand(UpdatePasswordByIdQuery, connection, transaction);
+            UpdatePasswordByIdQueryCommand.Parameters.AddWithValue("@password", password);
+            UpdatePasswordByIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            int rowsAffected = await UpdatePasswordByIdQueryCommand.ExecuteNonQueryAsync();
+
+            if (rowsAffected > 0)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+
+            await transaction.RollbackAsync();
+            return false;
+        }
+        public async Task<bool> UpdateProfileById(int id, int? profileId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string UpdateNameByIdQuery = @"UPDATE UserAccount Set ProfileId = @profileId Where Id = @id";
+            using var UpdateNameByIdCommand = new SqliteCommand(UpdateNameByIdQuery, connection, transaction);
+            UpdateNameByIdCommand.Parameters.AddWithValue("@profileId", profileId);
+            UpdateNameByIdCommand.Parameters.AddWithValue("@id", id);
+
+            int rowsAffected = await UpdateNameByIdCommand.ExecuteNonQueryAsync();
+
+            if (rowsAffected > 0)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+
+            await transaction.RollbackAsync();
+            return false;
+        }
+
+        public async Task<UserAccount>? GetAllDetailsById(int userId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            try
+            {
+                string getByEmailQuery = @"SELECT * FROM UserAccount WHERE Id = @userId";
+
+                await using var getByEmailQueryCommand = new SqliteCommand(getByEmailQuery, connection);
+                getByEmailQueryCommand.Parameters.AddWithValue("@userId", userId);
+
+                var reader = await getByEmailQueryCommand.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    return new UserAccount
+                    {
+                        id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        Name = reader.GetString(reader.GetOrdinal("Name")),
+                        ProfileId = reader.GetInt32(reader.GetOrdinal("ProfileId")),
+                        Email = reader.GetString(reader.GetOrdinal("Email")),
+                        PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                        HashedPassword = reader.GetString(reader.GetOrdinal("HashedPassword")),
+                        IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
+                    };
+                }
+                return null;
+
+            }
+            catch
+            {
+
+                throw;
+            }
+
+        }
     }
 }

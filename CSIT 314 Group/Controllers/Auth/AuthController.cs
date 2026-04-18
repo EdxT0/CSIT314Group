@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using CSIT_314_Group.DTO.UserDTO;
+using CSIT_314_Group.Entity;
 
 namespace CSIT_314_Group.Controllers.Auth
 {
@@ -23,14 +24,14 @@ namespace CSIT_314_Group.Controllers.Auth
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            var user = await _userAccountRepository.GetByEmail(loginDto.email.ToLower());
+            var user = await _userAccountRepository.GetByEmail(loginDto.Email.ToLower());
 
             if (user == null)
             {
                 return Unauthorized("invalid email or password");
             }
-            var hasher = new PasswordHasher<Entity.UserAccount>();
-            var verifyPassword = hasher.VerifyHashedPassword(user, user.HashedPassword, loginDto.password);
+            var hasher = new PasswordHasher<UserAccount>();
+            var verifyPassword = hasher.VerifyHashedPassword(user, user.HashedPassword, loginDto.Password);
             if (verifyPassword == PasswordVerificationResult.Failed)
             {
                 return Unauthorized("invalid email or password");

@@ -1,7 +1,9 @@
 using CSIT_314_Group.Authentication;
 using CSIT_314_Group.Data;
+using CSIT_314_Group.Entity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
@@ -40,6 +42,7 @@ namespace CSIT_314_Group
             builder.Services.AddSingleton<DbConnectionFactory>();
             builder.Services.AddScoped<UserAccountRepository>();
             builder.Services.AddScoped<DatabaseInitialiser>();
+            builder.Services.AddScoped<PasswordHasher<UserAccount>>();
 
             var app = builder.Build();
 
