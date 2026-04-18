@@ -30,6 +30,7 @@ namespace CSIT_314_Group
 
             builder.Services.AddAuthorization();
 
+            builder.Services.AddSingleton<UserProfileRepository>();
             builder.Services.AddSingleton<DbConnectionFactory>();
             builder.Services.AddScoped<UserAccountRepository>();
             builder.Services.AddScoped<DatabaseInitialiser>();
