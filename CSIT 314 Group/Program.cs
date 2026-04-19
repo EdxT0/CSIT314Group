@@ -1,7 +1,9 @@
 using CSIT_314_Group.Authentication;
 using CSIT_314_Group.Data;
+using CSIT_314_Group.Entity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
@@ -14,7 +16,13 @@ namespace CSIT_314_Group
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                });
+            });
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
@@ -30,9 +38,11 @@ namespace CSIT_314_Group
 
             builder.Services.AddAuthorization();
 
+            builder.Services.AddSingleton<UserProfileRepository>();
             builder.Services.AddSingleton<DbConnectionFactory>();
             builder.Services.AddScoped<UserAccountRepository>();
             builder.Services.AddScoped<DatabaseInitialiser>();
+            builder.Services.AddScoped<PasswordHasher<UserAccount>>();
 
             var app = builder.Build();
 
@@ -53,7 +63,7 @@ namespace CSIT_314_Group
             app.UseAuthentication();
             app.UseAuthorization();
 
-
+            app.UseCors("AllowFrontend");
             app.MapControllers();
 
             app.Run();

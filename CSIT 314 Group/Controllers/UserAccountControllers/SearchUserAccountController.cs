@@ -1,11 +1,11 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO;
+using CSIT_314_Group.DTO.UserDTO;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSIT_314_Group.Controllers.UserAccount
+namespace CSIT_314_Group.Controllers.UserAccountControllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[controller]")]
     public class SearchUserAccountController : ControllerBase
     {
         private readonly UserAccountRepository _userAccountRepository;

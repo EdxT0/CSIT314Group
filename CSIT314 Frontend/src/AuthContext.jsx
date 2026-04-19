@@ -17,17 +17,22 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (email, password) => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-    localStorage.setItem("token", data.token);
-    setUser(data.user);
-  };
+const login = async (email, password) => {
+  const res = await fetch("https://localhost:7039/api/auth/Login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, password }),
+  });
+
+  const text = await res.text();
+
+  if (!res.ok) {
+    throw new Error(text || "Login failed");
+  }
+
+  setUser({ email });
+};
 
   const logout = () => {
     localStorage.removeItem("token");

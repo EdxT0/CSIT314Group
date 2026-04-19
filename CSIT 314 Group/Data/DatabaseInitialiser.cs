@@ -21,37 +21,43 @@ namespace CSIT_314_Group.Data
 
             try
             {
-                string createUserAccountTableQuery = @"CREATE TABLE IF NOT EXISTS user(
-                                                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                     Name TEXT NOT NULL,
-                                                     Profile TEXT NOT NULL,
-                                                     PhoneNumber TEXT NOT NULL UNIQUE,
-                                                     Email TEXT NOT NULL UNIQUE,
-                                                     IsSuspended BOOL NOT NULL,
-                                                     HashedPassword TEXT NOT NULL
-                                                    )";
-                using (var createUserAccountTableQueryCommand = new SqliteCommand(createUserAccountTableQuery, connection, transaction))
-                {
-                    createUserAccountTableQueryCommand.ExecuteNonQuery();
-                }
+                using var pragma = new SqliteCommand("PRAGMA foreign_keys = ON;", connection, transaction);
+                pragma.ExecuteNonQuery();
 
-
-                string createUserProfileTableQuery = @"CREATE TABLE IF NOT EXISTS userprofile(
-                                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                            ProfileName TEXT NOT NULL UNIQUE
-                                            
+                string createUserProfileTableQuery = @"CREATE TABLE IF NOT EXISTS UserProfile(
+                                            Id INTEGER PRIMARY KEY,
+                                            ProfileName TEXT NOT NULL UNIQUE,
+                                            isRoleSuspended BOOL NOT NULL,
+                                            Description TEXT
                                             )";
                 using (var createUserProfileTableQueryCommand = new SqliteCommand(createUserProfileTableQuery, connection, transaction))
                 {
                     createUserProfileTableQueryCommand.ExecuteNonQuery();
                 }
 
+                string createUserAccountTableQuery = @"CREATE TABLE IF NOT EXISTS UserAccount(
+                                                     Id INTEGER PRIMARY KEY,
+                                                     Name TEXT NOT NULL,
+                                                     PhoneNumber TEXT NOT NULL UNIQUE,
+                                                     Email TEXT NOT NULL UNIQUE,
+                                                     IsSuspended BOOL NOT NULL,
+                                                     HashedPassword TEXT NOT NULL,
+                                                     ProfileId INTEGER NOT NULL,
+                                                     FOREIGN KEY (ProfileId) References UserProfile(Id)
+                                                    )";
+                using (var createUserAccountTableQueryCommand = new SqliteCommand(createUserAccountTableQuery, connection, transaction))
+                {
+                    createUserAccountTableQueryCommand.ExecuteNonQuery();
+                }
 
-                string createFRATableQuery = @"CREATE TABLE IF NOT EXISTS fra(
-                                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                string createFRATableQuery = @"CREATE TABLE IF NOT EXISTS FundraiserActivity(
+                                            Id INTEGER PRIMARY KEY,
                                             FraName TEXT NOT NULL UNIQUE,
                                             Description TEXT,
-                                            date DATETIME NOT NULL
+                                            Deadline TEXT NOT NULL,
+                                            Status TEXT NOT NULL,
+                                            AmtDonated REAL,    
+                                            AmtRequested REAL
                                             )";
 
 
@@ -59,6 +65,35 @@ namespace CSIT_314_Group.Data
                 {
                     createFRATableQueryCommand.ExecuteNonQuery();
                 }
+
+
+                string createFavouriteListTableQuery = @"CREATE TABLE IF NOT EXISTS FavouriteList(
+                                            Id INTEGER PRIMARY KEY,
+                                            UserId INTEGER NOT NULL,
+                                            FraId INTEGER NOT NULL,
+                                            UNIQUE (UserId, FraId),
+                                            FOREIGN KEY (UserId) REFERENCES UserAccount(Id),
+                                            FOREIGN KEY (FraId) REFERENCES FRA(Id)
+                                            )";
+                using (var createFavouriteListTableQueryCommand = new SqliteCommand(createFavouriteListTableQuery, connection, transaction))
+                {
+                    createFavouriteListTableQueryCommand.ExecuteNonQuery();
+                }
+
+                string createFundraiserDonationsTableQuery = @"CREATE TABLE IF NOT EXISTS FundraiserDonations(
+                                            Id INTEGER PRIMARY KEY,
+                                            UserId INTEGER NOT NULL,
+                                            FraId INTEGER NOT NULL,
+                                            AmtDonatedByUser REAL,
+                                            DateDonated TEXT,
+                                            FOREIGN KEY (UserId) REFERENCES UserAccount(Id),
+                                            FOREIGN KEY (FraId) REFERENCES FRA(Id)
+                                            )";
+                using (var createFundraiserDonationsTableQueryCommand = new SqliteCommand(createFundraiserDonationsTableQuery, connection, transaction))
+                {
+                    createFundraiserDonationsTableQueryCommand.ExecuteNonQuery();
+                }
+
 
                 seedProfile(connection, transaction);
                 
@@ -79,16 +114,23 @@ namespace CSIT_314_Group.Data
             object? result = checkIfTableHasAnyValueCommand.ExecuteScalar();
             if(result == null)
             {
-                string seedProfileTableQuery = @"INSERT INTO userProfile ( ProfileName ) VALUES (@Name)";
-                string[] profileExampleList = { "admin", "user", "Fundraiser Manager" };
+                string seedProfileTableQuery = @"INSERT INTO userProfile ( ProfileName, Description, IsRoleSuspended ) VALUES (@Name, @Desc, @isRoleSuspended)";
+
+                string[] UserProfileNameList = { "admin","platform manager", "donee", "fundraiser manager" };
+                string[] UserProfileDescList = { "To manage account", "To manage fundraiser categories", "To contribute to fundraisers", "To manage fundraisers" };
+
 
                 using (var seedProfileTableQueryCommand = new SqliteCommand(seedProfileTableQuery, connection, transaction))
                 {
                     seedProfileTableQueryCommand.Parameters.Add("@Name", SqliteType.Text);
+                    seedProfileTableQueryCommand.Parameters.Add("@Desc", SqliteType.Text);
+                    seedProfileTableQueryCommand.Parameters.Add("@isRoleSuspended", SqliteType.Integer);
 
-                    foreach (var profile in profileExampleList)
+                    for (int i = 0; i < UserProfileNameList.Length; i++) 
                     {
-                        seedProfileTableQueryCommand.Parameters["@Name"].Value = profile;
+                        seedProfileTableQueryCommand.Parameters["@Name"].Value = UserProfileNameList[i];
+                        seedProfileTableQueryCommand.Parameters["@Desc"].Value = UserProfileNameList[i];
+                        seedProfileTableQueryCommand.Parameters["@isRoleSuspended"].Value = 1;
                         seedProfileTableQueryCommand.ExecuteNonQuery();
                     }
                 }

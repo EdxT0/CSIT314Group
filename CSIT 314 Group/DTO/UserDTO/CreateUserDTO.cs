@@ -1,13 +1,12 @@
-﻿namespace CSIT_314_Group.DTO
+﻿namespace CSIT_314_Group.DTO.UserDTO
 {
-    public class UserAccountDTO
+    public class CreateUserDTO
     {
         public string Name { get; set; } = "";
         public string Email { get; set; } = "";
         public string PhoneNumber { get; set; } = "";
-        public string Profile { get; set; } = "user";
+        public string Password { get; set; } = "";
         public bool IsSuspended { get; set; } = false;
-
-
+        public string ProfileName { get; set; } = "profile Not Given";
     }
 }

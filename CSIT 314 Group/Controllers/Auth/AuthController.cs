@@ -1,35 +1,37 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO;
-using CSIT_314_Group.Entity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using CSIT_314_Group.DTO.UserDTO;
+using CSIT_314_Group.Entity;
 
 namespace CSIT_314_Group.Controllers.Auth
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly UserAccountRepository _userAccountRepository;
-        public AuthController(UserAccountRepository userAccountRepository)
+        private readonly UserProfileRepository _userProfileRepository;
+        public AuthController(UserAccountRepository userAccountRepository, UserProfileRepository userProfileRepository)
         {
             _userAccountRepository = userAccountRepository;
+            _userProfileRepository = userProfileRepository;
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            var user = await _userAccountRepository.GetByEmail(loginDto.email.ToLower());
+            var user = await _userAccountRepository.GetByEmail(loginDto.Email.ToLower());
 
             if (user == null)
             {
                 return Unauthorized("invalid email or password");
             }
-            var hasher = new PasswordHasher<Entity.UserAccount>();
-            var verifyPassword = hasher.VerifyHashedPassword(user, user.HashedPassword, loginDto.password);
+            var hasher = new PasswordHasher<UserAccount>();
+            var verifyPassword = hasher.VerifyHashedPassword(user, user.HashedPassword, loginDto.Password);
             if (verifyPassword == PasswordVerificationResult.Failed)
             {
                 return Unauthorized("invalid email or password");
@@ -43,7 +45,7 @@ namespace CSIT_314_Group.Controllers.Auth
                 new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Profile)
+                new Claim(ClaimTypes.Role, await _userProfileRepository.getProfileNameWithId(user.ProfileId))
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -55,7 +57,17 @@ namespace CSIT_314_Group.Controllers.Auth
                 IsPersistent = false
             });
 
-            return Ok("Logged in");
+            return Ok(new
+            {
+                message = "Logged in",
+                user = new
+                {
+                    id = user.id,
+                    name = user.Name,
+                    email = user.Email,
+                    role = await _userProfileRepository.getProfileNameWithId(user.ProfileId)
+                }
+            });
         }
 
         [HttpGet("Logout")]
