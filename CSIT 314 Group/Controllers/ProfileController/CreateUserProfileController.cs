@@ -23,7 +23,7 @@ public class CreateUserProfileController : ControllerBase
         var userProfile = new UserProfile
         {
             Id = request.Id,
-            Role = request.ProfileName?.Trim().ToLower(), // added trim to remove space
+            ProfileName = request.ProfileName?.Trim().ToLower(), // added trim to remove space
             Description = request.Description?.Trim().ToLower(),
             Status = "Active"
         };
