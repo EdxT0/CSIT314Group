@@ -1,4 +1,4 @@
-﻿namespace CSIT_314_Group.DTO.UserDTO
+﻿namespace CSIT_314_Group.DTO.UserAccountDTO
 {
     public class SuspendUserDTO
     {

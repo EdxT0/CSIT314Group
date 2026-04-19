@@ -1,12 +1,14 @@
-﻿namespace CSIT_314_Group.DTO.UserDTO
+﻿namespace CSIT_314_Group.DTO.UserAccountDTO
 {
-    public class UpdateUserDTO
+    public class UserAccountDTO
     {
-        public int Id { get; set; } 
+        public int id { get; set; }
         public string Name { get; set; } = "";
         public string Email { get; set; } = "";
         public string PhoneNumber { get; set; } = "";
-        public string Password { get; set; } = "";
         public string ProfileName { get; set; } = "";
+        public bool IsSuspended { get; set; } = false;
+
+
     }
 }

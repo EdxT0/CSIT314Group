@@ -1,0 +1,77 @@
+@CSIT_314_Group_HostAddress = http://localhost:5135
+
+
+POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": "abc123",
+  "Email": "abc123@example.com",
+  "PhoneNumber": "12313123",
+  "Password": "password123!",
+  "ProfileName" : "FUNDRAISER manager",
+  "IsSuspended" : false
+}
+
+###
+
+POST {{CSIT_314_Group_HostAddress}}/api/Auth/Login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Email": "abc123@example.com",
+     "Password": "password123!"
+}
+###
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewAllUserAccount
+Accept : application/json
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtcyldyKSL8s41fcO8RpM4ih-wfgJiCed2JnytgrngQE94Ha4YW3FWxU11v9H9cBwPn4zkT9MnD1CLA-ZxG1Wyx_EqEQiSRNvpCL7bpVIAu4IVOm6ZSoeisuBGdvqeLtYd3EInf6_PTrXSbftOQYNPKOZwXP0gBsB1IX_tss4KtuFFPdw2LBi-1WfnB7swh28RDigzbo5gEE64jFVJUDtXuYkrQ4jXRXn6hGbOWtOJUKLkIkydUsQagbHvfUPfZrEUNZ3BZymgy3tWRuzFcuuhbFtYsv8IXd5LNPeAh2HBTU4XtkyIKDtu9I-CKvFo7Ywwu-MYMB1nIVUXQwzdG5MVZuDnLsHhOa_rAw2Bc2_7x_cYvtdn8fXwE7xgYwFG24zHGYz6R3e3LfZzJxpCjXvWiv0Sk5WwVVQEsIC8QC27Zp1ZAL8kZr9FIZ_Ds_PMDIqVgVUY-RkrqEgMBpl9cHnWTLytTFb47wR4Msy-UEJLsjxSd7nO3bXl7UX2Uwfz-5ccjot7RNEKwlx1Q8KkXOoD-OR1b8tBn_vEdOsxqFPfcffHHQsJ0zkhG-vCw-fd5G3b1Xss7eQqeCBpQVa8kw
+
+###
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount
+Content-Type : application/json
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6o86JVl71Qj-gcPUQpGbHUyJ_Pbc3wiIsOE11f6JcfnUSGW-289E108L4LALrvC6zXO-Zo7FTStdbEnC1d9x9NcWl1SNV3ofaslIdI4nYSRRZZLPDg8Y4cn5NNFEMA5m-VxcBkjhhWL78_egIG-VgJj9zEAf5ZiaTdftodd84ddXt9ezAsZvWlU6UYRbrgVl2HAGSGTGOTF8KXcvHBj4U0pawm-ZoCjjuAeN18ojrl9LCx76CmF3JCyyFON8AxVN1awd0vScyz9YsGG_0K-R0MdyfWlfRFNPsvM3xUPwQ8O0FuPq1hhv7r0Mc7gukOEMZQm6Ue37OjZ9T_3ga7ZCRNlIWGrKF_00PrNLba2o3-iNo79Fhxfi2LOMAQFM1eGu3Hv_unsc2VQ68GbN2Sxa3ZkGRT_UYvhRst9K_dUvAfD95ZhtHtAUVyomJU5sxDoU2sSZ7zVVkdTeqg9vqSmFpMgGPJb1ORsDGu305Yi6lNzFzhVS0XlZSlf0VbvNbG0toDEXOyVGFoPpmitRzz7ic1kgl7tuV5njDfzyMGfMTPMRP8IMSrZHOtrh9CuCgV4M7z_MRmG9nlVwQ8eoxl4pbVJyay9DtryZTyR5drZOrApspiFc21CdqGpr7JvcjfRTHA
+###
+
+POST {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount
+Content-Type : application/json
+Accept : application/json
+{
+  "NameOrEmailOrPhone" : "zhang yue"
+}
+
+###
+
+GET {{CSIT_314_Group_HostAddress}}/api/Auth/Logout
+Content-Type : application/json
+
+###
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount
+Content-Type: application/json
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtcyldyKSL8s41fcO8RpM4ih-wfgJiCed2JnytgrngQE94Ha4YW3FWxU11v9H9cBwPn4zkT9MnD1CLA-ZxG1Wyx_EqEQiSRNvpCL7bpVIAu4IVOm6ZSoeisuBGdvqeLtYd3EInf6_PTrXSbftOQYNPKOZwXP0gBsB1IX_tss4KtuFFPdw2LBi-1WfnB7swh28RDigzbo5gEE64jFVJUDtXuYkrQ4jXRXn6hGbOWtOJUKLkIkydUsQagbHvfUPfZrEUNZ3BZymgy3tWRuzFcuuhbFtYsv8IXd5LNPeAh2HBTU4XtkyIKDtu9I-CKvFo7Ywwu-MYMB1nIVUXQwzdG5MVZuDnLsHhOa_rAw2Bc2_7x_cYvtdn8fXwE7xgYwFG24zHGYz6R3e3LfZzJxpCjXvWiv0Sk5WwVVQEsIC8QC27Zp1ZAL8kZr9FIZ_Ds_PMDIqVgVUY-RkrqEgMBpl9cHnWTLytTFb47wR4Msy-UEJLsjxSd7nO3bXl7UX2Uwfz-5ccjot7RNEKwlx1Q8KkXOoD-OR1b8tBn_vEdOsxqFPfcffHHQsJ0zkhG-vCw-fd5G3b1Xss7eQqeCBpQVa8kw
+
+###
+PUT {{CSIT_314_Group_HostAddress}}/api/SuspendUserAccount
+Content-Type : application/json
+Accept: application/json
+Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6pPowVubAT5Coaq-BfEjV_LYWKNQts3Z1MVv-QHkg2Ck45ZuJN1xnK7sg3hm_wDBaG2X-cXxYMNQzoC-gHdHTXwZ84GwQi32QWF_w3E_epMfFMvvrmtGTyGgZiOu0_DYUUzpuavtHE5bqqgnwSckYlWcoF35NBsxhqLmfiI7AA_TcptZOHMbK29JxTDb4uwu8nsYs4tTqyLqz4VyzCteA4ChvlYUxa5KySZCg3T60ChyM54GSrnJSpgG1WPUiOtDsjDj4gHAOxQN-Nr6Ip0RBjLrqoo2CA28qSudcCG_tbOSrDHvcvvcA1cH9AYP4Mod9UbSvAMqOgLSKJqy7S8TP0h7vhAOKvCBNvcKq2Kw-X3998v9o6ak7vk1eDYR3gJ92R4WmpGaCiDWjeJzs6pEDITPFeIgRX_dbO4sSa-n-IslnbNK8d5juzgl7JJx7GbwhZLCL-g5NlwXAciYjRAtiO7NhxWSyAYmJ2AAgvvLh4fLO8Np6Q8z_FXxdRfwcDZXmzYjKPwG9JIfuMTdeTEvpoMyyVtD2ipcoaf-P385ghGnufPJHev4tPHTV66rT0fG_IerNdytih6o-Qr2Fh3da9_ewXJYa1mkrEut3E9R77SsQ
+{
+  "Email" : "junjie@example.com",
+  "suspendUser" : false
+}
+###
+
+POST {{CSIT_314_Group_HostAddress}}/api/UpdateUserAccount
+Content-Type : application/json
+Accept: application/json
+Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtcyldyKSL8s41fcO8RpM4ih-wfgJiCed2JnytgrngQE94Ha4YW3FWxU11v9H9cBwPn4zkT9MnD1CLA-ZxG1Wyx_EqEQiSRNvpCL7bpVIAu4IVOm6ZSoeisuBGdvqeLtYd3EInf6_PTrXSbftOQYNPKOZwXP0gBsB1IX_tss4KtuFFPdw2LBi-1WfnB7swh28RDigzbo5gEE64jFVJUDtXuYkrQ4jXRXn6hGbOWtOJUKLkIkydUsQagbHvfUPfZrEUNZ3BZymgy3tWRuzFcuuhbFtYsv8IXd5LNPeAh2HBTU4XtkyIKDtu9I-CKvFo7Ywwu-MYMB1nIVUXQwzdG5MVZuDnLsHhOa_rAw2Bc2_7x_cYvtdn8fXwE7xgYwFG24zHGYz6R3e3LfZzJxpCjXvWiv0Sk5WwVVQEsIC8QC27Zp1ZAL8kZr9FIZ_Ds_PMDIqVgVUY-RkrqEgMBpl9cHnWTLytTFb47wR4Msy-UEJLsjxSd7nO3bXl7UX2Uwfz-5ccjot7RNEKwlx1Q8KkXOoD-OR1b8tBn_vEdOsxqFPfcffHHQsJ0zkhG-vCw-fd5G3b1Xss7eQqeCBpQVa8kw
+{
+  "Id" : 2,
+  "Email" : "edwin@example.com",
+  "ProfileName": "Fundraiser Manager"
+}

@@ -1,0 +1,29 @@
+@CSIT_314_Group_HostAddress = http://localhost:5135
+
+###
+POST {{CSIT_314_Group_HostAddress}}/api/CreateFundraiser
+Content-Type: application/json
+Accept: application/json
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6o86JVl71Qj-gcPUQpGbHUyJ_Pbc3wiIsOE11f6JcfnUSGW-289E108L4LALrvC6zXO-Zo7FTStdbEnC1d9x9NcWl1SNV3ofaslIdI4nYSRRZZLPDg8Y4cn5NNFEMA5m-VxcBkjhhWL78_egIG-VgJj9zEAf5ZiaTdftodd84ddXt9ezAsZvWlU6UYRbrgVl2HAGSGTGOTF8KXcvHBj4U0pawm-ZoCjjuAeN18ojrl9LCx76CmF3JCyyFON8AxVN1awd0vScyz9YsGG_0K-R0MdyfWlfRFNPsvM3xUPwQ8O0FuPq1hhv7r0Mc7gukOEMZQm6Ue37OjZ9T_3ga7ZCRNlIWGrKF_00PrNLba2o3-iNo79Fhxfi2LOMAQFM1eGu3Hv_unsc2VQ68GbN2Sxa3ZkGRT_UYvhRst9K_dUvAfD95ZhtHtAUVyomJU5sxDoU2sSZ7zVVkdTeqg9vqSmFpMgGPJb1ORsDGu305Yi6lNzFzhVS0XlZSlf0VbvNbG0toDEXOyVGFoPpmitRzz7ic1kgl7tuV5njDfzyMGfMTPMRP8IMSrZHOtrh9CuCgV4M7z_MRmG9nlVwQ8eoxl4pbVJyay9DtryZTyR5drZOrApspiFc21CdqGpr7JvcjfRTHA
+{
+  "Name" : "ThisIsATestFRA3",
+  "Description" : "ThisIsATestFraDesc3",
+  "deadline": "10-01-2050",
+  "amtRequested" : "111111"
+}
+###
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewAllFundraiser
+Content-Type: application/json
+Accept: application/json
+###
+GET {{CSIT_314_Group_HostAddress}}/api/ViewMyFundraisers
+Content-Type: application/json
+Accept: application/json
+Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6o86JVl71Qj-gcPUQpGbHUyJ_Pbc3wiIsOE11f6JcfnUSGW-289E108L4LALrvC6zXO-Zo7FTStdbEnC1d9x9NcWl1SNV3ofaslIdI4nYSRRZZLPDg8Y4cn5NNFEMA5m-VxcBkjhhWL78_egIG-VgJj9zEAf5ZiaTdftodd84ddXt9ezAsZvWlU6UYRbrgVl2HAGSGTGOTF8KXcvHBj4U0pawm-ZoCjjuAeN18ojrl9LCx76CmF3JCyyFON8AxVN1awd0vScyz9YsGG_0K-R0MdyfWlfRFNPsvM3xUPwQ8O0FuPq1hhv7r0Mc7gukOEMZQm6Ue37OjZ9T_3ga7ZCRNlIWGrKF_00PrNLba2o3-iNo79Fhxfi2LOMAQFM1eGu3Hv_unsc2VQ68GbN2Sxa3ZkGRT_UYvhRst9K_dUvAfD95ZhtHtAUVyomJU5sxDoU2sSZ7zVVkdTeqg9vqSmFpMgGPJb1ORsDGu305Yi6lNzFzhVS0XlZSlf0VbvNbG0toDEXOyVGFoPpmitRzz7ic1kgl7tuV5njDfzyMGfMTPMRP8IMSrZHOtrh9CuCgV4M7z_MRmG9nlVwQ8eoxl4pbVJyay9DtryZTyR5drZOrApspiFc21CdqGpr7JvcjfRTHA
+###
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewAllFundraiser
+Content-Type: application/json
+Accept: application/json
+###

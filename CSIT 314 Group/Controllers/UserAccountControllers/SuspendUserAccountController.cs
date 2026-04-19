@@ -1,7 +1,7 @@
 ﻿using CSIT_314_Group.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CSIT_314_Group.DTO.UserDTO;
+using CSIT_314_Group.DTO.UserAccountDTO;
 
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
@@ -15,6 +15,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
         {
             _userAccountRepository = userAccountRepository;
         }
+
         [Authorize(Roles = "admin")]
         [HttpPut]
         public async Task<IActionResult> SuspendUserAccount([FromBody] SuspendUserDTO suspendUserDTO)

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSIT_314_Group.Controllers.Fundraiser
+namespace CSIT_314_Group.Controllers.FundraiserActivity
 {
     [Route("api/[controller]")]
     [ApiController]

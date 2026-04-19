@@ -1,5 +1,5 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserDTO;
+using CSIT_314_Group.DTO.UserAccountDTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
@@ -13,10 +13,10 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
         {
             _userAccountRepository = userAccountRepository;
         }
-        [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] string NameOrEmailOrPhone)
+        [HttpPost]
+        public async Task<IActionResult> Search([FromBody] SearchUserAccountDTO searchUserAccountDTO)
         {
-            object? result = await _userAccountRepository.GetIdWithNameOrEmailOrPhone(NameOrEmailOrPhone.ToLower());
+            object? result = await _userAccountRepository.GetIdWithNameOrEmailOrPhone(searchUserAccountDTO.NameOrEmailOrPhone.ToLower());
             if(result == null)
             {
                 return NotFound("User not found");

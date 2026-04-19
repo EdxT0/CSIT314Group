@@ -50,12 +50,35 @@ namespace CSIT_314_Group.Data
                     createUserAccountTableQueryCommand.ExecuteNonQuery();
                 }
 
+                //resets the tables below
+                //string dropFraTableQuery = @"DROP TABLE FundraiserActivity";
+                //using (var dropFraTableQueryCommand = new SqliteCommand(dropFraTableQuery, connection, transaction))
+                //{
+                //    dropFraTableQueryCommand.ExecuteNonQuery();
+                //}
+                //string dropUserFundraiserTableQuery = @"DROP TABLE UserFundraiser";
+                //using (var dropUserFundraiserTableQueryCommand = new SqliteCommand(dropUserFundraiserTableQuery, connection, transaction))
+                //{
+                //    dropUserFundraiserTableQueryCommand.ExecuteNonQuery();
+                //}
+                //string dropFavouriteListTableQuery = @"DROP TABLE FavouriteList";
+                //using (var dropFavouriteListTableQueryCommand = new SqliteCommand(dropFavouriteListTableQuery, connection, transaction))
+                //{
+                //    dropFavouriteListTableQueryCommand.ExecuteNonQuery();
+                //}
+                //string dropFundraiserDonationsTableQuery = @"DROP TABLE FundraiserDonations";
+                //using (var dropFundraiserDonationsTableQueryCommand = new SqliteCommand(dropFundraiserDonationsTableQuery, connection, transaction))
+                //{
+                //    dropFundraiserDonationsTableQueryCommand.ExecuteNonQuery();
+                //}
+
                 string createFRATableQuery = @"CREATE TABLE IF NOT EXISTS FundraiserActivity(
                                             Id INTEGER PRIMARY KEY,
                                             FraName TEXT NOT NULL UNIQUE,
                                             Description TEXT,
                                             Deadline TEXT NOT NULL,
-                                            Status TEXT NOT NULL,
+                                            Status BOOL NOT NULL,
+                                            AmtOfViews Integer,
                                             AmtDonated REAL,    
                                             AmtRequested REAL
                                             )";
@@ -66,6 +89,18 @@ namespace CSIT_314_Group.Data
                     createFRATableQueryCommand.ExecuteNonQuery();
                 }
 
+                string createUserFundraiserTableQuery = @"CREATE TABLE IF NOT EXISTS UserFundraiser(
+                                            Id INTEGER PRIMARY KEY,
+                                            UserId INTEGER NOT NULL,
+                                            FraId INTEGER NOT NULL,
+                                            UNIQUE (UserId, FraId),
+                                            FOREIGN KEY (UserId) REFERENCES UserAccount(Id),
+                                            FOREIGN KEY (FraId) REFERENCES FundraiserActivity(Id)
+                                            )";
+                using (var createUserFundraiserTableQueryCommand = new SqliteCommand(createUserFundraiserTableQuery, connection, transaction))
+                {
+                    createUserFundraiserTableQueryCommand.ExecuteNonQuery();
+                }
 
                 string createFavouriteListTableQuery = @"CREATE TABLE IF NOT EXISTS FavouriteList(
                                             Id INTEGER PRIMARY KEY,
@@ -73,7 +108,7 @@ namespace CSIT_314_Group.Data
                                             FraId INTEGER NOT NULL,
                                             UNIQUE (UserId, FraId),
                                             FOREIGN KEY (UserId) REFERENCES UserAccount(Id),
-                                            FOREIGN KEY (FraId) REFERENCES FRA(Id)
+                                            FOREIGN KEY (FraId) REFERENCES FundraiserActivity(Id)
                                             )";
                 using (var createFavouriteListTableQueryCommand = new SqliteCommand(createFavouriteListTableQuery, connection, transaction))
                 {
@@ -87,7 +122,7 @@ namespace CSIT_314_Group.Data
                                             AmtDonatedByUser REAL,
                                             DateDonated TEXT,
                                             FOREIGN KEY (UserId) REFERENCES UserAccount(Id),
-                                            FOREIGN KEY (FraId) REFERENCES FRA(Id)
+                                            FOREIGN KEY (FraId) REFERENCES FundraiserActivity(Id)
                                             )";
                 using (var createFundraiserDonationsTableQueryCommand = new SqliteCommand(createFundraiserDonationsTableQuery, connection, transaction))
                 {
