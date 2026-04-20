@@ -75,5 +75,24 @@ namespace CSIT_314_Group.Data
             }
             return result;
         }
+
+
+        public async Task<bool> validateUserAndFundraiser(int userId, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string successfulSelectIfUserAndFundraiserQuery = @"SELECT EXISTS(
+                        SELECT 1
+                        FROM UserFundraiser
+                        WHERE UserId = @userId AND FraId = @fraId
+                     )";
+            using var successfulSelectIfUserAndFundraiserQueryCommand = new SqliteCommand(successfulSelectIfUserAndFundraiserQuery, connection);
+            successfulSelectIfUserAndFundraiserQueryCommand.Parameters.AddWithValue("@userId", userId);
+            successfulSelectIfUserAndFundraiserQueryCommand.Parameters.AddWithValue("@fraId", fraId);
+            var result = await successfulSelectIfUserAndFundraiserQueryCommand.ExecuteScalarAsync();
+
+            return Convert.ToInt32(result) == 1;
+        }
     }
 }

@@ -2,6 +2,8 @@
 using CSIT_314_Group.Entity;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
+using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 
 namespace CSIT_314_Group.Data
 {
@@ -13,6 +15,129 @@ namespace CSIT_314_Group.Data
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
+        public async Task<bool> updateName(string name, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string updateNameQuery = @"UPDATE FundraiserActivity SET FraName = @name where Id = @id";
+            using var updateNameQueryCommand = new SqliteCommand(updateNameQuery, connection, transaction);
+            updateNameQueryCommand.Parameters.AddWithValue("@name", name);
+            updateNameQueryCommand.Parameters.AddWithValue("@id", fraId);
+
+            int rowsAffected = await updateNameQueryCommand.ExecuteNonQueryAsync();
+            if(rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
+        public async Task<bool> DeleteFundraiser(int fundraiserId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string deleteFundraiserQuery = @"DELETE FROM FundraiserActivity WHERE Id = @fraId ";
+            using var deleteFundraiserQuerycommand = new SqliteCommand(deleteFundraiserQuery, connection, transaction);
+            deleteFundraiserQuerycommand.Parameters.AddWithValue("@fraId", fundraiserId);
+
+            int rowsAffected = await deleteFundraiserQuerycommand.ExecuteNonQueryAsync();
+
+            if(rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
+
+        public async Task<bool> updateDesc(string description, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string updateDescQuery = @"UPDATE FundraiserActivity SET Description = @description where Id = @id";
+            using var updateDescQueryCommand = new SqliteCommand(updateDescQuery, connection, transaction);
+            updateDescQueryCommand.Parameters.AddWithValue("@description", description);
+            updateDescQueryCommand.Parameters.AddWithValue("@id", fraId);
+
+            int rowsAffected = await updateDescQueryCommand.ExecuteNonQueryAsync();
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
+        public async Task<bool> updateStatus(bool? status, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string updateStatusQuery = @"UPDATE FundraiserActivity SET Status = @status where Id = @id";
+            using var updateStatusQueryCommand = new SqliteCommand(updateStatusQuery, connection, transaction);
+            updateStatusQueryCommand.Parameters.AddWithValue("@status", status);
+            updateStatusQueryCommand.Parameters.AddWithValue("@id", fraId);
+
+            int rowsAffected = await updateStatusQueryCommand.ExecuteNonQueryAsync();
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+
+        }
+        public async Task<bool> updateDeadline(string deadline, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string updateDeadlineQuery = @"UPDATE FundraiserActivity SET Deadline = @deadline where Id = @id";
+            using var updateDeadlineQueryCommand = new SqliteCommand(updateDeadlineQuery, connection, transaction);
+            updateDeadlineQueryCommand.Parameters.AddWithValue("@deadline", deadline);
+            updateDeadlineQueryCommand.Parameters.AddWithValue("@id", fraId);
+
+            int rowsAffected = await updateDeadlineQueryCommand.ExecuteNonQueryAsync();
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
+        public async Task<bool> updateAmtRequested(double? amtRequested, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string updateAmtRequestedQuery = @"UPDATE FundraiserActivity SET AmtRequested = @amtRequested where Id = @id";
+            using var updateAmtRequestedQueryCommand = new SqliteCommand(updateAmtRequestedQuery, connection, transaction);
+            updateAmtRequestedQueryCommand.Parameters.AddWithValue("@amtRequested", amtRequested);
+            updateAmtRequestedQueryCommand.Parameters.AddWithValue("@id", fraId);
+
+            int rowsAffected = await updateAmtRequestedQueryCommand.ExecuteNonQueryAsync();
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
+
 
         public async Task<ViewFundraiserDTO> GetByName(string name)
         {
@@ -25,6 +150,46 @@ namespace CSIT_314_Group.Data
             getByNameQueryCommand.Parameters.AddWithValue("@name", name);
 
             var reader = await getByNameQueryCommand.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                bool success = DateTime.TryParseExact(
+                                reader.GetString(reader.GetOrdinal("Deadline")),
+                                "o",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out DateTime readerDate
+                            );
+
+                if (!success)
+                {
+                    throw new Exception("Invalid deadline format in database.");
+                }
+                return new ViewFundraiserDTO(
+                            reader.GetInt32(reader.GetOrdinal("Id")),
+                            reader.GetString(reader.GetOrdinal("FraName")),
+                            reader.GetString(reader.GetOrdinal("Description")),
+                            readerDate.ToString("dd-MM-yyyy"),
+                            reader.GetDouble(reader.GetOrdinal("AmtRequested")),
+                            reader.GetDouble(reader.GetOrdinal("AmtDonated")),
+                            reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
+                            reader.GetBoolean(reader.GetOrdinal("Status"))
+                    );
+            }
+            return null;
+        }
+
+        public async Task<ViewFundraiserDTO> GetById(int id)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string getByIdQuery = @"SELECT * FROM FundraiserActivity WHERE Id = @id";
+            using var getByIdQueryCommand = new SqliteCommand(getByIdQuery, connection);
+
+            getByIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            var reader = await getByIdQueryCommand.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
             {

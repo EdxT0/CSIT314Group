@@ -1,4 +1,6 @@
-﻿namespace CSIT_314_Group.Entity
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CSIT_314_Group.Entity
 {
     public class Fundraiser
     {
@@ -10,7 +12,6 @@
         public double AmtRequested { get; private set; }
         public double AmtDonated { get; private set; }
         public int AmtOfViews { get; private set; }
-
         public Fundraiser(string name, string description, DateTime deadline, double amtRequested)
         {
             Name = name;

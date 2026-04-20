@@ -38,11 +38,16 @@ namespace CSIT_314_Group.Controllers.Auth
             {
                 return Unauthorized("invalid email or password");
             }
-            if( user.IsSuspended == true)
+            if( user.IsSuspended == true )
             {
                 return Unauthorized("User suspended");
             }
             string profileName = await _userProfileRepository.getProfileNameWithId(user.ProfileId);
+            if (await _userProfileRepository.IsProfileSuspended(user.ProfileId))
+            {
+                
+                return Unauthorized($"Profile {profileName} is suspended");
+            }
             var claims = new List<Claim>{
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),

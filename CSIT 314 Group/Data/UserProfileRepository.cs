@@ -244,4 +244,25 @@ public class UserProfileRepository
 
         return result.ToString()?.ToLower() == "suspended";
     }
+
+    public async Task<bool> IsProfileSuspended(int? profileId)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+        await connection.OpenAsync();
+
+        string query = @"
+            SELECT Status
+            FROM UserProfile
+            WHERE Id = @profileId";
+
+        using var command = new SqliteCommand(query, connection);
+        command.Parameters.AddWithValue("@profileId", profileId);
+
+        var result = await command.ExecuteScalarAsync();
+
+        if (result == null)
+            return false;
+
+        return Convert.ToBoolean(result);
+    }
 }

@@ -18,7 +18,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             _userAccountRepository = userAccountRepository;
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpGet]
         public async Task<IActionResult> ViewUserAccount()
         {
