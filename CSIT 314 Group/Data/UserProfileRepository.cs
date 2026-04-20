@@ -185,6 +185,32 @@ public class UserProfileRepository
         return profiles;
     }
 
+    // View all user profile
+    public async Task<List<UserProfile>> ViewAllUserProfiles()
+    {
+        var profiles = new List<UserProfile>();
+
+        using var connection = _dbConnectionFactory.CreateConnection();
+        await connection.OpenAsync();
+
+        string query = @"SELECT Id, ProfileName, Description, Status FROM UserProfile";
+
+        using var command = new SqliteCommand(query, connection);
+        using var reader = await command.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            profiles.Add(new UserProfile
+            {
+                Id = Convert.ToInt32(reader["Id"]),
+                ProfileName = reader["ProfileName"].ToString() ?? "",
+                Description = reader["Description"].ToString() ?? "",
+                Status = reader["Status"].ToString() ?? ""
+            });
+        }
+
+        return profiles;
+    }
     
     // Suspend User Profile
     public async Task<bool> SuspendUserProfile(int id, bool status)
