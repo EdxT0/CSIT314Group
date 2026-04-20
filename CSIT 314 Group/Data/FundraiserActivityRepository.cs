@@ -53,6 +53,48 @@ namespace CSIT_314_Group.Data
             }
             return null;
         }
+        
+        public async Task<ViewFundraiserDTO?> GetById(int id)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string getByIdQuery = @"SELECT * FROM FundraiserActivity WHERE Id = @id";
+            using var getByIdQueryCommand = new SqliteCommand(getByIdQuery, connection);
+
+            getByIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            var reader = await getByIdQueryCommand.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                bool success = DateTime.TryParseExact(
+                    reader.GetString(reader.GetOrdinal("Deadline")),
+                    "o",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateTime readerDate
+                );
+
+                if (!success)
+                {
+                    throw new Exception("Invalid deadline format in database.");
+                }
+
+                return new ViewFundraiserDTO(
+                    reader.GetInt32(reader.GetOrdinal("Id")),
+                    reader.GetString(reader.GetOrdinal("FraName")),
+                    reader.GetString(reader.GetOrdinal("Description")),
+                    readerDate.ToString("dd-MM-yyyy"),
+                    reader.GetDouble(reader.GetOrdinal("AmtRequested")),
+                    reader.GetDouble(reader.GetOrdinal("AmtDonated")),
+                    reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
+                    reader.GetBoolean(reader.GetOrdinal("Status"))
+                );
+            }
+
+            return null;
+        }
 
         public async Task<int?> createFundraiser(Fundraiser fundraiser)
         {
@@ -101,6 +143,34 @@ namespace CSIT_314_Group.Data
             await transaction.RollbackAsync();
             return null;
 
+        }
+        
+        public async Task<bool> UpdateFundraiser(Fundraiser fundraiser)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string updateFundraiserQuery = @"
+                UPDATE FundraiserActivity
+                SET FraName = @fraName,
+                Description = @description,
+                Deadline = @deadline,
+                AmtRequested = @amtRequested,
+                Status = @status
+                WHERE Id = @id";
+
+            using var updateFundraiserQueryCommand = new SqliteCommand(updateFundraiserQuery, connection);
+
+            updateFundraiserQueryCommand.Parameters.AddWithValue("@id", fundraiser.Id);
+            updateFundraiserQueryCommand.Parameters.AddWithValue("@fraName", fundraiser.Name);
+            updateFundraiserQueryCommand.Parameters.AddWithValue("@description", fundraiser.Description);
+            updateFundraiserQueryCommand.Parameters.AddWithValue("@deadline", fundraiser.Deadline.ToString("O"));
+            updateFundraiserQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiser.AmtRequested);
+            updateFundraiserQueryCommand.Parameters.AddWithValue("@status", fundraiser.Status);
+
+            int rowsAffected = await updateFundraiserQueryCommand.ExecuteNonQueryAsync();
+
+            return rowsAffected == 1;
         }
 
         public async Task<List<ViewFundraiserDTO>> ViewAllFundraisers()
