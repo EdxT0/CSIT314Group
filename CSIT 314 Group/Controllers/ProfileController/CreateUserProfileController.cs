@@ -16,7 +16,8 @@ public class CreateUserProfileController : ControllerBase
     {
         _userProfileRepository = userProfileRepository;
     }
-
+    
+    //[Authorize(Roles ="admin")]
     [HttpPost]
     public async Task<IActionResult> CreateProfile([FromBody] CreateUserProfileDTO request)
     {
