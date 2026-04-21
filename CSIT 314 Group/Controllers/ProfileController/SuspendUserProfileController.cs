@@ -8,7 +8,7 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 public class SuspendUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
 {
     [HttpPut]
-    public async Task<IActionResult> SuspendUserProfile(int id, string status)
+    public async Task<IActionResult> SuspendUserProfile([FromBody] int id, string status)
     {
         status = status.Trim();
 

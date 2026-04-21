@@ -20,7 +20,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
             var result = await _fundraiserActivityRepository.ViewAllFundraisers();
             if (result.Count == 0)
             {
-                return StatusCode(404, "No Fundraiser Activities yet");
+                return NotFound("No Fundraiser Activities yet");
             }
             return Ok(result);
         }

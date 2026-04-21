@@ -35,6 +35,34 @@ namespace CSIT_314_Group.Data
             await transaction.RollbackAsync();
             return false;
         }
+
+        public async Task<bool> UpdateFundraiserView(int fundraiserId)
+        {
+            ViewFundraiserDTO fundraiser = await GetById(fundraiserId);
+            int viewsAfterIncrement = 1 + fundraiser.AmtOfViews;
+            if(fundraiser != null)
+            {
+                using var connection = _dbConnectionFactory.CreateConnection();
+                await connection.OpenAsync();
+                using var transaction = connection.BeginTransaction();
+
+                string updateFundraiserViewQuery = @"UPDATE FundraiserActivity SET AmtOfViews = @amtOfViews WHERE Id = @fraId";
+                using var updateFundraiserViewQueryCommand = new SqliteCommand(updateFundraiserViewQuery, connection, transaction);
+                updateFundraiserViewQueryCommand.Parameters.AddWithValue("@amtOfViews", viewsAfterIncrement);
+                updateFundraiserViewQueryCommand.Parameters.AddWithValue("@fraId", fundraiserId);
+
+                int rowsAffected = await updateFundraiserViewQueryCommand.ExecuteNonQueryAsync();
+
+                if(rowsAffected == 1)
+                {
+                    await transaction.CommitAsync();
+                    return true;
+                }
+                await transaction.RollbackAsync();
+            }
+            return false;
+        }
+
         public async Task<bool> DeleteFundraiser(int fundraiserId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
