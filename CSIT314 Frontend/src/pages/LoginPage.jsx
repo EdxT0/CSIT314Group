@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate("/"); // RoleRouter will redirect to the right dashboard
+      navigate("/"); 
     } catch (err) {
       setError(err.message);
     }
