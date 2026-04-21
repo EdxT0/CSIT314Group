@@ -5,21 +5,39 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  const login = async (email, password) => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    
-    if (!res.ok) throw new Error(data.message);
-    localStorage.setItem("token", data.token);
-    setUser(data.user);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      setUser({
+        id: payload.nameid,
+        name: payload.unique_name,
+        role: payload.role,
+      });
+    }
+  }, []);
 
-  const logout = () => {
-    localStorage.removeItem("token");
+const login = async (email, password) => {
+  const res = await fetch("/api/auth/Login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, password }),
+  });
+
+  const text = await res.text();
+
+  if (!res.ok) {
+    throw new Error(text || "Login failed");
+  }
+
+  setUser({ email });
+};
+
+  const logout = async () => {
+    await fetch("/api/auth/Logout", {
+      credentials: "include",
+    });
     setUser(null);
   };
 

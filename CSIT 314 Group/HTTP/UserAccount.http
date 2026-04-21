@@ -75,3 +75,59 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtc
   "profileName": "donee"
 }
 ###
+
+### JJ Admin Account
+POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": "JJ Admin",
+  "Email": "jj1@example.com",
+  "PhoneNumber": "88136551",
+  "Password": "Password123!",
+  "ProfileName": "admin",
+  "IsSuspended": false
+}
+
+### Fundraiser Account
+POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": "JJ Fundraiser",
+  "Email": "jj2@example.com",
+  "PhoneNumber": "88136552",
+  "Password": "Password123!",
+  "ProfileName": "fundraiser manager",
+  "IsSuspended": false
+}
+
+### Donee Account
+POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": "JJ Donee",
+  "Email": "jj3@example.com",
+  "PhoneNumber": "88136553",
+  "Password": "Password123!",
+  "ProfileName": "donee",
+  "IsSuspended": false
+}
+
+### Platform Manager Account
+POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": "JJ Platform Manager",
+  "Email": "jj4@example.com",
+  "PhoneNumber": "88136554",
+  "Password": "Password123!",
+  "ProfileName": "platform manager",
+  "IsSuspended": false
+}
