@@ -1,15 +1,19 @@
 import { useState } from "react";
 
-export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
+export default function EditAccountForm({ account, profiles, onSuccess, onCancel }) {
   const [form, setForm] = useState({
-    name: "", email: "", phoneNumber: "",
-    password: "", profileName: "", isSuspended: false
+    id: account.id,
+    name: account.name,
+    email: account.email,
+    phoneNumber: account.phoneNumber,
+    profileName: account.profileName,
+    password: ""
   });
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     setError("");
-    const res = await fetch("/api/CreateUserAccount", {
+    const res = await fetch("/api/UpdateUserAccount", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -22,7 +26,10 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
 
   return (
     <div className="admin-form-card">
-      <h2>Create account</h2>
+      <h2>Edit account</h2>
+      <p style={{ fontSize: "13px", color: "#7a7d8a", marginBottom: "1.25rem" }}>
+        Only fill in fields you want to change.
+      </p>
       {error && <div className="form-error">{error}</div>}
 
       {["name", "email", "phoneNumber", "password"].map(field => (
@@ -31,6 +38,7 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
           <input
             type={field === "password" ? "password" : "text"}
             value={form[field]}
+            placeholder={field === "password" ? "Leave blank to keep current" : ""}
             onChange={e => setForm({ ...form, [field]: e.target.value })}
           />
         </div>
@@ -50,7 +58,7 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
       </div>
 
       <div style={{ display: "flex", gap: "8px", marginTop: "0.5rem" }}>
-        <button className="submit-btn" onClick={handleSubmit}>Create account</button>
+        <button className="submit-btn" onClick={handleSubmit}>Save changes</button>
         <button className="admin-btn" onClick={onCancel}>Cancel</button>
       </div>
     </div>
