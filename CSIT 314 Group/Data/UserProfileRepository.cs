@@ -180,10 +180,15 @@ public class UserProfileRepository
             FROM UserProfile
             WHERE lower(ProfileName) LIKE @Keyword
                OR lower(Description) LIKE @Keyword
-               OR lower(Status) LIKE @Keyword";
+               OR CAST(Status AS TEXT) LIKE @Keyword
+               OR (@SearchWord = 'active' AND Status = 1)
+               OR (@SearchWord = 'suspended' AND Status = 0)";
 
         using var command = new SqliteCommand(query, connection);
-        command.Parameters.AddWithValue("@Keyword", "%" + keyword.Trim().ToLower() + "%");
+        var trimmedKeyword = keyword.Trim().ToLower();
+
+        command.Parameters.AddWithValue("@Keyword", "%" + trimmedKeyword + "%");
+        command.Parameters.AddWithValue("@SearchWord", trimmedKeyword); 
 
         using var reader = await command.ExecuteReaderAsync();
 

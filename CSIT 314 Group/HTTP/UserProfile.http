@@ -33,4 +33,42 @@ Accept: application/json
     "description": "test 7"
 }
 
+### Search by profile name
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=admin
+Accept: application/json
+
 ###
+
+### Search by description
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=manager
+Accept: application/json
+
+###
+
+### Search by status
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=suspended
+Accept: application/json
+
+###
+
+### Search by status
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=1
+Accept: application/json
+
+###
+
+### Search suspended profiles
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=suspended
+Accept: application/json
+
+###
+
+### Search partial word
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=fun
+Accept: application/json
+
+###
+
+### Empty keyword test
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=
+Accept: application/json
