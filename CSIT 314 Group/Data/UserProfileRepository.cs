@@ -12,7 +12,22 @@ public class UserProfileRepository
     {
         _dbConnectionFactory = factory;
     }
+    
+    // Check if profile exist
+    public async Task<bool> ProfileNameExists(string profileName)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+        await connection.OpenAsync();
 
+        string query = "SELECT COUNT(1) FROM UserProfile WHERE LOWER(ProfileName) = @ProfileName";
+
+        using var command = new SqliteCommand(query, connection);
+        command.Parameters.AddWithValue("@ProfileName", profileName.ToLower());
+
+        var result = await command.ExecuteScalarAsync();
+
+        return Convert.ToInt32(result) > 0;
+    }
 
     // Create Profile
     public async Task<bool> CreateUserProfile(UserProfile userProfile)
@@ -24,11 +39,10 @@ public class UserProfileRepository
         try
         {
             string query = @"
-                INSERT INTO UserProfile (Id, ProfileName, Description, Status)
-                VALUES (@Id, @ProfileName, @Description, @Status)";
+            INSERT INTO UserProfile (ProfileName, Description, Status)
+            VALUES (@ProfileName, @Description, @Status)";
 
             using var command = new SqliteCommand(query, connection, transaction);
-            command.Parameters.AddWithValue("@Id", userProfile.Id);
             command.Parameters.AddWithValue("@ProfileName", userProfile.ProfileName);
             command.Parameters.AddWithValue("@Description", userProfile.Description);
             command.Parameters.AddWithValue("@Status", userProfile.Status);
@@ -44,9 +58,11 @@ public class UserProfileRepository
             await transaction.CommitAsync();
             return true;
         }
-        catch
+        catch (Exception ex)
         {
             await transaction.RollbackAsync();
+            Console.WriteLine("CreateUserProfile Error: " + ex.Message);
+            Console.WriteLine(ex.StackTrace);
             throw;
         }
     }
@@ -104,7 +120,7 @@ public class UserProfileRepository
                 Id = Convert.ToInt32(reader["Id"]),
                 ProfileName = reader["ProfileName"].ToString() ?? "",
                 Description = reader["Description"].ToString() ?? "",
-                Status = reader["Status"].ToString() ?? ""
+                Status = Convert.ToBoolean(reader["Status"])
             };
         }
 
@@ -178,7 +194,7 @@ public class UserProfileRepository
                 Id = Convert.ToInt32(reader["Id"]),
                 ProfileName = reader["ProfileName"].ToString() ?? "",
                 Description = reader["Description"].ToString() ?? "",
-                Status = reader["Status"].ToString() ?? ""
+                Status = Convert.ToBoolean(reader["Status"])
             });
         }
 
@@ -205,7 +221,7 @@ public class UserProfileRepository
                 Id = Convert.ToInt32(reader["Id"]),
                 ProfileName = reader["ProfileName"].ToString() ?? "",
                 Description = reader["Description"].ToString() ?? "",
-                Status = reader["Status"].ToString() ?? ""
+                Status = Convert.ToBoolean(reader["Status"])
             });
         }
 
