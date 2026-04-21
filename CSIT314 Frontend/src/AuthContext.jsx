@@ -5,18 +5,6 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      setUser({
-        id: payload.nameid,
-        name: payload.unique_name,
-        role: payload.role,
-      });
-    }
-  }, []);
-
 const login = async (email, password) => {
   const res = await fetch("/api/auth/Login", {
     method: "POST",
@@ -25,13 +13,13 @@ const login = async (email, password) => {
     body: JSON.stringify({ email, password }),
   });
 
-  const text = await res.text();
+  const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(text || "Login failed");
+    throw new Error(data.message || "Login failed");
   }
 
-  setUser({ email });
+  setUser(data.user);
 };
 
   const logout = async () => {
