@@ -1,3 +1,4 @@
+using CSIT_314_Group.DTO.UserProfileDTO;
 using CSIT_314_Group.Entity;
 using Microsoft.Data.Sqlite;
 
@@ -23,12 +24,12 @@ public class UserProfileRepository
         try
         {
             string query = @"
-                INSERT INTO UserProfile (Id, Role, Description, Status)
-                VALUES (@Id, @Role, @Description, @Status)";
+                INSERT INTO UserProfile (Id, ProfileName, Description, Status)
+                VALUES (@Id, @ProfileName, @Description, @Status)";
 
             using var command = new SqliteCommand(query, connection, transaction);
             command.Parameters.AddWithValue("@Id", userProfile.Id);
-            command.Parameters.AddWithValue("@Role", userProfile.Role);
+            command.Parameters.AddWithValue("@ProfileName", userProfile.ProfileName);
             command.Parameters.AddWithValue("@Description", userProfile.Description);
             command.Parameters.AddWithValue("@Status", userProfile.Status);
 
@@ -87,7 +88,7 @@ public class UserProfileRepository
         await connection.OpenAsync();
 
         string query = @"
-            SELECT Id, Role, Description, Status
+            SELECT Id, ProfileName, Description, Status
             FROM UserProfile
             WHERE Id = @Id";
 
@@ -101,7 +102,7 @@ public class UserProfileRepository
             return new UserProfile
             {
                 Id = Convert.ToInt32(reader["Id"]),
-                Role = reader["Role"].ToString() ?? "",
+                ProfileName = reader["ProfileName"].ToString() ?? "",
                 Description = reader["Description"].ToString() ?? "",
                 Status = reader["Status"].ToString() ?? ""
             };
@@ -111,8 +112,8 @@ public class UserProfileRepository
     }
 
 
-    // Update Profile
-    public async Task<bool> UpdateUserProfile(UserProfile userProfile)
+    // Update 
+    public async Task<bool> UpdateUserProfile(UpdateUserProfileDTO request)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -121,17 +122,15 @@ public class UserProfileRepository
         try
         {
             string query = @"
-                UPDATE UserProfile
-                SET Role = @Role,
-                    Description = @Description,
-                    Status = @Status
-                WHERE Id = @Id";
+            UPDATE UserProfile
+            SET ProfileName = @ProfileName,
+                Description = @Description
+            WHERE Id = @Id";
 
             using var command = new SqliteCommand(query, connection, transaction);
-            command.Parameters.AddWithValue("@Role", userProfile.Role);
-            command.Parameters.AddWithValue("@Description", userProfile.Description);
-            command.Parameters.AddWithValue("@Status", userProfile.Status);
-            command.Parameters.AddWithValue("@Id", userProfile.Id);
+            command.Parameters.AddWithValue("@ProfileName", request.ProfileName.Trim().ToLower());
+            command.Parameters.AddWithValue("@Description", request.Description.Trim().ToLower());
+            command.Parameters.AddWithValue("@Id", request.Id);
 
             int rowsAffected = await command.ExecuteNonQueryAsync();
 
@@ -161,14 +160,14 @@ public class UserProfileRepository
         await connection.OpenAsync();
 
         string query = @"
-            SELECT Id, Role, Description, Status
+            SELECT Id, ProfileName, Description, Status
             FROM UserProfile
-            WHERE Role LIKE @Keyword
-               OR Description LIKE @Keyword
-               OR Status LIKE @Keyword";
+            WHERE lower(ProfileName) LIKE @Keyword
+               OR lower(Description) LIKE @Keyword
+               OR lower(Status) LIKE @Keyword";
 
         using var command = new SqliteCommand(query, connection);
-        command.Parameters.AddWithValue("@Keyword", "%" + keyword + "%");
+        command.Parameters.AddWithValue("@Keyword", "%" + keyword.Trim().ToLower() + "%");
 
         using var reader = await command.ExecuteReaderAsync();
 
@@ -177,7 +176,7 @@ public class UserProfileRepository
             profiles.Add(new UserProfile
             {
                 Id = Convert.ToInt32(reader["Id"]),
-                Role = reader["Role"].ToString() ?? "",
+                ProfileName = reader["ProfileName"].ToString() ?? "",
                 Description = reader["Description"].ToString() ?? "",
                 Status = reader["Status"].ToString() ?? ""
             });
@@ -188,7 +187,7 @@ public class UserProfileRepository
 
     
     // Suspend User Profile
-    public async Task<bool> SuspendUserProfile(int id)
+    public async Task<bool> SuspendUserProfile(int id, string status)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -197,12 +196,12 @@ public class UserProfileRepository
         try
         {
             string query = @"
-                UPDATE UserProfile
-                SET Status = @Status
-                WHERE Id = @Id";
+            UPDATE UserProfile
+            SET Status = @Status
+            WHERE Id = @Id";
 
             using var command = new SqliteCommand(query, connection, transaction);
-            command.Parameters.AddWithValue("@Status", "Suspended");
+            command.Parameters.AddWithValue("@Status", status);
             command.Parameters.AddWithValue("@Id", id);
 
             int rowsAffected = await command.ExecuteNonQueryAsync();
@@ -224,8 +223,8 @@ public class UserProfileRepository
     }
 
     
-    // Check if Role is Suspended
-    public async Task<bool> IsRoleSuspended(string role)
+    // Check if ProfileName is Suspended
+    public async Task<bool> IsProfileSuspended(string profileName)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -233,10 +232,10 @@ public class UserProfileRepository
         string query = @"
             SELECT Status
             FROM UserProfile
-            WHERE Role = @Role";
+            WHERE ProfileName = @ProfileName";
 
         using var command = new SqliteCommand(query, connection);
-        command.Parameters.AddWithValue("@Role", role);
+        command.Parameters.AddWithValue("@ProfileName", profileName);
 
         var result = await command.ExecuteScalarAsync();
 
@@ -244,5 +243,26 @@ public class UserProfileRepository
             return false;
 
         return result.ToString()?.ToLower() == "suspended";
+    }
+
+    public async Task<bool> IsProfileSuspended(int? profileId)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+        await connection.OpenAsync();
+
+        string query = @"
+            SELECT Status
+            FROM UserProfile
+            WHERE Id = @profileId";
+
+        using var command = new SqliteCommand(query, connection);
+        command.Parameters.AddWithValue("@profileId", profileId);
+
+        var result = await command.ExecuteScalarAsync();
+
+        if (result == null)
+            return false;
+
+        return Convert.ToBoolean(result);
     }
 }

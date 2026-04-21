@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using CSIT_314_Group.DTO.UserDTO;
+using CSIT_314_Group.DTO.UserAccountDTO;
 using CSIT_314_Group.Entity;
 
 namespace CSIT_314_Group.Controllers.Auth
@@ -15,10 +15,12 @@ namespace CSIT_314_Group.Controllers.Auth
     {
         private readonly UserAccountRepository _userAccountRepository;
         private readonly UserProfileRepository _userProfileRepository;
-        public AuthController(UserAccountRepository userAccountRepository, UserProfileRepository userProfileRepository)
+        private readonly PasswordHasher<UserAccount> _hasher;
+        public AuthController(UserAccountRepository userAccountRepository, UserProfileRepository userProfileRepository, PasswordHasher<UserAccount> hasher)
         {
             _userAccountRepository = userAccountRepository;
             _userProfileRepository = userProfileRepository;
+            _hasher = hasher;
         }
 
         [HttpPost("Login")]
@@ -30,22 +32,27 @@ namespace CSIT_314_Group.Controllers.Auth
             {
                 return Unauthorized("invalid email or password");
             }
-            var hasher = new PasswordHasher<UserAccount>();
-            var verifyPassword = hasher.VerifyHashedPassword(user, user.HashedPassword, loginDto.Password);
+
+            var verifyPassword = _hasher.VerifyHashedPassword(user, user.HashedPassword, loginDto.Password);
             if (verifyPassword == PasswordVerificationResult.Failed)
             {
                 return Unauthorized("invalid email or password");
             }
-            if( user.IsSuspended == true)
+            if( user.IsSuspended == true )
             {
                 return Unauthorized("User suspended");
             }
-
+            string profileName = await _userProfileRepository.getProfileNameWithId(user.ProfileId);
+            if (await _userProfileRepository.IsProfileSuspended(user.ProfileId))
+            {
+                
+                return Unauthorized($"Profile {profileName} is suspended");
+            }
             var claims = new List<Claim>{
-                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, await _userProfileRepository.getProfileNameWithId(user.ProfileId))
+                new Claim(ClaimTypes.Role, profileName.ToLower())
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -62,7 +69,7 @@ namespace CSIT_314_Group.Controllers.Auth
                 message = "Logged in",
                 user = new
                 {
-                    id = user.id,
+                    id = user.Id,
                     name = user.Name,
                     email = user.Email,
                     role = await _userProfileRepository.getProfileNameWithId(user.ProfileId)

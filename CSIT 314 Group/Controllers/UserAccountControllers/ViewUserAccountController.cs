@@ -1,5 +1,5 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserDTO;
+using CSIT_314_Group.DTO.UserAccountDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -18,7 +18,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             _userAccountRepository = userAccountRepository;
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpGet]
         public async Task<IActionResult> ViewUserAccount()
         {

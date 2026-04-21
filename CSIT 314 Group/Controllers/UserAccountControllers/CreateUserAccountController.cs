@@ -4,7 +4,7 @@ using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using CSIT_314_Group.DTO.UserDTO;
+using CSIT_314_Group.DTO.UserAccountDTO;
 
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
@@ -33,28 +33,24 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             {
                 return BadRequest($"Invalid Profile {createUserRequest.ProfileName}");
             }
-                var hasher = new PasswordHasher<UserAccount>();
-            var userDetails = new UserAccount
-            {
-                Name = createUserRequest.Name.ToLower(),
-                Email = createUserRequest.Email.ToLower(),
-                PhoneNumber = createUserRequest.PhoneNumber.ToLower(),
-                ProfileId = ProfileId,
-                IsSuspended = createUserRequest.IsSuspended
-            };
-            userDetails.HashedPassword = hasher.HashPassword(userDetails, createUserRequest.Password);
+            var hasher = new PasswordHasher<UserAccount>();
 
-            CreateUserResultEnum result = await _userAccountRepository.CreateUser(userDetails);
-            return result switch
+            var userDetails = new UserAccount(createUserRequest.Name.ToLower(), createUserRequest.Email.ToLower(), createUserRequest.PhoneNumber.ToLower(), ProfileId, createUserRequest.IsSuspended);
             {
-                CreateUserResultEnum.Success => Ok($"User {userDetails.Name} Created"),
-                CreateUserResultEnum.DuplicateEmail => Conflict("Email already exists"),
-                CreateUserResultEnum.DuplicatePhoneNumber => Conflict("Phone number already exists"),
-                CreateUserResultEnum.DuplicatePhoneNumberAndEmail => Conflict("Email or phone number already exist."),
-                CreateUserResultEnum.Failed => Problem("unable to create user, please try again"),
-                _ => StatusCode(500, "Could not create user.")
-            };
+                userDetails.setPassword(hasher.HashPassword(userDetails, createUserRequest.Password));
+
+                CreateUserResultEnum result = await _userAccountRepository.CreateUser(userDetails);
+                return result switch
+                {
+                    CreateUserResultEnum.Success => Ok($"User {userDetails.Name} Created"),
+                    CreateUserResultEnum.DuplicateEmail => Conflict("Email already exists"),
+                    CreateUserResultEnum.DuplicatePhoneNumber => Conflict("Phone number already exists"),
+                    CreateUserResultEnum.DuplicatePhoneNumberAndEmail => Conflict("Email or phone number already exist."),
+                    CreateUserResultEnum.Failed => Problem("unable to create user, please try again"),
+                    _ => StatusCode(500, "Could not create user.")
+                };
+            }
+
         }
-
     }
 }

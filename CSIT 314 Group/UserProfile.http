@@ -1,0 +1,17 @@
+@CSIT_314_Group_HostAddress = http://localhost:5135
+
+
+
+###
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewUserProfile/1
+Content-Type: application/json
+###
+
+PUT{{CSIT_314_Group_HostAddress}}/api/SuspendUserProfile
+Content-Type: application/json
+Accept: application/json
+{
+  3,
+  "suspended"
+}

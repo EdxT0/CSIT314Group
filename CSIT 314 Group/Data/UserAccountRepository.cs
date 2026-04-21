@@ -1,4 +1,4 @@
-﻿using CSIT_314_Group.DTO.UserDTO;
+﻿using CSIT_314_Group.DTO.UserAccountDTO;
 using CSIT_314_Group.Entity;
 using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +27,7 @@ namespace CSIT_314_Group.Data
             getByIdQueryCommand.Parameters.AddWithValue("@id", id);
             var reader = await getByIdQueryCommand.ExecuteReaderAsync();
 
-            if(await reader.ReadAsync())
+            if (await reader.ReadAsync())
             {
                 return new UserAccountDTO
                 {
@@ -58,22 +58,22 @@ namespace CSIT_314_Group.Data
                 if (await reader.ReadAsync())
                 {
                     return new UserAccount
-                    {
-                        id = reader.GetInt32(reader.GetOrdinal("Id")),
-                        Name = reader.GetString(reader.GetOrdinal("Name")),
-                        ProfileId = reader.GetInt32(reader.GetOrdinal("ProfileId")),
-                        Email = reader.GetString(reader.GetOrdinal("Email")),
-                        PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
-                        HashedPassword = reader.GetString(reader.GetOrdinal("HashedPassword")),
-                        IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
-                    };
+                    (
+                        reader.GetInt32(reader.GetOrdinal("Id")),
+                        reader.GetString(reader.GetOrdinal("Name")),
+                        reader.GetString(reader.GetOrdinal("Email")),
+                        reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                        reader.GetString(reader.GetOrdinal("HashedPassword")),
+                        reader.GetInt32(reader.GetOrdinal("ProfileId")),
+                        reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
+                    );
                 }
                 return null;
 
             }
             catch
             {
-               
+
                 throw;
             }
 
@@ -121,7 +121,7 @@ namespace CSIT_314_Group.Data
                 }
                 return CreateUserResultEnum.DuplicatePhoneNumberAndEmail;
             }
-            catch(SqliteException ex)
+            catch (SqliteException ex)
             {
                 Console.WriteLine(ex);
                 await transaction.RollbackAsync();
@@ -139,7 +139,7 @@ namespace CSIT_314_Group.Data
 
             string viewUserAccountQuery = @"SELECT UA.Id, UA.Name, UA.Email, UA.PhoneNumber, UP.ProfileName, UA.IsSuspended FROM UserAccount UA Join UserProfile UP ON UA.ProfileId = UP.Id  WHERE UA.id = @id";
 
-            using var viewUserAccountQueryCommand = new SqliteCommand(viewUserAccountQuery,connection,transaction);
+            using var viewUserAccountQueryCommand = new SqliteCommand(viewUserAccountQuery, connection, transaction);
             viewUserAccountQueryCommand.Parameters.AddWithValue("@id", id);
 
             var reader = await viewUserAccountQueryCommand.ExecuteReaderAsync();
@@ -196,7 +196,7 @@ namespace CSIT_314_Group.Data
 
             int rowsAffected = await suspendUserWithIdQueryCommand.ExecuteNonQueryAsync();
 
-            if(rowsAffected != 1)
+            if (rowsAffected != 1)
             {
                 await transaction.RollbackAsync();
                 return false;
@@ -224,7 +224,7 @@ namespace CSIT_314_Group.Data
             object? result = null;
             using var connection = _dbConnectionFactory.CreateConnection();
             connection.Open();
-          
+
 
             string getIdWithNameQuery = @"SELECT id FROM UserAccount WHERE Name = @name";
 
@@ -399,15 +399,15 @@ namespace CSIT_314_Group.Data
                 if (await reader.ReadAsync())
                 {
                     return new UserAccount
-                    {
-                        id = reader.GetInt32(reader.GetOrdinal("Id")),
-                        Name = reader.GetString(reader.GetOrdinal("Name")),
-                        ProfileId = reader.GetInt32(reader.GetOrdinal("ProfileId")),
-                        Email = reader.GetString(reader.GetOrdinal("Email")),
-                        PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
-                        HashedPassword = reader.GetString(reader.GetOrdinal("HashedPassword")),
-                        IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
-                    };
+                     (
+                      reader.GetInt32(reader.GetOrdinal("Id")),
+                      reader.GetString(reader.GetOrdinal("Name")),
+                      reader.GetString(reader.GetOrdinal("Email")),
+                      reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                      reader.GetString(reader.GetOrdinal("HashedPassword")),
+                      reader.GetInt32(reader.GetOrdinal("ProfileId")),
+                      reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
+                     );
                 }
                 return null;
 

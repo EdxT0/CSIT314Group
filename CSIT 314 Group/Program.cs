@@ -41,6 +41,9 @@ namespace CSIT_314_Group
             builder.Services.AddSingleton<UserProfileRepository>();
             builder.Services.AddSingleton<DbConnectionFactory>();
             builder.Services.AddScoped<UserAccountRepository>();
+            builder.Services.AddScoped<FundraiserActivityRepository>();
+            builder.Services.AddScoped<UserFundraiserRepository>();
+            builder.Services.AddScoped<UserFundraiserRepository>();
             builder.Services.AddScoped<DatabaseInitialiser>();
             builder.Services.AddScoped<PasswordHasher<UserAccount>>();
 
