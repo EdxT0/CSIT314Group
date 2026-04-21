@@ -20,6 +20,7 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [editingAccount, setEditingAccount] = useState(null);
   const [editingProfile, setEditingProfile] = useState(null);
+  
 
   useEffect(() => {
     fetchAccounts();
@@ -28,15 +29,20 @@ export default function AdminPage() {
 
   const fetchAccounts = async () => {
     setError("");
-    const res = await fetch("/api/ViewAllUserAccount", { credentials: "include" });
+    const res = await fetch("/api/ViewAllUserAccount", 
+      { credentials: "include" });
     if (!res.ok) { setError("Failed to load accounts"); return; }
     setAccounts(await res.json());
   };
 
   const fetchProfiles = async () => {
-    const res = await fetch("/api/ViewAllUserProfile", { credentials: "include" });
+    const res = await fetch("/api/ViewAllUserProfile", {
+      credentials: "include" 
+    });
     if (!res.ok) return;
-    setProfiles(await res.json());
+    const data = await res.json();
+    console.log("Profile data:", data); //remove after testing
+    setProfiles(data);
   };
 
   const handleSuspendAccount = async (email, suspend) => {
@@ -57,6 +63,8 @@ export default function AdminPage() {
       method: "PUT",
       credentials: "include",
     });
+    const text = await res.text(); //remove after testing
+    console.log("Response:", res.status, text);  // remove after testing
     if (!res.ok) { setError(await res.text()); return; }
     fetchProfiles();
   };
