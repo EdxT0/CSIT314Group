@@ -44,6 +44,7 @@ namespace CSIT_314_Group
             builder.Services.AddScoped<FundraiserActivityRepository>();
             builder.Services.AddScoped<UserFundraiserRepository>();
             builder.Services.AddScoped<UserFundraiserRepository>();
+            builder.Services.AddScoped<FavouriteRepository>();
             builder.Services.AddScoped<DatabaseInitialiser>();
             builder.Services.AddScoped<PasswordHasher<UserAccount>>();
 

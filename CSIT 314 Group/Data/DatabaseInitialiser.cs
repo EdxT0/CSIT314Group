@@ -114,7 +114,7 @@ namespace CSIT_314_Group.Data
                                             FraId INTEGER NOT NULL,
                                             UNIQUE (UserId, FraId),
                                             FOREIGN KEY (UserId) REFERENCES UserAccount(Id),
-                                            FOREIGN KEY (FraId) REFERENCES FundraiserActivity(Id)
+                                            FOREIGN KEY (FraId) REFERENCES FundraiserActivity(Id) ON DELETE CASCADE
                                             )";
                 using (var createFavouriteListTableQueryCommand = new SqliteCommand(createFavouriteListTableQuery, connection, transaction))
                 {
