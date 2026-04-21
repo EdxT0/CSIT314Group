@@ -44,7 +44,7 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
         >
           <option value="">Select a profile...</option>
           {profiles.map(p => (
-            <option key={p.id} value={p.name}>{p.name}</option>
+            <option key={p.id} value={p.profileName}>{p.profileName}</option>
           ))}
         </select>
       </div>
