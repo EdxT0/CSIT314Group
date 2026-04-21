@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import AccountsTable from "../components/admin/AccountsTable";
 import CreateAccountForm from "../components/admin/CreateAccountForm";
 import EditAccountForm from "../components/admin/EditAccountForm";
+import ProfilesTable from "../components/admin/ProfilesTable";
+import CreateProfileForm from "../components/admin/CreateProfileForm";
+import EditProfileForm from "../components/admin/EditProfileForm";
 import "../styles/adminpage.css";
 
 export default function AdminPage() {
@@ -12,9 +15,11 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("accounts");
   const [accounts, setAccounts] = useState([]);
   const [profiles, setProfiles] = useState([]);
-  const [search, setSearch] = useState("");
+  const [accountSearch, setAccountSearch] = useState("");
+  const [profileSearch, setProfileSearch] = useState("");
   const [error, setError] = useState("");
   const [editingAccount, setEditingAccount] = useState(null);
+  const [editingProfile, setEditingProfile] = useState(null);
 
   useEffect(() => {
     fetchAccounts();
@@ -34,7 +39,7 @@ export default function AdminPage() {
     setProfiles(await res.json());
   };
 
-  const handleSuspend = async (email, suspend) => {
+  const handleSuspendAccount = async (email, suspend) => {
     setError("");
     const res = await fetch("/api/SuspendUserAccount", {
       method: "PUT",
@@ -46,6 +51,16 @@ export default function AdminPage() {
     fetchAccounts();
   };
 
+  const handleSuspendProfile = async (id, status) => {
+    setError("");
+    const res = await fetch(`/api/SuspendUserProfile?id=${id}&status=${status}`, {
+      method: "PUT",
+      credentials: "include",
+    });
+    if (!res.ok) { setError(await res.text()); return; }
+    fetchProfiles();
+  };
+
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -55,6 +70,16 @@ export default function AdminPage() {
     <div className="admin-wrap">
       <aside className="admin-sidebar">
         <div className="sidebar-logo">Admin panel</div>
+
+        <div className="sidebar-section">Profiles</div>
+        <div className={`nav-item ${activeTab === "profiles" ? "active" : ""}`}
+          onClick={() => setActiveTab("profiles")}>
+          View profiles
+        </div>
+        <div className={`nav-item ${activeTab === "createProfile" ? "active" : ""}`}
+          onClick={() => setActiveTab("createProfile")}>
+          Create profile
+        </div>
 
         <div className="sidebar-section">Accounts</div>
         <div className={`nav-item ${activeTab === "accounts" ? "active" : ""}`}
@@ -77,9 +102,9 @@ export default function AdminPage() {
         {activeTab === "accounts" && (
           <AccountsTable
             accounts={accounts}
-            search={search}
-            setSearch={setSearch}
-            onSuspend={handleSuspend}
+            search={accountSearch}
+            setSearch={setAccountSearch}
+            onSuspend={handleSuspendAccount}
             onEdit={(acc) => { setEditingAccount(acc); setActiveTab("editAccount"); }}
           />
         )}
@@ -98,6 +123,31 @@ export default function AdminPage() {
             profiles={profiles}
             onSuccess={() => { setActiveTab("accounts"); fetchAccounts(); }}
             onCancel={() => setActiveTab("accounts")}
+          />
+        )}
+
+        {activeTab === "profiles" && (
+          <ProfilesTable
+            profiles={profiles}
+            search={profileSearch}
+            setSearch={setProfileSearch}
+            onSuspend={handleSuspendProfile}
+            onEdit={(p) => { setEditingProfile(p); setActiveTab("editProfile"); }}
+          />
+        )}
+
+        {activeTab === "createProfile" && (
+          <CreateProfileForm
+            onSuccess={() => { setActiveTab("profiles"); fetchProfiles(); }}
+            onCancel={() => setActiveTab("profiles")}
+          />
+        )}
+
+        {activeTab === "editProfile" && editingProfile && (
+          <EditProfileForm
+            profile={editingProfile}
+            onSuccess={() => { setActiveTab("profiles"); fetchProfiles(); }}
+            onCancel={() => setActiveTab("profiles")}
           />
         )}
       </main>
