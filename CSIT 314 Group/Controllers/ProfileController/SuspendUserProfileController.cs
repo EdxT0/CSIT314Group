@@ -1,4 +1,6 @@
 using CSIT_314_Group.Data;
+using CSIT_314_Group.DTO.UserProfileDTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSIT_314_Group.Controllers.ProfileController;
@@ -7,19 +9,17 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 [Route("api/[controller]")]
 public class SuspendUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
 {
+    [Authorize]
     [HttpPut]
-    public async Task<IActionResult> SuspendUserProfile([FromBody] int id, string status)
+    public async Task<IActionResult> SuspendUserProfile([FromBody]SuspendProfileDTO suspendProfileDTO)
     {
-        status = status.Trim();
+        
 
-        if (status != "Suspended" && status != "Active")
-            return BadRequest("Status must be either 'Suspended' or 'Active'");
-
-        var result = await userProfileRepository.SuspendUserProfile(id, status);
+        var result = await userProfileRepository.SuspendUserProfile(suspendProfileDTO.id, suspendProfileDTO.isSuspend);
 
         if (!result)
             return NotFound("User profile not found");
-        return Ok($"'User profile status updated to {status}");
+        return Ok($"'User profile status updated to {suspendProfileDTO.isSuspend}");
     }
     
 }

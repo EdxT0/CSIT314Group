@@ -2,5 +2,8 @@
 {
     public class SuspendProfileDTO
     {
+        public int id { get; set; }
+        public bool isSuspend { get; set; }
+
     }
 }

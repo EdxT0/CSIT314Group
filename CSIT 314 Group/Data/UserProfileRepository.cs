@@ -187,7 +187,7 @@ public class UserProfileRepository
 
     
     // Suspend User Profile
-    public async Task<bool> SuspendUserProfile(int id, string status)
+    public async Task<bool> SuspendUserProfile(int id, bool status)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -242,7 +242,7 @@ public class UserProfileRepository
         if (result == null)
             return false;
 
-        return result.ToString()?.ToLower() == "suspended";
+        return Convert.ToBoolean(result);
     }
 
     public async Task<bool> IsProfileSuspended(int? profileId)
