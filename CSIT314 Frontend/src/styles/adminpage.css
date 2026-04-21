@@ -214,6 +214,9 @@ body {
   font-size: 13px;
   color: #c8c6c1;
   border-bottom: 0.5px solid #2e3240;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .admin-table-card tr:last-child td {
