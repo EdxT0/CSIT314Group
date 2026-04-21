@@ -26,37 +26,42 @@ namespace CSIT_314_Group.Controllers.Auth
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
+            Console.WriteLine($"Login attempt: {loginDto.Email}");
+
             var user = await _userAccountRepository.GetByEmail(loginDto.Email.ToLower());
+            Console.WriteLine($"User found: {user != null}");
 
             if (user == null)
-            {
                 return Unauthorized("invalid email or password");
-            }
 
             var verifyPassword = _hasher.VerifyHashedPassword(user, user.HashedPassword, loginDto.Password);
+            Console.WriteLine($"Password verify result: {verifyPassword}");
+
             if (verifyPassword == PasswordVerificationResult.Failed)
-            {
                 return Unauthorized("invalid email or password");
-            }
-            if( user.IsSuspended == true )
-            {
+
+            Console.WriteLine($"IsSuspended: {user.IsSuspended}");
+            if (user.IsSuspended == true)
                 return Unauthorized("User suspended");
-            }
+
+            Console.WriteLine($"ProfileId: {user.ProfileId}");
             string profileName = await _userProfileRepository.getProfileNameWithId(user.ProfileId);
+            Console.WriteLine($"ProfileName: {profileName}");
+
+            // ↓ YOUR ORIGINAL CODE STAYS HERE — everything below is unchanged
             if (await _userProfileRepository.IsProfileSuspended(user.ProfileId))
             {
-                
                 return Unauthorized($"Profile {profileName} is suspended");
             }
+
             var claims = new List<Claim>{
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, profileName.ToLower())
-            };
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.Name),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Role, profileName.ToLower())
+    };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
@@ -76,7 +81,6 @@ namespace CSIT_314_Group.Controllers.Auth
                 }
             });
         }
-
         [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
         {
