@@ -15,7 +15,9 @@ body {
 .admin-wrap {
   display: flex;
   min-height: 100vh;
+  min-width: 800px;
   background-color: #111318;
+  overflow-x: auto;
 }
 
 /* Sidebar */
@@ -190,10 +192,12 @@ body {
   border: 0.5px solid #2e3240;
   border-radius: 12px;
   overflow: hidden;
+  overflow-x: auto;
 }
 
 .admin-table-card table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -208,6 +212,24 @@ body {
   background-color: #13151c;
   border-bottom: 0.5px solid #2e3240;
 }
+
+.admin-table-card th:nth-child(1),
+.admin-table-card td:nth-child(1) { width: 12%; }  /* Name */
+
+.admin-table-card th:nth-child(2),
+.admin-table-card td:nth-child(2) { width: 22%; }  /* Email */
+
+.admin-table-card th:nth-child(3),
+.admin-table-card td:nth-child(3) { width: 12%; }  /* Phone */
+
+.admin-table-card th:nth-child(4),
+.admin-table-card td:nth-child(4) { width: 16%; }  /* Profile */
+
+.admin-table-card th:nth-child(5),
+.admin-table-card td:nth-child(5) { width: 12%; }  /* Status */
+
+.admin-table-card th:nth-child(6),
+.admin-table-card td:nth-child(6) { width: 16%; }  /* Actions */
 
 .admin-table-card td {
   padding: 10px 1.25rem;
