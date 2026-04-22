@@ -1,5 +1,6 @@
 using CSIT_314_Group.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CSIT_314_Group.Controllers.ProfileController;
 
@@ -7,6 +8,7 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 [Route("api/[controller]")]
 public class ViewUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
 {
+    [Authorize(Roles ="admin")]
     [HttpGet("{id}")]
     public async Task<IActionResult> ViewUserProfile(int id)
     {

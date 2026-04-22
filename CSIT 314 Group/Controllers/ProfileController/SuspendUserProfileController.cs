@@ -9,7 +9,7 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 [Route("api/[controller]")]
 public class SuspendUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
 {
-    //[Authorize(Roles ="admin")]
+    [Authorize(Roles ="admin")]
     [HttpPut]
     public async Task<IActionResult> SuspendUserProfile([FromBody]SuspendProfileDTO? SuspendProfileDTO)
     {
