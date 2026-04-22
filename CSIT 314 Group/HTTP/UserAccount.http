@@ -21,8 +21,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "Email": "edwin@example.com",
-     "Password": "Password123"
+    "Email": "abc123@example.com",
+     "Password": "password123!"
 }
 ###
 
@@ -34,7 +34,7 @@ Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVt
 
 GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount
 Content-Type : application/json
-Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6rh6KdC5XiU3pcgcBz5uvCv5cpzwREg7iHxchhm4KSnjabrcB-5v_JpB31a4a3-2V3exCaBFdoNllsr0tQ8VfyuKx4iLJJPMGJ900TOknewTV80Qg5cYmdEbFioEAyl97Tq7i7esrUCbiqVysdi0x9K5mQsqJcc0Dc03uhIshbcdaC-Vjhub5985dg-Il2DgVTo7EeNf_e3XfVMswtxW6bg3PsAvtVYMbG0Nd4lXM024FPwnj1k4TtXwZ1mkMQ8-ouYVDG5p09B6xKRNOpTJFBzqM2dcH-bcveR1a8P7N2o1rjSq__fiQqHZ96O49o7vl10XhfcrZOX7Nx2-fKIVrvGdPg3UacpjjYwyb_ovMFXht2Vszv7BUeSvLBHPFeANtmxp4xiSE9gR1dDj5EphAbwdbBdz38E7W-6ZjeAwxCAzI2YHyKqfhUBvLibW1wRv9CiQdaGCiUjXtIRfZJFyx8Sr9s1fbOvFbmUjcafHr1Zwji1wZvFVwGonOTgBBVwSbUcNUP5rq3mckMsAma7cIb5QryyUftyisdmf6e-vp7VvnHtqtXUFjjumoIs9SD_cPTJZGC2-aloQPIbqw0T1tcXTIB5mARNS-8zcJZ300kW9X1ZPQQ9nl70IveqvbUNyTM
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oQjeNUh5PNnRl85b-_3223ojQRhZhDk533tdarqcgStv5KIAs19_hlsVB6jTgOfzAjj_Xi4__PLdmoW0fI5DcFwB0aa9B85jZyjRtBZAIwSLUKZVbJ9LWdVmDN4iu61iLza2H-_a5xKIVRUoS-T_eQkBO1JwO3cy1Hi-n3IQTvEVcwFFPNFS_lK-BGJxP4aOHmX1NY0Ld1QW316_Wnxru5Zm5uGQGLbTecfI2DTe5eHiYvvbA1oDf9TKElqC_3C7UHbcFMhbyPpNiPa1rauVRwyF7UGAaxxI3UAfgudkfl6O_J3i2CUnK6KUME16-GOEgDmcrXtBpZZ7HZDVXJDjNT6aTPmkErWnM6oCTxo4AbZSQiuJro2OD3_6tSFZDUtdg0qwqeEalhxNyh5gihb0J-cwzkPA0OQtXXTDCbSn9m7UTeI9As7SlNXOHv3M04ICNnAYNlxBJY8RkQVrhbLenrXq0X5sW3XyqegLqaXxhCYsOycJNDDMcLDZ9g0SfilLGlV7Q9lW2J9hkoucdUPB9x6uZHUAuaCuzs3KAX7LFDCoWCB7B9x79lRhjYU5ncG-0DttQgTRJ3bEmsB8-9-UP37Py_rHnFv2nE2oMGtO2Upxv777Ip5OA8w09yPnDRLg4
 ###
 
 POST {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount
@@ -75,7 +75,6 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtc
   "Name": "edwin",
   "Email": "",
   "PhoneNumber":"" ,
-  "Password": "password123",
-  "profileName" : "admin"
+  "profileName" : "fundraiser MANAGER"
 }
 ###

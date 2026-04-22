@@ -25,7 +25,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
         public async Task<IActionResult> CreateFundraiser([FromBody] CreateFundraiserDTO createFundraiserDTO)
         {
 
-            if (!DateTime.TryParseExact(createFundraiserDTO.Deadline,
+            if (!DateTime.TryParseExact(createFundraiserDTO.deadline,
                                         "dd-MM-yyyy",
                                         null,
                                         System.Globalization.DateTimeStyles.None,
@@ -33,13 +33,19 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
             {
                 return BadRequest("Deadline must be in dd-MM-yyyy format");
             }
-            var result = await _fundraiserActivityRepository.GetByName(createFundraiserDTO.Name.ToLower());
+
+            if(createFundraiserDTO.fraCategoryId == null)
+            {
+                return BadRequest("Fundraiser Category cannot be empty! Please select existing Categories!");
+            }
+            var result = await _fundraiserActivityRepository.GetByName(createFundraiserDTO.name.ToLower());
 
             if (result == null)
             {
-                var fundraiser = new Fundraiser(createFundraiserDTO.Name.ToLower(),
-                                                createFundraiserDTO.Description,
+                var fundraiser = new Fundraiser(createFundraiserDTO.name.ToLower(),
+                                                createFundraiserDTO.description,
                                                 parsedDeadline,
+                                                createFundraiserDTO.fraCategoryId,
                                                 createFundraiserDTO.amtRequested);
 
                 int? fraId = await _fundraiserActivityRepository.createFundraiser(fundraiser);
@@ -53,7 +59,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
                 }
                 return StatusCode(500, "Failed to create fundraiser");
             }
-            return Conflict($"Fundraiser with the same name ( {createFundraiserDTO.Name} )exists already");
+            return Conflict($"Fundraiser with the same name ( {createFundraiserDTO.name} )exists already");
         }
     }
 }

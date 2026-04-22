@@ -11,7 +11,9 @@
         public double AmtDonated { get; private set; }
         public int AmtOfViews { get; private set; }
 
-        public ViewFundraiserDTO(int id, string name, string description, string deadline, double amtRequested, double amtDonated, int amtOfViews, bool status)
+        public string FraCategoryName { get; private set; }
+
+        public ViewFundraiserDTO(int id, string name, string description, string deadline, double amtRequested, double amtDonated, int amtOfViews, bool status, string fraCategoryName)
         {
             Id = id;
             Name = name;
@@ -21,6 +23,7 @@
             AmtDonated = amtDonated;
             AmtOfViews = amtOfViews;
             Status = status;
+            FraCategoryName = fraCategoryName;
         }
     }
 }

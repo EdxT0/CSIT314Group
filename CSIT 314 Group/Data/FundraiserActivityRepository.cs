@@ -3,6 +3,7 @@ using CSIT_314_Group.Entity;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
 using System.Net.NetworkInformation;
+using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 
 namespace CSIT_314_Group.Data
@@ -172,7 +173,7 @@ namespace CSIT_314_Group.Data
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            string getByNameQuery = @"SELECT * FROM FundraiserActivity WHERE FraName = @name";
+            string getByNameQuery = @"SELECT fra.*, fraC.FraCategoryName FROM FundraiserActivity fra JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id WHERE fra.FraName = @name";
             using var getByNameQueryCommand = new SqliteCommand(getByNameQuery, connection);
 
             getByNameQueryCommand.Parameters.AddWithValue("@name", name);
@@ -201,18 +202,21 @@ namespace CSIT_314_Group.Data
                             reader.GetDouble(reader.GetOrdinal("AmtRequested")),
                             reader.GetDouble(reader.GetOrdinal("AmtDonated")),
                             reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
-                            reader.GetBoolean(reader.GetOrdinal("Status"))
-                    );
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            );
             }
             return null;
         }
+
+  
 
         public async Task<ViewFundraiserDTO> GetById(int id)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            string getByIdQuery = @"SELECT * FROM FundraiserActivity WHERE Id = @id";
+            string getByIdQuery = @"SELECT fra.*, fraC.FraCategoryName FROM FundraiserActivity  fra JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id WHERE fra.Id = @id";
             using var getByIdQueryCommand = new SqliteCommand(getByIdQuery, connection);
 
             getByIdQueryCommand.Parameters.AddWithValue("@id", id);
@@ -222,12 +226,12 @@ namespace CSIT_314_Group.Data
             while (await reader.ReadAsync())
             {
                 bool success = DateTime.TryParseExact(
-                                reader.GetString(reader.GetOrdinal("Deadline")),
-                                "o",
-                                CultureInfo.InvariantCulture,
-                                DateTimeStyles.None,
-                                out DateTime readerDate
-                            );
+                     reader.GetString(reader.GetOrdinal("Deadline")),
+                     "o",
+                     CultureInfo.InvariantCulture,
+                     DateTimeStyles.None,
+                     out DateTime readerDate
+                 );
 
                 if (!success)
                 {
@@ -241,9 +245,10 @@ namespace CSIT_314_Group.Data
                             reader.GetDouble(reader.GetOrdinal("AmtRequested")),
                             reader.GetDouble(reader.GetOrdinal("AmtDonated")),
                             reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
-                            reader.GetBoolean(reader.GetOrdinal("Status"))
-                    );
-            }
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            );
+            } 
             return null;
         }
 
@@ -256,7 +261,7 @@ namespace CSIT_314_Group.Data
             try
             {
                 int? fraId = null;
-                string createFundraiserQuery = @"INSERT INTO FundraiserActivity (FraName, Description, Deadline, Status, AmtOfViews, AmtDonated, AmtRequested ) VALUES (@fraName, @description, @deadline, @status, @amtOfViews, @amtDonated, @amtRequested)";
+                string createFundraiserQuery = @"INSERT INTO FundraiserActivity (FraName, Description, Deadline, Status, AmtOfViews, AmtDonated, AmtRequested, FraCategoryId ) VALUES (@fraName, @description, @deadline, @status, @amtOfViews, @amtDonated, @amtRequested, @fraCategoryId)";
                 using var createFundraiserQueryCommand = new SqliteCommand(createFundraiserQuery, connection, transaction);
 
                 createFundraiserQueryCommand.Parameters.AddWithValue("@fraName", fundraiser.Name);
@@ -265,7 +270,8 @@ namespace CSIT_314_Group.Data
                 createFundraiserQueryCommand.Parameters.AddWithValue("@status", fundraiser.Status);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@amtOfViews", fundraiser.AmtOfViews);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@amtDonated", fundraiser.AmtDonated);
-                createFundraiserQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiser.AmtRequested);
+                createFundraiserQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiser.AmtRequested); 
+                createFundraiserQueryCommand.Parameters.AddWithValue("@fraCategoryId", fundraiser.FraCategoryId);
 
                 int rowsAffected = await createFundraiserQueryCommand.ExecuteNonQueryAsync();
 
@@ -302,7 +308,7 @@ namespace CSIT_314_Group.Data
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            string viewAllFundraiserQuery = @"SELECT * From FundraiserActivity";
+            string viewAllFundraiserQuery = @"SELECT fra.*, fraC.FraCategoryName From FundraiserActivity fra JOIN FundraiserCategory fraC on fra.FraCategoryId = fraC.Id ";
             using var viewAllFundraiserQueryCommand = new SqliteCommand(viewAllFundraiserQuery, connection);
             var reader = await viewAllFundraiserQueryCommand.ExecuteReaderAsync();
 
@@ -329,7 +335,8 @@ namespace CSIT_314_Group.Data
                             reader.GetDouble(reader.GetOrdinal("AmtRequested")),
                             reader.GetDouble(reader.GetOrdinal("AmtDonated")),
                             reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
-                            reader.GetBoolean(reader.GetOrdinal("Status"))
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
                             ));
 
             }

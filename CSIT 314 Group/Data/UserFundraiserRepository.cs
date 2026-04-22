@@ -40,9 +40,10 @@ namespace CSIT_314_Group.Data
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            string ViewMyFundraisersQuery = @"SELECT Fra.Id, Fra.FraName, Fra.Description, Fra.Deadline, Fra.Status, Fra.AmtOfViews, Fra.AmtDonated, Fra.AmtRequested 
+            string ViewMyFundraisersQuery = @"SELECT Fra.Id, Fra.FraName, Fra.Description, Fra.Deadline, Fra.Status, Fra.AmtOfViews, Fra.AmtDonated, Fra.AmtRequested, fraC.FraCategoryName
                                             FROM UserFundraiser UF 
                                         INNER JOIN FundraiserActivity Fra ON Fra.Id = UF.FraId
+                                        JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id
                                         WHERE UF.UserID = @userId";
 
             using var ViewMyFundraisersQueryCommand = new SqliteCommand(ViewMyFundraisersQuery, connection);
@@ -63,15 +64,16 @@ namespace CSIT_314_Group.Data
                     throw new Exception("Invalid deadline format in database.");
                 }
                 result.Add(new ViewFundraiserDTO(
-                           reader.GetInt32(reader.GetOrdinal("Id")),
-                           reader.GetString(reader.GetOrdinal("FraName")),
-                           reader.GetString(reader.GetOrdinal("Description")),
-                           readerDate.ToString("dd-MM-yyyy"),
-                           reader.GetDouble(reader.GetOrdinal("AmtRequested")),
-                           reader.GetDouble(reader.GetOrdinal("AmtDonated")),
-                           reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
-                           reader.GetBoolean(reader.GetOrdinal("Status"))
-                           ));
+                            reader.GetInt32(reader.GetOrdinal("Id")),
+                            reader.GetString(reader.GetOrdinal("FraName")),
+                            reader.GetString(reader.GetOrdinal("Description")),
+                            readerDate.ToString("dd-MM-yyyy"),
+                            reader.GetDouble(reader.GetOrdinal("AmtRequested")),
+                            reader.GetDouble(reader.GetOrdinal("AmtDonated")),
+                            reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            ));
             }
             return result;
         }

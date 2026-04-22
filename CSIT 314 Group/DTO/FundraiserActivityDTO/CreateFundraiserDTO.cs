@@ -5,14 +5,17 @@ namespace CSIT_314_Group.DTO.FundraiserActivityDTO
     public class CreateFundraiserDTO
     {
         [Required]
-        public string Name { get; set; }
+        public string name { get; set; }
         [Required]
-        public string Description { get; set; }
+        public string description { get; set; }
         [Required]
+        public string deadline { get; set; }
 
-        public string Deadline { get; set; }
+        [Required]
+        public int? fraCategoryId { get; set; }
+
+
         [Range(0.01, double.MaxValue, ErrorMessage = "Amount requested must be more than 0.")]
-
         public double amtRequested { get; set; }
 
     }
