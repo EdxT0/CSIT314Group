@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace CSIT_314_Group.Controllers.ProfileController;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 
 public class ViewAllUserProfileController : ControllerBase
 {

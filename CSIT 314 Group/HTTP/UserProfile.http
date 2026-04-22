@@ -9,6 +9,13 @@ Content-Type: application/json
 
 ###
 
+### 
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewAllUserProfile
+Content-Type: application/json
+
+###
+
 ###
 
 PUT {{CSIT_314_Group_HostAddress}}/api/SuspendUserProfile
@@ -23,6 +30,7 @@ Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6rCiUTVYmmYBuIgkelIOiePx59V
 
 ###
 
+###
 POST {{CSIT_314_Group_HostAddress}}/api/CreateUserProfile
 Content-Type: application/json
 Accept: application/json
@@ -32,6 +40,7 @@ Accept: application/json
     "profileName": "Admin2",
     "description": "test 7"
 }
+###
 
 ### Search by profile name
 GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=admin
@@ -46,7 +55,7 @@ Accept: application/json
 ###
 
 ### Search by status
-GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=suspended
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=active
 Accept: application/json
 
 ###
@@ -70,5 +79,25 @@ Accept: application/json
 ###
 
 ### Empty keyword test
+
 GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=
 Accept: application/json
+
+###
+
+###
+
+PUT {{CSIT_314_Group_HostAddress}}/api/UpdateUserProfile
+Content-Type: application/json
+
+{
+  "id": 1,
+  "profileName": "admin ",
+  "description": "updated description"
+}
+
+###
+
+
+
+
