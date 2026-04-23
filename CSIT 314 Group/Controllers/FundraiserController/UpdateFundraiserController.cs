@@ -94,7 +94,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
                 }
                 if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.description))
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.updateDesc(updateFundraiserDTO.description, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateDesc(updateFundraiserDTO.description, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Description");
@@ -117,7 +117,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
 
 
 
-                    bool updateSuccess = await _fundraiserActivityRepository.updateDeadline(databaseDeadlineFormatParsedString, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateDeadline(databaseDeadlineFormatParsedString, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Deadline");
@@ -127,7 +127,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
                 }
                 if (updateFundraiserDTO.status != null)
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.updateStatus(updateFundraiserDTO.status, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateStatus(updateFundraiserDTO.status, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Status");
@@ -138,7 +138,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
 
                 if (updateFundraiserDTO.amtRequested != null)
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.updateAmtRequested(updateFundraiserDTO.amtRequested, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateAmtRequested(updateFundraiserDTO.amtRequested, fundraiser.Id);
 
                     if (!updateSuccess)
                     {

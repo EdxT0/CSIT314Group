@@ -24,39 +24,12 @@ namespace CSIT_314_Group.Data
                 using var pragma = new SqliteCommand("PRAGMA foreign_keys = ON;", connection, transaction);
                 pragma.ExecuteNonQuery();
 
+                ////resets the tables below
                 //string dropUserProfileTableQuery = @"DROP TABLE UserProfile";
                 //using (var dropUserProfileTableQueryCommand = new SqliteCommand(dropUserProfileTableQuery, connection, transaction))
                 //{
                 //    dropUserProfileTableQueryCommand.ExecuteNonQuery();
-                //}
-
-                string createUserProfileTableQuery = @"CREATE TABLE IF NOT EXISTS UserProfile(
-                                            Id INTEGER PRIMARY KEY,
-                                            ProfileName TEXT NOT NULL UNIQUE,
-                                            Description TEXT,
-                                            Status BOOL NOT NULL
-                                            )";
-                using (var createUserProfileTableQueryCommand = new SqliteCommand(createUserProfileTableQuery, connection, transaction))
-                {
-                    createUserProfileTableQueryCommand.ExecuteNonQuery();
-                }
-
-                string createUserAccountTableQuery = @"CREATE TABLE IF NOT EXISTS UserAccount(
-                                                     Id INTEGER PRIMARY KEY,
-                                                     Name TEXT NOT NULL,
-                                                     PhoneNumber TEXT NOT NULL UNIQUE,
-                                                     Email TEXT NOT NULL UNIQUE,
-                                                     IsSuspended BOOL NOT NULL,
-                                                     HashedPassword TEXT NOT NULL,
-                                                     ProfileId INTEGER NOT NULL,
-                                                     FOREIGN KEY (ProfileId) References UserProfile(Id)
-                                                    )";
-                using (var createUserAccountTableQueryCommand = new SqliteCommand(createUserAccountTableQuery, connection, transaction))
-                {
-                    createUserAccountTableQueryCommand.ExecuteNonQuery();
-                }
-
-                ////resets the tables below
+                //}     
                 //string dropFundraiserCategoryTableQuery = @"DROP TABLE FundraiserCategory";
                 //using (var dropFundraiserCategoryTableQueryCommand = new SqliteCommand(dropFundraiserCategoryTableQuery, connection, transaction))
                 //{
@@ -83,6 +56,32 @@ namespace CSIT_314_Group.Data
                 //    dropFundraiserDonationsTableQueryCommand.ExecuteNonQuery();
                 //}
 
+
+                string createUserProfileTableQuery = @"CREATE TABLE IF NOT EXISTS UserProfile(
+                                            Id INTEGER PRIMARY KEY,
+                                            ProfileName TEXT NOT NULL UNIQUE,
+                                            Description TEXT,
+                                            Status BOOL NOT NULL
+                                            )";
+                using (var createUserProfileTableQueryCommand = new SqliteCommand(createUserProfileTableQuery, connection, transaction))
+                {
+                    createUserProfileTableQueryCommand.ExecuteNonQuery();
+                }
+
+                string createUserAccountTableQuery = @"CREATE TABLE IF NOT EXISTS UserAccount(
+                                                     Id INTEGER PRIMARY KEY,
+                                                     Name TEXT NOT NULL,
+                                                     PhoneNumber TEXT NOT NULL UNIQUE,
+                                                     Email TEXT NOT NULL UNIQUE,
+                                                     IsSuspended BOOL NOT NULL,
+                                                     HashedPassword TEXT NOT NULL,
+                                                     ProfileId INTEGER NOT NULL,
+                                                     FOREIGN KEY (ProfileId) References UserProfile(Id)
+                                                    )";
+                using (var createUserAccountTableQueryCommand = new SqliteCommand(createUserAccountTableQuery, connection, transaction))
+                {
+                    createUserAccountTableQueryCommand.ExecuteNonQuery();
+                }
 
                 string createFRATableQuery = @"CREATE TABLE IF NOT EXISTS FundraiserActivity(
                                             Id INTEGER PRIMARY KEY,
