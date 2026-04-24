@@ -45,7 +45,7 @@ namespace CSIT_314_Group
             builder.Services.AddScoped<FundraiserActivityRepository>();
             builder.Services.AddScoped<UserFundraiserRepository>();
             builder.Services.AddScoped<FundraiserDonationsRepository>();
-            //builder.Services.AddScoped<FundraiserCategoryRepository>();
+            builder.Services.AddScoped<CategoryRepository>();
             builder.Services.AddScoped<FavouriteRepository>(); 
 
             builder.Services.AddScoped<DatabaseInitialiser>();

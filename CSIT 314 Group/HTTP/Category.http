@@ -1,0 +1,31 @@
+### Create Category
+POST http://localhost:5135/api/CreateCategory
+Content-Type: application/json
+
+{
+  "name": "food",
+  "description": "Food fundraising activities"
+}
+
+
+### View All Categories
+GET http://localhost:5135/api/ViewAllCategory
+
+
+### Search Category
+GET http://localhost:5135/api/SearchCategory?keyword=food
+
+
+### Update Category
+PUT http://localhost:5135/api/UpdateCategory
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "education",
+  "description": "Education fundraising activities"
+}
+
+
+### Delete Category
+DELETE http://localhost:5135/api/DeleteCategory/6
