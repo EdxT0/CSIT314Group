@@ -231,6 +231,9 @@ public class UserProfileRepository
     // Suspend User Profile
     public async Task<bool> SuspendUserProfile(int id, bool status)
     {
+        if (id <= 0)
+            return false;
+        
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
         using var transaction = connection.BeginTransaction();
