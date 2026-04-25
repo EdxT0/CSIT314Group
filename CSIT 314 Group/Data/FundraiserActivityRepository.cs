@@ -121,7 +121,26 @@ namespace CSIT_314_Group.Data
             await transaction.RollbackAsync();
             return false;
         }
+        public async Task<bool> UpdateFraCate(int fraCategoryId, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
 
+            string updatefraCategoryIdQuery = @"UPDATE FundraiserActivity SET FraCategoryId = @fraCategoryId where Id = @id";
+            using var updatefraCategoryIdQueryCommand = new SqliteCommand(updatefraCategoryIdQuery, connection, transaction);
+            updatefraCategoryIdQueryCommand.Parameters.AddWithValue("@fraCategoryId", fraCategoryId);
+            updatefraCategoryIdQueryCommand.Parameters.AddWithValue("@id", fraId);
+
+            int rowsAffected = await updatefraCategoryIdQueryCommand.ExecuteNonQueryAsync();
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
         public async Task<bool> UpdateDesc(string description, int fraId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
