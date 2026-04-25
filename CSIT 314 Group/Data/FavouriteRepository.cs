@@ -155,5 +155,28 @@ namespace CSIT_314_Group.Data
             return result;
 
         }
+
+
+        public async Task<bool> UnfavouriteFundraiser(int userId, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            string unfavouriteFundraiserQuery = @"DELETE FROM FavouriteList WHERE UserId = @userId and FraId = @fraId";
+            using var unfavouriteFundraiserQueryCommand = new SqliteCommand(unfavouriteFundraiserQuery, connection, (SqliteTransaction)transaction);
+            unfavouriteFundraiserQueryCommand.Parameters.AddWithValue("@userId", userId);
+            unfavouriteFundraiserQueryCommand.Parameters.AddWithValue("@fraId", fraId);
+
+            int rowsAffected = await unfavouriteFundraiserQueryCommand.ExecuteNonQueryAsync();
+
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 }

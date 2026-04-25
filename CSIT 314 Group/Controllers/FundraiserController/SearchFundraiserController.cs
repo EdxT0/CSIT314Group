@@ -19,7 +19,7 @@ namespace CSIT_314_Group.Controllers.FundraiserController
         [HttpGet]
         public async Task<IActionResult> SearchFundraiser([FromQuery] string name)
         {
-            var fundraiser = await _fundraiserActivityRepository.GetByName(name.ToLower());
+            var fundraiser = await _fundraiserActivityRepository.SearchByName(name.ToLower());
             if(fundraiser == null)
             {
                 return NotFound($"No fundraiser with {name} found");
