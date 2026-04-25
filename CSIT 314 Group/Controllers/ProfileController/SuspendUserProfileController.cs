@@ -9,17 +9,24 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 [Route("api/[controller]")]
 public class SuspendUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
 {
-    [Authorize]
+    [Authorize(Roles ="admin")]
     [HttpPut]
-    public async Task<IActionResult> SuspendUserProfile([FromBody]SuspendProfileDTO suspendProfileDTO)
+    public async Task<IActionResult> SuspendUserProfile([FromBody]SuspendProfileDTO? SuspendProfileDTO)
     {
+        if (SuspendProfileDTO == null)
+            return BadRequest("Request body cannot be empty");
         
-
-        var result = await userProfileRepository.SuspendUserProfile(suspendProfileDTO.id, suspendProfileDTO.isSuspend);
+        if (SuspendProfileDTO.id <= 0)
+            return BadRequest("Invalid Profile ID");
+        
+        var result = await userProfileRepository.SuspendUserProfile(
+            SuspendProfileDTO.id, 
+            SuspendProfileDTO.isSuspend);
 
         if (!result)
             return NotFound("User profile not found");
-        return Ok($"'User profile status updated to {suspendProfileDTO.isSuspend}");
+        
+        return Ok($"'User profile status updated to {SuspendProfileDTO.isSuspend}");
     }
     
 }

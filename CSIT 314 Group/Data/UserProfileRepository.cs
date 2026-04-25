@@ -12,7 +12,22 @@ public class UserProfileRepository
     {
         _dbConnectionFactory = factory;
     }
+    
+    // Check if profile exist
+    public async Task<bool> ProfileNameExists(string profileName)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+        await connection.OpenAsync();
 
+        string query = "SELECT COUNT(1) FROM UserProfile WHERE LOWER(ProfileName) = @ProfileName";
+
+        using var command = new SqliteCommand(query, connection);
+        command.Parameters.AddWithValue("@ProfileName", profileName.ToLower());
+
+        var result = await command.ExecuteScalarAsync();
+
+        return Convert.ToInt32(result) > 0;
+    }
 
     // Create Profile
     public async Task<bool> CreateUserProfile(UserProfile userProfile)
@@ -24,11 +39,10 @@ public class UserProfileRepository
         try
         {
             string query = @"
-                INSERT INTO UserProfile (Id, ProfileName, Description, Status)
-                VALUES (@Id, @ProfileName, @Description, @Status)";
+            INSERT INTO UserProfile (ProfileName, Description, Status)
+            VALUES (@ProfileName, @Description, @Status)";
 
             using var command = new SqliteCommand(query, connection, transaction);
-            command.Parameters.AddWithValue("@Id", userProfile.Id);
             command.Parameters.AddWithValue("@ProfileName", userProfile.ProfileName);
             command.Parameters.AddWithValue("@Description", userProfile.Description);
             command.Parameters.AddWithValue("@Status", userProfile.Status);
@@ -44,9 +58,11 @@ public class UserProfileRepository
             await transaction.CommitAsync();
             return true;
         }
-        catch
+        catch (Exception ex)
         {
             await transaction.RollbackAsync();
+            Console.WriteLine("CreateUserProfile Error: " + ex.Message);
+            Console.WriteLine(ex.StackTrace);
             throw;
         }
     }
@@ -104,7 +120,7 @@ public class UserProfileRepository
                 Id = Convert.ToInt32(reader["Id"]),
                 ProfileName = reader["ProfileName"].ToString() ?? "",
                 Description = reader["Description"].ToString() ?? "",
-                Status = reader["Status"].ToString() ?? ""
+                Status = Convert.ToBoolean(reader["Status"])
             };
         }
 
@@ -164,10 +180,15 @@ public class UserProfileRepository
             FROM UserProfile
             WHERE lower(ProfileName) LIKE @Keyword
                OR lower(Description) LIKE @Keyword
-               OR lower(Status) LIKE @Keyword";
+               OR CAST(Status AS TEXT) LIKE @Keyword
+               OR (@SearchWord = 'active' AND Status = 1)
+               OR (@SearchWord = 'suspended' AND Status = 0)";
 
         using var command = new SqliteCommand(query, connection);
-        command.Parameters.AddWithValue("@Keyword", "%" + keyword.Trim().ToLower() + "%");
+        var trimmedKeyword = keyword.Trim().ToLower();
+
+        command.Parameters.AddWithValue("@Keyword", "%" + trimmedKeyword + "%");
+        command.Parameters.AddWithValue("@SearchWord", trimmedKeyword); 
 
         using var reader = await command.ExecuteReaderAsync();
 
@@ -178,17 +199,46 @@ public class UserProfileRepository
                 Id = Convert.ToInt32(reader["Id"]),
                 ProfileName = reader["ProfileName"].ToString() ?? "",
                 Description = reader["Description"].ToString() ?? "",
-                Status = reader["Status"].ToString() ?? ""
+                Status = Convert.ToBoolean(reader["Status"])
             });
         }
 
         return profiles;
     }
 
-    
+        // View all user profile
+        public async Task<List<UserProfile>> ViewAllUserProfiles()
+        {
+            var profiles = new List<UserProfile>();
+
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string query = @"SELECT Id, ProfileName, Description, Status FROM UserProfile";
+
+            using var command = new SqliteCommand(query, connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                profiles.Add(new UserProfile
+                {
+                    Id = Convert.ToInt32(reader["Id"]),
+                    ProfileName = reader["ProfileName"].ToString() ?? "",
+                    Description = reader["Description"].ToString() ?? "",
+                    Status = Convert.ToBoolean(reader["Status"])
+                });
+            }
+
+            return profiles;
+        }
+        
     // Suspend User Profile
     public async Task<bool> SuspendUserProfile(int id, bool status)
     {
+        if (id <= 0)
+            return false;
+        
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
         using var transaction = connection.BeginTransaction();

@@ -6,6 +6,16 @@
 
 GET {{CSIT_314_Group_HostAddress}}/api/ViewUserProfile/1
 Content-Type: application/json
+
+###
+
+### 
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewAllUserProfile
+Content-Type: application/json
+
+###
+
 ###
 
 PUT {{CSIT_314_Group_HostAddress}}/api/SuspendUserProfile
@@ -14,9 +24,12 @@ Accept: application/json
 Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6rCiUTVYmmYBuIgkelIOiePx59VXvwS7BZJ7apWcQycqB9jkoqAnzsCeRoaWrKPTBUSyuvKyy5eV4S98Q94j9_0uy4S3tho7FAvgUN0X1xPSNY7238pn_q8HW47CXaVHthDURJuZXpTYkeA2OjaWpGgIPPwTRwF6jDq5eDNNNRovdZy9TcozxkTHlONFAh0LabIzuLHDbc5Q1Xsow7C1HY6ZlLU45H6Bqw8lVS2BxOT4vO_dLmzLh7STMgZqI_alHhrL7j-pfxlYgGQ39hxFZYl1rKiVx7Uj-LsaPo99B7cVCDSEgU0EcQuOPStcweHJ3muzqVC-10CnXmVou3a1DEgkInGE8kZC5V9fW5rBxnAwe7WQC79p08BEfguKYdMMQQhlW_0WTkNYDMBZIzk7JDKrMMhEEFrjHkRMk1-3J-rTDlJWf6od9y6x0nqEDOX3k62MZLgEkbk_mB_fxUDWA-aR4FiN7vS1PPpVZgWrYj-cYuTvgNBDp-konKCf8hj5j507F_UN0n1Vd2Y6sCz_m7oSDahyNCKmIjp9N66GOP7U-7B_I0NI1zjVcxntSNeGT5XKL07hCmjjGbz-N_sqvXtJviV4xz8HZO6pS8paYJsVePQ7_h_CxcYgqjJ7jkth0s
 
 {
-  "id" : 0,
-  "isSuspend": false
+  "id" : 1,
+  "isSuspend": true
 }
+
+###
+
 ###
 POST {{CSIT_314_Group_HostAddress}}/api/CreateUserProfile
 Content-Type: application/json
@@ -24,8 +37,67 @@ Accept: application/json
 
 
 {
-    "profileName": "test6 7",
-    "description": " test6 7"
+    "profileName": "Admin2",
+    "description": "test 7"
+}
+###
+
+### Search by profile name
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=admin
+Accept: application/json
+
+###
+
+### Search by description
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=manager
+Accept: application/json
+
+###
+
+### Search by status
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=active
+Accept: application/json
+
+###
+
+### Search by status
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=1
+Accept: application/json
+
+###
+
+### Search suspended profiles
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=suspended
+Accept: application/json
+
+###
+
+### Search partial word
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=fun
+Accept: application/json
+
+###
+
+### Empty keyword test
+
+GET {{CSIT_314_Group_HostAddress}}/api/SearchUserProfile?keyword=
+Accept: application/json
+
+###
+
+###
+
+PUT {{CSIT_314_Group_HostAddress}}/api/UpdateUserProfile
+Content-Type: application/json
+
+{
+  "id": 1,
+  "profileName": "admin ",
+  "description": "updated description"
 }
 
 ###
+
+
+
+
