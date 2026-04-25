@@ -15,7 +15,7 @@ namespace CSIT_314_Group.Controllers.Category
             _categoryRepository = categoryRepository;
         }
 
-        [Authorize(Roles = "platform manager")]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> ViewAllCategory()
         {

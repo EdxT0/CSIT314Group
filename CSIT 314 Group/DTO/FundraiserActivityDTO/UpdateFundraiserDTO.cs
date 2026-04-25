@@ -8,7 +8,7 @@ namespace CSIT_314_Group.DTO.FundraiserActivityDTO
         public string description { get; set; } = "";
         public string deadline { get; set; } = "";
         public bool? status { get; set; } 
-        public double? amtRequested { get; set; } 
-
+        public double? amtRequested { get; set; }
+        public int fraCategoryId { get; set; }
     }
 }
