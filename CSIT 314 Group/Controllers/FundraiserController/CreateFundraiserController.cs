@@ -13,14 +13,16 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
     public class CreateFundraiserController : ControllerBase
     {
         private readonly FundraiserActivityRepository _fundraiserActivityRepository;
-        private readonly UserFundraiserRepository _userFundraiserRepo;
-        public CreateFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
+        private readonly UserFundraiserRepository _userFundraiserRepository;
+        private readonly CategoryRepository _categoryRepository;
+        public CreateFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, CategoryRepository categoryRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
-            _userFundraiserRepo = userFundraiserRepo;
+            _userFundraiserRepository = userFundraiserRepo;
+            _categoryRepository = categoryRepository;
         }
 
-        [Authorize(Roles = "fundraiser manager")]
+        [Authorize(Roles = "fundraiser manager, admin")]
         [HttpPost]
         public async Task<IActionResult> CreateFundraiser([FromBody] CreateFundraiserDTO createFundraiserDTO)
         {
@@ -38,6 +40,10 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
             {
                 return BadRequest("Fundraiser Category cannot be empty! Please select existing Categories!");
             }
+            if (await _categoryRepository.GetById(createFundraiserDTO.fraCategoryId) == null)
+            {
+                return BadRequest("no such fundraiser category");
+            }
             var result = await _fundraiserActivityRepository.GetByName(createFundraiserDTO.name.ToLower());
 
             if (result == null)
@@ -52,7 +58,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
                 if (fraId != null)
                 {
                     int userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                    if (await _userFundraiserRepo.AddFRAToUser(userId, fraId))
+                    if (await _userFundraiserRepository.AddFRAToUser(userId, fraId))
                     {
                         return Ok($"Created {fundraiser.Name} Fundraiser");
                     }

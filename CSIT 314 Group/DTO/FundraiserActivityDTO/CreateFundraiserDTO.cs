@@ -12,7 +12,7 @@ namespace CSIT_314_Group.DTO.FundraiserActivityDTO
         public string deadline { get; set; }
 
         [Required]
-        public int? fraCategoryId { get; set; }
+        public int fraCategoryId { get; set; }
 
 
         [Range(0.01, double.MaxValue, ErrorMessage = "Amount requested must be more than 0.")]

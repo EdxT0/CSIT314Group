@@ -283,7 +283,46 @@ namespace CSIT_314_Group.Data
             }
             return null;
         }
+        public async Task<ViewFundraiserDTO> SearchByName(string name)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
 
+            string getByNameQuery = @"SELECT fra.*, fraC.FraCategoryName FROM FundraiserActivity fra JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id WHERE fra.FraName Like '%' || @name || '%' ";
+            using var getByNameQueryCommand = new SqliteCommand(getByNameQuery, connection);
+
+            getByNameQueryCommand.Parameters.AddWithValue("@name", name);
+
+            var reader = await getByNameQueryCommand.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                bool success = DateTime.TryParseExact(
+                                reader.GetString(reader.GetOrdinal("Deadline")),
+                                "o",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out DateTime readerDate
+                            );
+
+                if (!success)
+                {
+                    throw new Exception("Invalid deadline format in database.");
+                }
+                return new ViewFundraiserDTO(
+                            reader.GetInt32(reader.GetOrdinal("Id")),
+                            reader.GetString(reader.GetOrdinal("FraName")),
+                            reader.GetString(reader.GetOrdinal("Description")),
+                            readerDate.ToString("dd-MM-yyyy"),
+                            reader.GetDouble(reader.GetOrdinal("AmtRequested")),
+                            reader.GetDouble(reader.GetOrdinal("AmtDonated")),
+                            reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            );
+            }
+            return null;
+        }
         public async Task<ViewFundraiserDTO> GetById(int id)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
