@@ -1,6 +1,7 @@
 ﻿using CSIT_314_Group.DTO.FundraiserActivityDTO;
 using CSIT_314_Group.Results;
 using Microsoft.Data.Sqlite;
+using System.Globalization;
 
 namespace CSIT_314_Group.Data
 {
@@ -70,27 +71,112 @@ namespace CSIT_314_Group.Data
             await connection.OpenAsync();
             List<ViewFundraiserDTO> result = new List<ViewFundraiserDTO>();
 
-            string getFavouritesQuery = @"Select fra.* FROM FavouriteList FL INNER JOIN FundraiserActivity fra on fra.Id = FL.FraId WHERE UserId = @userId ";
+            string getFavouritesQuery = @"Select fra.* , fraC.FraCategoryName FROM FavouriteList FL INNER JOIN FundraiserActivity fra on fra.Id = FL.FraId JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id WHERE UserId = @userId ";
             using var getFavouriteQueryCommand = new SqliteCommand(getFavouritesQuery, connection);
             getFavouriteQueryCommand.Parameters.AddWithValue("@userId", userId);
 
             var reader = await getFavouriteQueryCommand.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                result.Add(new ViewFundraiserDTO(reader.GetInt32(reader.GetOrdinal("Id")),
-                                                 reader.GetString(reader.GetOrdinal("FraName")),
-                                                 reader.GetString(reader.GetOrdinal("Description")),
-                                                 reader.GetString(reader.GetOrdinal("Deadline")),
-                                                 reader.GetDouble(reader.GetOrdinal("amtRequested")),
-                                                 reader.GetDouble(reader.GetOrdinal("amtDonated")),
-                                                 reader.GetInt32(reader.GetOrdinal("amtOfViews")),
-                                                 reader.GetBoolean(reader.GetOrdinal("status"))
-                                                 )
-                    );
+                bool success = DateTime.TryParseExact(
+                    reader.GetString(reader.GetOrdinal("Deadline")),
+                    "o",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateTime readerDate
+                );
+
+                if (!success)
+                {
+                    throw new Exception("Invalid deadline format in database.");
+                }
+                result.Add(new ViewFundraiserDTO(
+                            reader.GetInt32(reader.GetOrdinal("Id")),
+                            reader.GetString(reader.GetOrdinal("FraName")),
+                            reader.GetString(reader.GetOrdinal("Description")),
+                            readerDate.ToString("dd-MM-yyyy"),
+                            reader.GetDouble(reader.GetOrdinal("AmtRequested")),
+                            reader.GetDouble(reader.GetOrdinal("AmtDonated")),
+                            reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            ));
             }
             return result;
         }
 
+        public async Task <List<ViewFundraiserDTO>> SearchFavourites(string fraName, int userId)
+        {
+            List<ViewFundraiserDTO> result = new List<ViewFundraiserDTO>();
 
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string SearchFavouriteQuery = @" SELECT fra.*, fraC.FraCategoryName 
+                                                FROM FavouriteList FL 
+                                                JOIN FundraiserActivity fra
+                                                ON fra.Id = FL.FraId 
+                                                JOIN FundraiserCategory fraC
+                                                ON fra.FraCategoryId = fraC.Id
+                                                WHERE fra.FraName LIKE '%'||@fraName||'%'
+                                                AND FL.UserId = @userId";
+            using var SearchFavouriteQueryCommand = new SqliteCommand(SearchFavouriteQuery, connection);
+            SearchFavouriteQueryCommand.Parameters.AddWithValue("@fraName", fraName);
+            SearchFavouriteQueryCommand.Parameters.AddWithValue("@userId", userId);
+
+            var reader = await SearchFavouriteQueryCommand.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                bool success = DateTime.TryParseExact(
+                    reader.GetString(reader.GetOrdinal("Deadline")),
+                    "o",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateTime readerDate
+                );
+
+                if (!success)
+                {
+                    throw new Exception("Invalid deadline format in database.");
+                }
+                result.Add(new ViewFundraiserDTO(
+                            reader.GetInt32(reader.GetOrdinal("Id")),
+                            reader.GetString(reader.GetOrdinal("FraName")),
+                            reader.GetString(reader.GetOrdinal("Description")),
+                            readerDate.ToString("dd-MM-yyyy"),
+                            reader.GetDouble(reader.GetOrdinal("AmtRequested")),
+                            reader.GetDouble(reader.GetOrdinal("AmtDonated")),
+                            reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            ));
+            }
+            return result;
+
+        }
+
+
+        public async Task<bool> UnfavouriteFundraiser(int userId, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            string unfavouriteFundraiserQuery = @"DELETE FROM FavouriteList WHERE UserId = @userId and FraId = @fraId";
+            using var unfavouriteFundraiserQueryCommand = new SqliteCommand(unfavouriteFundraiserQuery, connection, (SqliteTransaction)transaction);
+            unfavouriteFundraiserQueryCommand.Parameters.AddWithValue("@userId", userId);
+            unfavouriteFundraiserQueryCommand.Parameters.AddWithValue("@fraId", fraId);
+
+            int rowsAffected = await unfavouriteFundraiserQueryCommand.ExecuteNonQueryAsync();
+
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 }

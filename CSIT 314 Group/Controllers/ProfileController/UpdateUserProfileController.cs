@@ -1,6 +1,7 @@
 using CSIT_314_Group.Data;
 using CSIT_314_Group.DTO.UserProfileDTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CSIT_314_Group.Controllers.ProfileController;
 
@@ -8,6 +9,7 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 [Route("api/[controller]")]
 public class UpdateUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
 {
+    [Authorize(Roles ="admin")]
     [HttpPut]
     public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserProfileDTO request)
     {

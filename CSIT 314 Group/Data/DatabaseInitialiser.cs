@@ -24,11 +24,38 @@ namespace CSIT_314_Group.Data
                 using var pragma = new SqliteCommand("PRAGMA foreign_keys = ON;", connection, transaction);
                 pragma.ExecuteNonQuery();
 
+                ////resets the tables below
                 //string dropUserProfileTableQuery = @"DROP TABLE UserProfile";
                 //using (var dropUserProfileTableQueryCommand = new SqliteCommand(dropUserProfileTableQuery, connection, transaction))
                 //{
                 //    dropUserProfileTableQueryCommand.ExecuteNonQuery();
+                //}     
+                //string dropFundraiserCategoryTableQuery = @"DROP TABLE FundraiserCategory";
+                //using (var dropFundraiserCategoryTableQueryCommand = new SqliteCommand(dropFundraiserCategoryTableQuery, connection, transaction))
+                //{
+                //    dropFundraiserCategoryTableQueryCommand.ExecuteNonQuery();
                 //}
+                //string dropFraTableQuery = @"DROP TABLE FundraiserActivity";
+                //using (var dropFraTableQueryCommand = new SqliteCommand(dropFraTableQuery, connection, transaction))
+                //{
+                //    dropFraTableQueryCommand.ExecuteNonQuery();
+                //}
+                //string dropUserFundraiserTableQuery = @"DROP TABLE UserFundraiser";
+                //using (var dropUserFundraiserTableQueryCommand = new SqliteCommand(dropUserFundraiserTableQuery, connection, transaction))
+                //{
+                //    dropUserFundraiserTableQueryCommand.ExecuteNonQuery();
+                //}
+                //string dropFavouriteListTableQuery = @"DROP TABLE FavouriteList";
+                //using (var dropFavouriteListTableQueryCommand = new SqliteCommand(dropFavouriteListTableQuery, connection, transaction))
+                //{
+                //    dropFavouriteListTableQueryCommand.ExecuteNonQuery();
+                //}
+                //string dropFundraiserDonationsTableQuery = @"DROP TABLE FundraiserDonations";
+                //using (var dropFundraiserDonationsTableQueryCommand = new SqliteCommand(dropFundraiserDonationsTableQuery, connection, transaction))
+                //{
+                //    dropFundraiserDonationsTableQueryCommand.ExecuteNonQuery();
+                //}
+
 
                 string createUserProfileTableQuery = @"CREATE TABLE IF NOT EXISTS UserProfile(
                                             Id INTEGER PRIMARY KEY,
@@ -56,28 +83,6 @@ namespace CSIT_314_Group.Data
                     createUserAccountTableQueryCommand.ExecuteNonQuery();
                 }
 
-                //resets the tables below
-                //string dropFraTableQuery = @"DROP TABLE FundraiserActivity";
-                //using (var dropFraTableQueryCommand = new SqliteCommand(dropFraTableQuery, connection, transaction))
-                //{
-                //    dropFraTableQueryCommand.ExecuteNonQuery();
-                //}
-                //string dropUserFundraiserTableQuery = @"DROP TABLE UserFundraiser";
-                //using (var dropUserFundraiserTableQueryCommand = new SqliteCommand(dropUserFundraiserTableQuery, connection, transaction))
-                //{
-                //    dropUserFundraiserTableQueryCommand.ExecuteNonQuery();
-                //}
-                //string dropFavouriteListTableQuery = @"DROP TABLE FavouriteList";
-                //using (var dropFavouriteListTableQueryCommand = new SqliteCommand(dropFavouriteListTableQuery, connection, transaction))
-                //{
-                //    dropFavouriteListTableQueryCommand.ExecuteNonQuery();
-                //}
-                //string dropFundraiserDonationsTableQuery = @"DROP TABLE FundraiserDonations";
-                //using (var dropFundraiserDonationsTableQueryCommand = new SqliteCommand(dropFundraiserDonationsTableQuery, connection, transaction))
-                //{
-                //    dropFundraiserDonationsTableQueryCommand.ExecuteNonQuery();
-                //}
-
                 string createFRATableQuery = @"CREATE TABLE IF NOT EXISTS FundraiserActivity(
                                             Id INTEGER PRIMARY KEY,
                                             FraName TEXT NOT NULL UNIQUE,
@@ -86,7 +91,9 @@ namespace CSIT_314_Group.Data
                                             Status BOOL NOT NULL,
                                             AmtOfViews Integer,
                                             AmtDonated REAL,    
-                                            AmtRequested REAL
+                                            AmtRequested REAL,
+                                            FraCategoryId INTEGER,
+                                            FOREIGN KEY (FraCategoryId) REFERENCES FundraiserCategory(Id) ON DELETE CASCADE
                                             )";
 
 
@@ -133,6 +140,16 @@ namespace CSIT_314_Group.Data
                 using (var createFundraiserDonationsTableQueryCommand = new SqliteCommand(createFundraiserDonationsTableQuery, connection, transaction))
                 {
                     createFundraiserDonationsTableQueryCommand.ExecuteNonQuery();
+                }
+
+                string createFundraiserCategoryTableQuery = @"CREATE TABLE IF NOT EXISTS FundraiserCategory(
+                                            Id INTEGER PRIMARY KEY,
+                                            FraCategoryName TEXT NOT NULL,
+                                            Desc TEXT NOT NULL
+                                            )";
+                using (var createFundraiserCategoryTableQueryCommand = new SqliteCommand(createFundraiserCategoryTableQuery, connection, transaction))
+                {
+                    createFundraiserCategoryTableQueryCommand.ExecuteNonQuery();
                 }
 
 

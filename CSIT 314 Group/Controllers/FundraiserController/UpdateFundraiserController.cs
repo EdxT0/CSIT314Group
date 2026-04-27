@@ -15,10 +15,12 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
 
         private readonly FundraiserActivityRepository _fundraiserActivityRepository;
         private readonly UserFundraiserRepository _userFundraiserRepository;
-        public UpdateFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
+        private readonly CategoryRepository _categoryRepository;
+        public UpdateFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, CategoryRepository categoryRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepository = userFundraiserRepo;
+            _categoryRepository = categoryRepository;
         }
 
         [Authorize(Roles = "fundraiser manager, admin")]
@@ -94,7 +96,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
                 }
                 if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.description))
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.updateDesc(updateFundraiserDTO.description, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateDesc(updateFundraiserDTO.description, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Description");
@@ -117,7 +119,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
 
 
 
-                    bool updateSuccess = await _fundraiserActivityRepository.updateDeadline(databaseDeadlineFormatParsedString, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateDeadline(databaseDeadlineFormatParsedString, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Deadline");
@@ -127,7 +129,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
                 }
                 if (updateFundraiserDTO.status != null)
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.updateStatus(updateFundraiserDTO.status, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateStatus(updateFundraiserDTO.status, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Status");
@@ -138,15 +140,29 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
 
                 if (updateFundraiserDTO.amtRequested != null)
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.updateAmtRequested(updateFundraiserDTO.amtRequested, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateAmtRequested(updateFundraiserDTO.amtRequested, fundraiser.Id);
 
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser amount requested");
                     }
                     itemsUpdated.Add(updateFundraiserDTO.amtRequested.ToString());
-
                 }
+                if (updateFundraiserDTO.fraCategoryId != null)
+                {
+                    if(await _categoryRepository.GetById(updateFundraiserDTO.fraCategoryId) == null)
+                    {
+                        return BadRequest("no such fundraiser category");
+                    }
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateFraCate(updateFundraiserDTO.fraCategoryId, fundraiser.Id);
+
+                    if (!updateSuccess)
+                    {
+                        return StatusCode(500, "Failed to update Fundraiser amount requested");
+                    }
+                    itemsUpdated.Add(updateFundraiserDTO.fraCategoryId.ToString());
+                }
+
                 return Ok(itemsUpdated);
             }
             return BadRequest($"Fundraiser Activity {fundraiser.Name} doesnt belong to {User.FindFirstValue(ClaimTypes.Name)}");

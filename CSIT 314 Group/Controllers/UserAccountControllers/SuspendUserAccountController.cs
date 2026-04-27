@@ -20,8 +20,8 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
         [HttpPut]
         public async Task<IActionResult> SuspendUserAccount([FromBody] SuspendUserDTO suspendUserDTO)
         {
-            var userIdResult = await _userAccountRepository.GetIdWithNameOrEmailOrPhone(suspendUserDTO.Email.ToLower());
-            if(userIdResult == null)
+            var userIdResult = await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(suspendUserDTO.Email.ToLower());
+            if(userIdResult.Count == 0)
             {
                 return NotFound("User dont exist");
             }

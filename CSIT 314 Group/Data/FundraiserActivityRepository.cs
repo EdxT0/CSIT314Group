@@ -2,8 +2,7 @@
 using CSIT_314_Group.Entity;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
+
 
 namespace CSIT_314_Group.Data
 {
@@ -14,6 +13,45 @@ namespace CSIT_314_Group.Data
         public FundraiserActivityRepository(DbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
+        }
+
+        public async Task<double?> getAmtDonated(int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string getAmtDonatedQuery = @"SELECT AmtDonated FROM FundraiserActivity WHERE Id = @fraId";
+            using var getAmtDonatedQueryCommand = new SqliteCommand(getAmtDonatedQuery, connection);
+
+            getAmtDonatedQueryCommand.Parameters.AddWithValue("@fraId", fraId);
+
+            var amtRequested = await getAmtDonatedQueryCommand.ExecuteScalarAsync();
+
+            if (amtRequested != null)
+            {
+                return Convert.ToDouble(amtRequested);
+            }
+            return null;
+
+        }
+        public async Task<double?> getAmtRequested(int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string getAmtRequestedQuery = @"SELECT AmtRequested FROM FundraiserActivity WHERE Id = @fraId";
+            using var getAmtRequestedQueryCommand = new SqliteCommand(getAmtRequestedQuery, connection);
+
+            getAmtRequestedQueryCommand.Parameters.AddWithValue("@fraId", fraId);
+
+            var amtRequested = await getAmtRequestedQueryCommand.ExecuteScalarAsync();
+
+            if (amtRequested != null)
+            {
+                return Convert.ToDouble(amtRequested);
+            }
+            return null;
+
         }
         public async Task<bool> updateName(string name, int fraId)
         {
@@ -83,8 +121,27 @@ namespace CSIT_314_Group.Data
             await transaction.RollbackAsync();
             return false;
         }
+        public async Task<bool> UpdateFraCate(int fraCategoryId, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
 
-        public async Task<bool> updateDesc(string description, int fraId)
+            string updatefraCategoryIdQuery = @"UPDATE FundraiserActivity SET FraCategoryId = @fraCategoryId where Id = @id";
+            using var updatefraCategoryIdQueryCommand = new SqliteCommand(updatefraCategoryIdQuery, connection, transaction);
+            updatefraCategoryIdQueryCommand.Parameters.AddWithValue("@fraCategoryId", fraCategoryId);
+            updatefraCategoryIdQueryCommand.Parameters.AddWithValue("@id", fraId);
+
+            int rowsAffected = await updatefraCategoryIdQueryCommand.ExecuteNonQueryAsync();
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
+        public async Task<bool> UpdateDesc(string description, int fraId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -104,7 +161,7 @@ namespace CSIT_314_Group.Data
             await transaction.RollbackAsync();
             return false;
         }
-        public async Task<bool> updateStatus(bool? status, int fraId)
+        public async Task<bool> UpdateStatus(bool? status, int fraId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -125,7 +182,7 @@ namespace CSIT_314_Group.Data
             return false;
 
         }
-        public async Task<bool> updateDeadline(string deadline, int fraId)
+        public async Task<bool> UpdateDeadline(string deadline, int fraId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -145,7 +202,7 @@ namespace CSIT_314_Group.Data
             await transaction.RollbackAsync();
             return false;
         }
-        public async Task<bool> updateAmtRequested(double? amtRequested, int fraId)
+        public async Task<bool> UpdateAmtRequested(double? amtRequested, int fraId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -165,14 +222,33 @@ namespace CSIT_314_Group.Data
             await transaction.RollbackAsync();
             return false;
         }
+        public async Task<bool> UpdateAmtDonated(double? amtDonated, int fraId)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
 
+            string updateAmtDonatedQuery = @"UPDATE FundraiserActivity SET AmtDonated = @amtDonated where Id = @id";
+            using var updateAmtDonatedQueryCommand = new SqliteCommand(updateAmtDonatedQuery, connection, transaction);
+            updateAmtDonatedQueryCommand.Parameters.AddWithValue("@amtDonated", amtDonated);
+            updateAmtDonatedQueryCommand.Parameters.AddWithValue("@id", fraId);
+
+            int rowsAffected = await updateAmtDonatedQueryCommand.ExecuteNonQueryAsync();
+            if (rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return true;
+            }
+            await transaction.RollbackAsync();
+            return false;
+        }
 
         public async Task<ViewFundraiserDTO> GetByName(string name)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            string getByNameQuery = @"SELECT * FROM FundraiserActivity WHERE FraName = @name";
+            string getByNameQuery = @"SELECT fra.*, fraC.FraCategoryName FROM FundraiserActivity fra JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id WHERE fra.FraName = @name";
             using var getByNameQueryCommand = new SqliteCommand(getByNameQuery, connection);
 
             getByNameQueryCommand.Parameters.AddWithValue("@name", name);
@@ -201,23 +277,23 @@ namespace CSIT_314_Group.Data
                             reader.GetDouble(reader.GetOrdinal("AmtRequested")),
                             reader.GetDouble(reader.GetOrdinal("AmtDonated")),
                             reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
-                            reader.GetBoolean(reader.GetOrdinal("Status"))
-                    );
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            );
             }
             return null;
         }
-
-        public async Task<ViewFundraiserDTO> GetById(int id)
+        public async Task<ViewFundraiserDTO> SearchByName(string name)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            string getByIdQuery = @"SELECT * FROM FundraiserActivity WHERE Id = @id";
-            using var getByIdQueryCommand = new SqliteCommand(getByIdQuery, connection);
+            string getByNameQuery = @"SELECT fra.*, fraC.FraCategoryName FROM FundraiserActivity fra JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id WHERE fra.FraName Like '%' || @name || '%' ";
+            using var getByNameQueryCommand = new SqliteCommand(getByNameQuery, connection);
 
-            getByIdQueryCommand.Parameters.AddWithValue("@id", id);
+            getByNameQueryCommand.Parameters.AddWithValue("@name", name);
 
-            var reader = await getByIdQueryCommand.ExecuteReaderAsync();
+            var reader = await getByNameQueryCommand.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
             {
@@ -241,9 +317,50 @@ namespace CSIT_314_Group.Data
                             reader.GetDouble(reader.GetOrdinal("AmtRequested")),
                             reader.GetDouble(reader.GetOrdinal("AmtDonated")),
                             reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
-                            reader.GetBoolean(reader.GetOrdinal("Status"))
-                    );
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            );
             }
+            return null;
+        }
+        public async Task<ViewFundraiserDTO> GetById(int id)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            string getByIdQuery = @"SELECT fra.*, fraC.FraCategoryName FROM FundraiserActivity  fra JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id WHERE fra.Id = @id";
+            using var getByIdQueryCommand = new SqliteCommand(getByIdQuery, connection);
+
+            getByIdQueryCommand.Parameters.AddWithValue("@id", id);
+
+            var reader = await getByIdQueryCommand.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                bool success = DateTime.TryParseExact(
+                     reader.GetString(reader.GetOrdinal("Deadline")),
+                     "o",
+                     CultureInfo.InvariantCulture,
+                     DateTimeStyles.None,
+                     out DateTime readerDate
+                 );
+
+                if (!success)
+                {
+                    throw new Exception("Invalid deadline format in database.");
+                }
+                return new ViewFundraiserDTO(
+                            reader.GetInt32(reader.GetOrdinal("Id")),
+                            reader.GetString(reader.GetOrdinal("FraName")),
+                            reader.GetString(reader.GetOrdinal("Description")),
+                            readerDate.ToString("dd-MM-yyyy"),
+                            reader.GetDouble(reader.GetOrdinal("AmtRequested")),
+                            reader.GetDouble(reader.GetOrdinal("AmtDonated")),
+                            reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                            );
+            } 
             return null;
         }
 
@@ -256,7 +373,7 @@ namespace CSIT_314_Group.Data
             try
             {
                 int? fraId = null;
-                string createFundraiserQuery = @"INSERT INTO FundraiserActivity (FraName, Description, Deadline, Status, AmtOfViews, AmtDonated, AmtRequested ) VALUES (@fraName, @description, @deadline, @status, @amtOfViews, @amtDonated, @amtRequested)";
+                string createFundraiserQuery = @"INSERT INTO FundraiserActivity (FraName, Description, Deadline, Status, AmtOfViews, AmtDonated, AmtRequested, FraCategoryId ) VALUES (@fraName, @description, @deadline, @status, @amtOfViews, @amtDonated, @amtRequested, @fraCategoryId)";
                 using var createFundraiserQueryCommand = new SqliteCommand(createFundraiserQuery, connection, transaction);
 
                 createFundraiserQueryCommand.Parameters.AddWithValue("@fraName", fundraiser.Name);
@@ -265,7 +382,8 @@ namespace CSIT_314_Group.Data
                 createFundraiserQueryCommand.Parameters.AddWithValue("@status", fundraiser.Status);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@amtOfViews", fundraiser.AmtOfViews);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@amtDonated", fundraiser.AmtDonated);
-                createFundraiserQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiser.AmtRequested);
+                createFundraiserQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiser.AmtRequested); 
+                createFundraiserQueryCommand.Parameters.AddWithValue("@fraCategoryId", fundraiser.FraCategoryId);
 
                 int rowsAffected = await createFundraiserQueryCommand.ExecuteNonQueryAsync();
 
@@ -302,7 +420,7 @@ namespace CSIT_314_Group.Data
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            string viewAllFundraiserQuery = @"SELECT * From FundraiserActivity";
+            string viewAllFundraiserQuery = @"SELECT fra.*, fraC.FraCategoryName From FundraiserActivity fra JOIN FundraiserCategory fraC on fra.FraCategoryId = fraC.Id ";
             using var viewAllFundraiserQueryCommand = new SqliteCommand(viewAllFundraiserQuery, connection);
             var reader = await viewAllFundraiserQueryCommand.ExecuteReaderAsync();
 
@@ -329,7 +447,8 @@ namespace CSIT_314_Group.Data
                             reader.GetDouble(reader.GetOrdinal("AmtRequested")),
                             reader.GetDouble(reader.GetOrdinal("AmtDonated")),
                             reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
-                            reader.GetBoolean(reader.GetOrdinal("Status"))
+                            reader.GetBoolean(reader.GetOrdinal("Status")),
+                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
                             ));
 
             }

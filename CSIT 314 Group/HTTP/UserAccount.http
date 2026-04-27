@@ -21,8 +21,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "Email": "edwin@example.com",
-     "Password": "Password123"
+    "Email": "donee01@example.com",
+     "Password": "password123!"
 }
 ###
 
@@ -34,15 +34,18 @@ Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVt
 
 GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount
 Content-Type : application/json
-Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6rh6KdC5XiU3pcgcBz5uvCv5cpzwREg7iHxchhm4KSnjabrcB-5v_JpB31a4a3-2V3exCaBFdoNllsr0tQ8VfyuKx4iLJJPMGJ900TOknewTV80Qg5cYmdEbFioEAyl97Tq7i7esrUCbiqVysdi0x9K5mQsqJcc0Dc03uhIshbcdaC-Vjhub5985dg-Il2DgVTo7EeNf_e3XfVMswtxW6bg3PsAvtVYMbG0Nd4lXM024FPwnj1k4TtXwZ1mkMQ8-ouYVDG5p09B6xKRNOpTJFBzqM2dcH-bcveR1a8P7N2o1rjSq__fiQqHZ96O49o7vl10XhfcrZOX7Nx2-fKIVrvGdPg3UacpjjYwyb_ovMFXht2Vszv7BUeSvLBHPFeANtmxp4xiSE9gR1dDj5EphAbwdbBdz38E7W-6ZjeAwxCAzI2YHyKqfhUBvLibW1wRv9CiQdaGCiUjXtIRfZJFyx8Sr9s1fbOvFbmUjcafHr1Zwji1wZvFVwGonOTgBBVwSbUcNUP5rq3mckMsAma7cIb5QryyUftyisdmf6e-vp7VvnHtqtXUFjjumoIs9SD_cPTJZGC2-aloQPIbqw0T1tcXTIB5mARNS-8zcJZ300kW9X1ZPQQ9nl70IveqvbUNyTM
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oQjeNUh5PNnRl85b-_3223ojQRhZhDk533tdarqcgStv5KIAs19_hlsVB6jTgOfzAjj_Xi4__PLdmoW0fI5DcFwB0aa9B85jZyjRtBZAIwSLUKZVbJ9LWdVmDN4iu61iLza2H-_a5xKIVRUoS-T_eQkBO1JwO3cy1Hi-n3IQTvEVcwFFPNFS_lK-BGJxP4aOHmX1NY0Ld1QW316_Wnxru5Zm5uGQGLbTecfI2DTe5eHiYvvbA1oDf9TKElqC_3C7UHbcFMhbyPpNiPa1rauVRwyF7UGAaxxI3UAfgudkfl6O_J3i2CUnK6KUME16-GOEgDmcrXtBpZZ7HZDVXJDjNT6aTPmkErWnM6oCTxo4AbZSQiuJro2OD3_6tSFZDUtdg0qwqeEalhxNyh5gihb0J-cwzkPA0OQtXXTDCbSn9m7UTeI9As7SlNXOHv3M04ICNnAYNlxBJY8RkQVrhbLenrXq0X5sW3XyqegLqaXxhCYsOycJNDDMcLDZ9g0SfilLGlV7Q9lW2J9hkoucdUPB9x6uZHUAuaCuzs3KAX7LFDCoWCB7B9x79lRhjYU5ncG-0DttQgTRJ3bEmsB8-9-UP37Py_rHnFv2nE2oMGtO2Upxv777Ip5OA8w09yPnDRLg4
+###
+GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount
+Content-Type : application/json
+
+
 ###
 
-POST {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount
+POST {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount?query=ab
 Content-Type : application/json
 Accept : application/json
-{
-  "NameOrEmailOrPhone" : "zhang yue"
-}
+
 
 ###
 
@@ -71,63 +74,89 @@ Content-Type : application/json
 Accept: application/json
 Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtcyldyKSL8s41fcO8RpM4ih-wfgJiCed2JnytgrngQE94Ha4YW3FWxU11v9H9cBwPn4zkT9MnD1CLA-ZxG1Wyx_EqEQiSRNvpCL7bpVIAu4IVOm6ZSoeisuBGdvqeLtYd3EInf6_PTrXSbftOQYNPKOZwXP0gBsB1IX_tss4KtuFFPdw2LBi-1WfnB7swh28RDigzbo5gEE64jFVJUDtXuYkrQ4jXRXn6hGbOWtOJUKLkIkydUsQagbHvfUPfZrEUNZ3BZymgy3tWRuzFcuuhbFtYsv8IXd5LNPeAh2HBTU4XtkyIKDtu9I-CKvFo7Ywwu-MYMB1nIVUXQwzdG5MVZuDnLsHhOa_rAw2Bc2_7x_cYvtdn8fXwE7xgYwFG24zHGYz6R3e3LfZzJxpCjXvWiv0Sk5WwVVQEsIC8QC27Zp1ZAL8kZr9FIZ_Ds_PMDIqVgVUY-RkrqEgMBpl9cHnWTLytTFb47wR4Msy-UEJLsjxSd7nO3bXl7UX2Uwfz-5ccjot7RNEKwlx1Q8KkXOoD-OR1b8tBn_vEdOsxqFPfcffHHQsJ0zkhG-vCw-fd5G3b1Xss7eQqeCBpQVa8kw
 {
-  "Id" : 1,
-  "profileName": "donee"
+  "Id" : 2,
+  "Name": "edwin",
+  "Email": "",
+  "PhoneNumber":"" ,
+  "profileName" : "fundraiser MANAGER"
 }
 ###
 
-### JJ Admin Account
+
+GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount?userId=4
+Content-Type : application/json
+Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6pPowVubAT5Coaq-BfEjV_LYWKNQts3Z1MVv-QHkg2Ck45ZuJN1xnK7sg3hm_wDBaG2X-cXxYMNQzoC-gHdHTXwZ84GwQi32QWF_w3E_epMfFMvvrmtGTyGgZiOu0_DYUUzpuavtHE5bqqgnwSckYlWcoF35NBsxhqLmfiI7AA_TcptZOHMbK29JxTDb4uwu8nsYs4tTqyLqz4VyzCteA4ChvlYUxa5KySZCg3T60ChyM54GSrnJSpgG1WPUiOtDsjDj4gHAOxQN-Nr6Ip0RBjLrqoo2CA28qSudcCG_tbOSrDHvcvvcA1cH9AYP4Mod9UbSvAMqOgLSKJqy7S8TP0h7vhAOKvCBNvcKq2Kw-X3998v9o6ak7vk1eDYR3gJ92R4WmpGaCiDWjeJzs6pEDITPFeIgRX_dbO4sSa-n-IslnbNK8d5juzgl7JJx7GbwhZLCL-g5NlwXAciYjRAtiO7NhxWSyAYmJ2AAgvvLh4fLO8Np6Q8z_FXxdRfwcDZXmzYjKPwG9JIfuMTdeTEvpoMyyVtD2ipcoaf-P385ghGnufPJHev4tPHTV66rT0fG_IerNdytih6o-Qr2Fh3da9_ewXJYa1mkrEut3E9R77SsQ
+
+###
 POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Name": "JJ Admin",
-  "Email": "jj1@example.com",
-  "PhoneNumber": "88136551",
-  "Password": "Password123!",
+  "Name": "admin01",
+  "Email": "admin01@example.com",
+  "PhoneNumber": "81111111",
+  "Password": "password123!",
   "ProfileName": "admin",
   "IsSuspended": false
 }
 
-### Fundraiser Account
+###
+
 POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Name": "JJ Fundraiser",
-  "Email": "jj2@example.com",
-  "PhoneNumber": "88136552",
-  "Password": "Password123!",
-  "ProfileName": "fundraiser manager",
+  "Name": "platformmanager01",
+  "Email": "platformmanager01@example.com",
+  "PhoneNumber": "82222222",
+  "Password": "password123!",
+  "ProfileName": "platform manager",
   "IsSuspended": false
 }
 
-### Donee Account
+###
+
 POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Name": "JJ Donee",
-  "Email": "jj3@example.com",
-  "PhoneNumber": "88136553",
-  "Password": "Password123!",
+  "Name": "donee01",
+  "Email": "donee01@example.com",
+  "PhoneNumber": "83333333",
+  "Password": "password123!",
   "ProfileName": "donee",
   "IsSuspended": false
 }
 
-### Platform Manager Account
+###
+
 POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Name": "JJ Platform Manager",
-  "Email": "jj4@example.com",
-  "PhoneNumber": "88136554",
-  "Password": "Password123!",
-  "ProfileName": "platform manager",
+  "Name": "fundraisermanager01",
+  "Email": "fundraisermanager01@example.com",
+  "PhoneNumber": "84444444",
+  "Password": "password123!",
+  "ProfileName": "fundraiser manager",
+  "IsSuspended": false
+}
+
+###
+
+POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": "donee02",
+  "Email": "donee02@example.com",
+  "PhoneNumber": "85555555",
+  "Password": "password123!",
+  "ProfileName": "donee",
   "IsSuspended": false
 }

@@ -219,50 +219,31 @@ namespace CSIT_314_Group.Data
             return isSuspended;
         }
 
-        public async Task<int?> GetIdWithNameOrEmailOrPhone(string nameOrEmailOrPhone)
+        public async Task<List<int>> GetIdsWithNameOrEmailOrPhone(string nameOrEmailOrPhone)
         {
-            object? result = null;
+            List<int> ids = new List<int>();
+
             using var connection = _dbConnectionFactory.CreateConnection();
-            connection.Open();
+            await connection.OpenAsync();
 
+            string query = @"
+                            SELECT Id 
+                            FROM UserAccount
+                            WHERE Name LIKE '%' || @search || '%'
+                            OR Email LIKE '%' || @search || '%'
+                            OR PhoneNumber LIKE '%' || @search || '%'";
 
-            string getIdWithNameQuery = @"SELECT id FROM UserAccount WHERE Name = @name";
+            using var command = new SqliteCommand(query, connection);
+            command.Parameters.AddWithValue("@search", nameOrEmailOrPhone);
 
-            using var getIdWithNameQueryCommand = new SqliteCommand(getIdWithNameQuery, connection);
-            getIdWithNameQueryCommand.Parameters.AddWithValue("@name", nameOrEmailOrPhone);
+            using var reader = await command.ExecuteReaderAsync();
 
-            result = await getIdWithNameQueryCommand.ExecuteScalarAsync();
-
-            if (result != null)
+            while (await reader.ReadAsync())
             {
-                return Convert.ToInt32(result);
+                ids.Add(reader.GetInt32(0));
             }
 
-            string getIdWithEmailQuery = @"SELECT id FROM UserAccount WHERE Email = @email";
-
-            using var getIdWithEmailQueryCommand = new SqliteCommand(getIdWithEmailQuery, connection);
-            getIdWithEmailQueryCommand.Parameters.AddWithValue("@email", nameOrEmailOrPhone);
-
-            result = await getIdWithEmailQueryCommand.ExecuteScalarAsync();
-
-            if (result != null)
-            {
-                return Convert.ToInt32(result);
-            }
-
-            string getIdWithPhoneQuery = @"SELECT id FROM UserAccount WHERE PhoneNumber = @phone";
-
-            using var getIdWithPhoneQueryCommand = new SqliteCommand(getIdWithPhoneQuery, connection);
-            getIdWithEmailQueryCommand.Parameters.AddWithValue("@phone", nameOrEmailOrPhone);
-
-            result = await getIdWithEmailQueryCommand.ExecuteScalarAsync();
-
-            if (result != null)
-            {
-                return Convert.ToInt32(result);
-            }
-            return null;
-
+            return ids;
         }
 
         public async Task<bool> UpdateEmailById(int id, string email)

@@ -12,11 +12,13 @@ namespace CSIT_314_Group.Entity
         public double AmtRequested { get; private set; }
         public double AmtDonated { get; private set; }
         public int AmtOfViews { get; private set; }
-        public Fundraiser(string name, string description, DateTime deadline, double amtRequested)
+        public int? FraCategoryId { get; private set; }
+        public Fundraiser(string name, string description, DateTime deadline,int? fraCategoryId, double amtRequested)
         {
             Name = name;
             Description = description;
             Deadline = deadline;
+            FraCategoryId = fraCategoryId;
             AmtRequested = amtRequested;
             AmtDonated = 0;
             AmtOfViews = 0;

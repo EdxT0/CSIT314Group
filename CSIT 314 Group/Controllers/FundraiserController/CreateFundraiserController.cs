@@ -13,19 +13,21 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
     public class CreateFundraiserController : ControllerBase
     {
         private readonly FundraiserActivityRepository _fundraiserActivityRepository;
-        private readonly UserFundraiserRepository _userFundraiserRepo;
-        public CreateFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
+        private readonly UserFundraiserRepository _userFundraiserRepository;
+        private readonly CategoryRepository _categoryRepository;
+        public CreateFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, CategoryRepository categoryRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
-            _userFundraiserRepo = userFundraiserRepo;
+            _userFundraiserRepository = userFundraiserRepo;
+            _categoryRepository = categoryRepository;
         }
 
-        [Authorize(Roles = "fundraiser manager")]
+        [Authorize(Roles = "fundraiser manager, admin")]
         [HttpPost]
         public async Task<IActionResult> CreateFundraiser([FromBody] CreateFundraiserDTO createFundraiserDTO)
         {
 
-            if (!DateTime.TryParseExact(createFundraiserDTO.Deadline,
+            if (!DateTime.TryParseExact(createFundraiserDTO.deadline,
                                         "dd-MM-yyyy",
                                         null,
                                         System.Globalization.DateTimeStyles.None,
@@ -33,27 +35,37 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
             {
                 return BadRequest("Deadline must be in dd-MM-yyyy format");
             }
-            var result = await _fundraiserActivityRepository.GetByName(createFundraiserDTO.Name.ToLower());
+
+            if(createFundraiserDTO.fraCategoryId == null)
+            {
+                return BadRequest("Fundraiser Category cannot be empty! Please select existing Categories!");
+            }
+            if (await _categoryRepository.GetById(createFundraiserDTO.fraCategoryId) == null)
+            {
+                return BadRequest("no such fundraiser category");
+            }
+            var result = await _fundraiserActivityRepository.GetByName(createFundraiserDTO.name.ToLower());
 
             if (result == null)
             {
-                var fundraiser = new Fundraiser(createFundraiserDTO.Name.ToLower(),
-                                                createFundraiserDTO.Description,
+                var fundraiser = new Fundraiser(createFundraiserDTO.name.ToLower(),
+                                                createFundraiserDTO.description,
                                                 parsedDeadline,
+                                                createFundraiserDTO.fraCategoryId,
                                                 createFundraiserDTO.amtRequested);
 
                 int? fraId = await _fundraiserActivityRepository.createFundraiser(fundraiser);
                 if (fraId != null)
                 {
                     int userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                    if (await _userFundraiserRepo.AddFRAToUser(userId, fraId))
+                    if (await _userFundraiserRepository.AddFRAToUser(userId, fraId))
                     {
                         return Ok($"Created {fundraiser.Name} Fundraiser");
                     }
                 }
                 return StatusCode(500, "Failed to create fundraiser");
             }
-            return Conflict($"Fundraiser with the same name ( {createFundraiserDTO.Name} )exists already");
+            return Conflict($"Fundraiser with the same name ( {createFundraiserDTO.name} )exists already");
         }
     }
 }
