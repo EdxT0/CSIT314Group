@@ -14,16 +14,20 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             _userAccountRepository = userAccountRepository;
         }
         [HttpPost]
-        public async Task<IActionResult> Search([FromBody] SearchUserAccountDTO searchUserAccountDTO)
+        public async Task<IActionResult> Search([FromQuery] string query)
         {
-            object? result = await _userAccountRepository.GetIdWithNameOrEmailOrPhone(searchUserAccountDTO.NameOrEmailOrPhone.ToLower());
-            if(result == null)
+            List<int> userIds = new List<int>();
+            userIds = await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(query);
+            if(userIds.Count == 0 )
             {
                 return NotFound("User not found");
             }
-            UserAccountDTO user = await _userAccountRepository.GetById(Convert.ToInt32(result));
-
-            return Ok(user);
+            List<UserAccountDTO> users = new List<UserAccountDTO>();
+            for(int i = 0; i < userIds.Count; i++)
+            {
+                users.Add(await _userAccountRepository.GetById(userIds[i]));
+            }           
+            return Ok(users);
         }
     }
 }

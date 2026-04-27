@@ -14,7 +14,7 @@ public class CategoryRepository
             _dbConnectionFactory = dbConnectionFactory;
         }
 
-        public async Task<ViewCategoryDTO?> GetById(int id)
+        public async Task<ViewCategoryDTO?> GetById(int? id)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();

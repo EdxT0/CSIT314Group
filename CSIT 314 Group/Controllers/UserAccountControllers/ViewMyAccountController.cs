@@ -1,38 +1,38 @@
 ﻿using CSIT_314_Group.Data;
 using CSIT_314_Group.DTO.UserAccountDTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Security.Claims;
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class ViewUserAccountController : ControllerBase
+    [Route("api/[controller]")]
+    public class ViewMyAccountController : ControllerBase
     {
+
         private readonly UserAccountRepository _userAccountRepository;
 
-        public ViewUserAccountController(UserAccountRepository userAccountRepository)
+        public ViewMyAccountController(UserAccountRepository userAccountRepository)
         {
             _userAccountRepository = userAccountRepository;
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ViewUserAccount([FromQuery]int userId)
+        public async Task<IActionResult> ViewMyAccount()
         {
+            var user = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if( user == null)
+            {
+                return Unauthorized();
+            }
             
-
+            int userId = Convert.ToInt32(user);
 
             UserAccountDTO userDTO = await _userAccountRepository.GetById(userId);
-            if(userDTO != null)
-            {
-                return Ok(userDTO);
-            }
-            return BadRequest("couldnt find user");
+
+            return Ok(userDTO);
         }
     }
 }
-
