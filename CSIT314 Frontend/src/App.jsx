@@ -14,8 +14,8 @@ function RoleRouter() {
   const routes = {
     admin: "/admin",
     donee: "/donee",
-    fundraiser: "/fundraiser",
-    platform_manager: "/platform",
+    "fundraiser manager": "/fundraiser",
+    "platform manager": "/platform",
   };
 
   return <Navigate to={routes[user.role] ?? "/login"} replace />;
@@ -42,13 +42,13 @@ export default function App() {
           } />
 
           <Route path="/fundraiser" element={
-            <ProtectedRoute allowedRoles={["fundraiser"]}>
+            <ProtectedRoute allowedRoles={["fundraiser manager"]}>
               <FundraiserPage />
             </ProtectedRoute>
           } />
 
           <Route path="/platform" element={
-            <ProtectedRoute allowedRoles={["platform_manager"]}>
+            <ProtectedRoute allowedRoles={["platform manager"]}>
               <PlatformManagerPage />
             </ProtectedRoute>
           } />

@@ -66,11 +66,10 @@ namespace CSIT_314_Group
             }
 
             // app.UseHttpsRedirection();
-
+            app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors("AllowFrontend");
             app.MapControllers();
 
             app.Run();

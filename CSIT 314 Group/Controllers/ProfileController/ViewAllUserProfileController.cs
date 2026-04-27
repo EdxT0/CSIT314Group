@@ -15,15 +15,15 @@ public class ViewAllUserProfileController : ControllerBase
     {
         _userProfileRepository = userProfileRepository;
     }
-    
-    [Authorize(Roles ="admin")]
+
+    [Authorize(Roles = "admin")]
     [HttpGet]
     public async Task<IActionResult> ViewAllUserProfiles()
     {
         var profiles = await _userProfileRepository.ViewAllUserProfiles();
-        if (profiles.Count == 0) 
+        if (profiles.Count == 0)
             return NotFound("User Profile not found");
-        
+
         return Ok(profiles);
     }
 }

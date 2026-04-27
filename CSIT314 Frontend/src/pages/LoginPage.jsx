@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate("/"); // RoleRouter will redirect to the right dashboard
+      navigate("/"); 
     } catch (err) {
       setError(err.message);
     }
@@ -28,20 +29,22 @@ export default function LoginPage() {
 
         {error && <div className="login-error">{error}</div>}
 
-        <div className="login-field">
-          <label>Email address</label>
-          <input type="email" placeholder="you@example.com"
-            value={email} onChange={e => setEmail(e.target.value)} />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="login-field">
+            <label>Email address</label>
+            <input type="email" placeholder="you@example.com"
+              value={email} onChange={e => setEmail(e.target.value)} />
+          </div>
 
-        <div className="login-field">
-          <label>Password</label>
-          <input type="password" placeholder="••••••••"
-            value={password} onChange={e => setPassword(e.target.value)} />
-          {/* <a className="login-forgot" href="#">Forgot password?</a> */}
-        </div>
+          <div className="login-field">
+            <label>Password</label>
+            <input type="password" placeholder="••••••••"
+              value={password} onChange={e => setPassword(e.target.value)} />
+            {/* <a className="login-forgot" href="#">Forgot password?</a> */}
+          </div>
 
-        <button className="login-btn" onClick={handleSubmit}>Sign in</button>
+          <button type="submit" className="login-btn">Sign in</button>
+        </form>
 
       </div>
     </div>
