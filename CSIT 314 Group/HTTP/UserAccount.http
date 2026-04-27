@@ -38,16 +38,14 @@ Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oQjeNUh5PNnRl85b-_3223ojQR
 ###
 GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount
 Content-Type : application/json
-Cookie:
+
 
 ###
 
-POST {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount
+POST {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount?query=ab
 Content-Type : application/json
 Accept : application/json
-{
-  "NameOrEmailOrPhone" : "zhang yue"
-}
+
 
 ###
 
@@ -85,6 +83,11 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6psGJ74GNlHmSJQEcRR8XPf0sVtc
 ###
 
 
+GET {{CSIT_314_Group_HostAddress}}/api/ViewUserAccount?userId=4
+Content-Type : application/json
+Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6pPowVubAT5Coaq-BfEjV_LYWKNQts3Z1MVv-QHkg2Ck45ZuJN1xnK7sg3hm_wDBaG2X-cXxYMNQzoC-gHdHTXwZ84GwQi32QWF_w3E_epMfFMvvrmtGTyGgZiOu0_DYUUzpuavtHE5bqqgnwSckYlWcoF35NBsxhqLmfiI7AA_TcptZOHMbK29JxTDb4uwu8nsYs4tTqyLqz4VyzCteA4ChvlYUxa5KySZCg3T60ChyM54GSrnJSpgG1WPUiOtDsjDj4gHAOxQN-Nr6Ip0RBjLrqoo2CA28qSudcCG_tbOSrDHvcvvcA1cH9AYP4Mod9UbSvAMqOgLSKJqy7S8TP0h7vhAOKvCBNvcKq2Kw-X3998v9o6ak7vk1eDYR3gJ92R4WmpGaCiDWjeJzs6pEDITPFeIgRX_dbO4sSa-n-IslnbNK8d5juzgl7JJx7GbwhZLCL-g5NlwXAciYjRAtiO7NhxWSyAYmJ2AAgvvLh4fLO8Np6Q8z_FXxdRfwcDZXmzYjKPwG9JIfuMTdeTEvpoMyyVtD2ipcoaf-P385ghGnufPJHev4tPHTV66rT0fG_IerNdytih6o-Qr2Fh3da9_ewXJYa1mkrEut3E9R77SsQ
+
+###
 POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
 Content-Type: application/json
 Accept: application/json

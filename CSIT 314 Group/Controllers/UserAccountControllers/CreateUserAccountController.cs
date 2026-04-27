@@ -31,7 +31,17 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             int? ProfileId = await _userProfileRepository.getIdWithProfileName(profileInputLowerCase);
             if (ProfileId == null)
             {
-                return BadRequest($"Invalid Profile {createUserRequest.ProfileName}");
+                return BadRequest($"Invalid Profile {createUserRequest.ProfileName}"); 
+            }
+            if((await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.Email)).Count != 0)
+            {
+                return Conflict("email already exist");
+            }
+
+            if ( (await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.PhoneNumber)).Count != 0 )
+
+            {
+                return Conflict("email already exist");
             }
             var hasher = new PasswordHasher<UserAccount>();
 
