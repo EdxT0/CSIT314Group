@@ -23,11 +23,11 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
         </div>
         <div className="metric">
           <div className="metric-label">Active</div>
-          <div className="metric-val">{filtered.filter(p => p.status == 1).length}</div>
+          <div className="metric-val">{filtered.filter(p => p.status == 0).length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Suspended</div>
-          <div className="metric-val">{filtered.filter(p => p.status == 0).length}</div>
+          <div className="metric-val">{filtered.filter(p => p.status == 1).length}</div>
         </div>
       </div>
 
@@ -47,16 +47,16 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
                 <td>{p.profileName}</td>
                 <td>{p.description}</td>
                 <td>
-                  <span className={`badge ${p.status == 1 ? "badge-active" : "badge-suspended"}`}>
-                    {p.status == 1 ? "Active" : "Suspended"}
+                  <span className={`badge ${p.status == 0 ? "badge-active" : "badge-suspended"}`}>
+                    {p.status == 0 ? "Active" : "Suspended"}
                   </span>
                 </td>
                 <td>  {/* ← actions in their own column */}
                   <button className="action-btn" onClick={() => onEdit(p)}>Edit</button>
                   <button
                     className={`action-btn ${p.status == 1 ? "danger" : ""}`}
-                    onClick={() => onSuspend(p.id, p.status == 1 ? "Suspended" : "Active")}>
-                    {p.status == 1 ? "Suspend" : "Unsuspend"}
+                    onClick={() => onSuspend(p.id, p.status == 0)}>
+                    {p.status == 0 ? "Suspend" : "Unsuspend"}
                   </button>
                 </td>
               </tr>
