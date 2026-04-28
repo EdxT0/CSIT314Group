@@ -338,7 +338,9 @@ public class UserProfileRepository
                 Id = Convert.ToInt32(reader["Id"]),
                 ProfileName = reader["ProfileName"].ToString() ?? "",
                 Description = reader["Description"].ToString() ?? "",
-                Status = reader["Status"].ToString() ?? ""
+                //Status = reader["Status"].ToString() ?? ""
+                //With the above line, dotnet run couldn't run
+                Status = Convert.ToBoolean(reader["Status"])
             });
         }
 
