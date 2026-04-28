@@ -42,7 +42,7 @@ Content-Type : application/json
 
 ###
 
-POST {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount?query=ab
+POST {{CSIT_314_Group_HostAddress}}/api/SearchUserAccount?query=donee
 Content-Type : application/json
 Accept : application/json
 
@@ -91,7 +91,6 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6pPowVubAT5Coaq-BfEjV_LYWKNQ
 POST {{CSIT_314_Group_HostAddress}}/api/CreateUserAccount
 Content-Type: application/json
 Accept: application/json
-
 {
   "Name": "admin01",
   "Email": "admin01@example.com",

@@ -23,7 +23,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             _userProfileRepository = userProfileRepository;
         }
 
-        //[Authorize(Roles ="admin")]
+        [Authorize(Roles ="admin")]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO createUserRequest)
         {

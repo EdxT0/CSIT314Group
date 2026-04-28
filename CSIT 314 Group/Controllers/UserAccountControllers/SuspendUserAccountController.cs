@@ -25,7 +25,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             {
                 return NotFound("User dont exist");
             }
-            int userId = Convert.ToInt32(userIdResult);
+            int userId = Convert.ToInt32(userIdResult[0]);
             var isSuspended = await _userAccountRepository.GetSuspendStatusWithId(userId);
             if (Convert.ToBoolean(isSuspended) == true && suspendUserDTO.SuspendUser == true)
             {

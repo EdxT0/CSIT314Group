@@ -26,7 +26,7 @@ namespace CSIT_314_Group.Controllers.Auth
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            Console.WriteLine($"Login attempt: {loginDto.Email}");
+            //Console.WriteLine($"Login attempt: {loginDto.Email}");
 
             var user = await _userAccountRepository.GetByEmail(loginDto.Email.ToLower());
             Console.WriteLine($"User found: {user != null}");
@@ -81,6 +81,7 @@ namespace CSIT_314_Group.Controllers.Auth
                 }
             });
         }
+
         [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
         {
