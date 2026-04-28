@@ -61,7 +61,7 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
                   <button className="action-btn" onClick={() => onEdit(acc)}>Edit</button>
                   <button
                     className={`action-btn ${!acc.isSuspended ? "danger" : ""}`}
-                    onClick={() => onSuspend(acc.email, !acc.isSuspended)}>
+                    onClick={() => onSuspend(acc.id, !acc.isSuspended)}>
                     {acc.isSuspended ? "Unsuspend" : "Suspend"}
                   </button>
                 </td>

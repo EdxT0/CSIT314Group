@@ -51,7 +51,7 @@ export default function AdminPage() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ email, suspendUser: suspend }),
+      body: JSON.stringify({ userId: id, suspendUser: suspend }),
     });
     if (!res.ok) { setError(await res.text()); return; }
     fetchAccounts();
