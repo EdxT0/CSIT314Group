@@ -2,7 +2,7 @@
 {
     public class SuspendUserDTO
     {
-        public string Email { get; set; } = "";
+        public int userId { get; set; }
         public bool SuspendUser { get; set; }
     }
 }
