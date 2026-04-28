@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function EditProfileForm({ profile, onSuccess, onCancel }) {
   const [form, setForm] = useState({
+    id: profile.id,
     profileName: profile.profileName,
     description: profile.description,
   });
