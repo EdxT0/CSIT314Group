@@ -41,7 +41,6 @@ export default function AdminPage() {
     });
     if (!res.ok) return;
     const data = await res.json();
-    console.log("Profile data:", data); //remove after testing
     setProfiles(data);
   };
 
@@ -63,7 +62,7 @@ export default function AdminPage() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ id, isSuspend }),
+      body: JSON.stringify({ userId, isSuspend }),
     });
     if (!res.ok) { setError(await res.text()); return; }
     fetchProfiles();
