@@ -26,18 +26,18 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
                 return BadRequest("User Not Found");
             }
             var isSuspended = await _userAccountRepository.GetSuspendStatusWithId(suspendUserDTO.userId);
-            if (Convert.ToBoolean(isSuspended) == true && suspendUserDTO.SuspendUser == true)
+            if (isSuspended == true && suspendUserDTO.SuspendUser == true)
             {
                 return Conflict($"User already suspended");
-            }else if (Convert.ToBoolean(isSuspended) == false && suspendUserDTO.SuspendUser == false)
+            }else if (isSuspended == true == false && suspendUserDTO.SuspendUser == false)
             {
                 return Conflict($"User already unsuspended");
             }
             var boolResult = await _userAccountRepository.SuspendUserWithId(suspendUserDTO.userId, suspendUserDTO.SuspendUser);
-            if (Convert.ToBoolean(boolResult) && suspendUserDTO.SuspendUser == true)
+            if (boolResult && suspendUserDTO.SuspendUser == true)
             {
                 return Ok("User suspended");
-            }else if (Convert.ToBoolean(boolResult) && suspendUserDTO.SuspendUser == false)
+            }else if (boolResult && suspendUserDTO.SuspendUser == false)
             {
                 return Ok("User unsuspended");
             }
