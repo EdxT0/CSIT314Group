@@ -45,18 +45,18 @@ export default function AdminPage() {
     setProfiles(data);
   };
 
-  const handleSuspendAccount = async (email, suspend) => {
+  const handleSuspendAccount = async (id, suspend) => {
     setError("");
     const res = await fetch("/api/SuspendUserAccount", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ userId: id, suspendUser: suspend }),
+      body: JSON.stringify({ userId: id, SuspendUser: suspend }),
     });
     if (!res.ok) { setError(await res.text()); return; }
     fetchAccounts();
   };
-  // Changed to send { id, isSuspend }
+  
   const handleSuspendProfile = async (id, isSuspend) => {
     setError("");
     const res = await fetch("/api/SuspendUserProfile", {
