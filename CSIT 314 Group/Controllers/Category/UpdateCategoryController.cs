@@ -18,7 +18,7 @@ namespace CSIT_314_Group.Controllers.Category
             _categoryRepository = categoryRepository;
         }
 
-        [Authorize(Roles = "platform manager, admin")]
+        [Authorize(Roles = "platform manager")]
         [HttpPut]
         public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryDTO updateCategoryDto)
         {

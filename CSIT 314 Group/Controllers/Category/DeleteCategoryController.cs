@@ -15,7 +15,7 @@ namespace CSIT_314_Group.Controllers.Category
             _categoryRepository = categoryRepository;
         }
 
-        [Authorize(Roles = "platform manager, admin")]
+        [Authorize(Roles = "platform manager")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
