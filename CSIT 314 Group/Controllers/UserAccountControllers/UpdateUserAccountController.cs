@@ -12,10 +12,10 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     [Route("api/[controller]")]
     public class UpdateUserAccountController : ControllerBase
     {
-        private readonly Data.UserAccount _userAccountRepository;
-        private readonly Data.UserProfile _userProfileRepository;
+        private readonly UserAccount _userAccountRepository;
+        private readonly UserProfile _userProfileRepository;
         private readonly PasswordHasher<UserAccount> _passwordHasher;
-        public UpdateUserAccountController(Data.UserAccount userAccountRepository, Data.UserProfile userProfileRepository, PasswordHasher<UserAccount> passwordHasher)
+        public UpdateUserAccountController(UserAccount userAccountRepository, UserProfile userProfileRepository, PasswordHasher<UserAccount> passwordHasher)
         {
             _userAccountRepository = userAccountRepository;
             _userProfileRepository = userProfileRepository;

@@ -12,7 +12,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     [ApiController]
     public class ViewUserAccountController : ControllerBase
     {
-        private readonly Data.UserAccount _userAccountRepository;
+        private readonly UserAccount _userAccountRepository;
 
         public ViewUserAccountController(Data.UserAccount userAccountRepository)
         {
@@ -23,8 +23,6 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
         [HttpGet]
         public async Task<IActionResult> ViewUserAccount([FromQuery]int userId)
         {
-            
-
 
             UserAccountDTO userDTO = await _userAccountRepository.GetById(userId);
             if(userDTO != null)

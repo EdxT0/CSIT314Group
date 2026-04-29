@@ -9,9 +9,9 @@ namespace CSIT_314_Group.Controllers.CategoryController
     [ApiController]
     public class CreateCategoryController : ControllerBase
     {
-        private readonly Data.Category _categoryRepository;
+        private readonly Category _categoryRepository;
 
-        public CreateCategoryController(Data.Category categoryRepository)
+        public CreateCategoryController(Category categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }

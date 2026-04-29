@@ -1,5 +1,4 @@
-﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserAccountDTO;
+﻿using CSIT_314_Group.DTO.UserAccountDTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
@@ -22,11 +21,13 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             {
                 return NotFound("User not found");
             }
+
             List<UserAccountDTO> users = new List<UserAccountDTO>();
             for(int i = 0; i < userIds.Count; i++)
             {
                 users.Add(await _userAccountRepository.GetById(userIds[i]));
-            }           
+            }   
+            
             return Ok(users);
         }
     }
