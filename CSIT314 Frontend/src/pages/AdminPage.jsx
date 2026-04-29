@@ -62,7 +62,11 @@ export default function AdminPage() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
+<<<<<<< HEAD
       body: JSON.stringify({ Id, isSuspend }),
+=======
+      body: JSON.stringify({ userId, isSuspend }),
+>>>>>>> dafa3f2 (FRA)
     });
     if (!res.ok) { setError(await res.text()); return; }
     fetchProfiles();
