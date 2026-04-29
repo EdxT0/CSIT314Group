@@ -25,28 +25,3 @@ export default function FundraiserPage() {
     </div>
   );
 }
-/*        public int Id { get; set; }
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public string Deadline { get; private set; }
-        public bool Status { get; private set; }
-        public double AmtRequested { get; private set; }
-        public double AmtDonated { get; private set; }
-        public int AmtOfViews { get; private set; }
-
-        public string FraCategoryName { get; private set; } */
-
-const styles = {
-  page: {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f9fafb",
-  },
-  heading: {
-    fontSize: "32px",
-    fontWeight: "bold",
-    color: "black",
-  },
-};
