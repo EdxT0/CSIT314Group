@@ -7,7 +7,7 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UpdateUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
+public class UpdateUserProfileController(UserProfile userProfileRepository) : ControllerBase
 {
     [Authorize(Roles ="admin")]
     [HttpPut]

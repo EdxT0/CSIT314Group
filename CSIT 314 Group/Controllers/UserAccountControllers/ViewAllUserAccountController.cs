@@ -10,8 +10,8 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     [ApiController]
     public class ViewAllUserAccountController : ControllerBase
     {
-        private readonly UserAccountRepository _userAccountRepo;
-        public ViewAllUserAccountController(UserAccountRepository userAccountRepo)
+        private readonly Data.UserAccount _userAccountRepo;
+        public ViewAllUserAccountController(Data.UserAccount userAccountRepo)
         {
             _userAccountRepo = userAccountRepo;
         }

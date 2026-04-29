@@ -10,10 +10,10 @@ namespace CSIT_314_Group.Controllers.FundraiserController
     [ApiController]
     public class ViewOneFundraiserController : ControllerBase
     {
-        private readonly FundraiserActivityRepository _fundraiserActivityRepository;
+        private readonly Data.FundraiserActivity _fundraiserActivityRepository;
         private readonly UserFundraiserRepository _userFundraiserRepo;
 
-        public ViewOneFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
+        public ViewOneFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepo = userFundraiserRepo;

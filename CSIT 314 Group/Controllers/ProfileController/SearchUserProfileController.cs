@@ -6,7 +6,7 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SearchUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
+public class SearchUserProfileController(UserProfile userProfileRepository) : ControllerBase
 {
     [Authorize(Roles ="admin")]
     [HttpGet]

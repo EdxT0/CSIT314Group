@@ -2,15 +2,15 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSIT_314_Group.Controllers.FundraiserActivity
+namespace CSIT_314_Group.Controllers.FundraiserController
 {
 
     [Route("api/[controller]")]
     [ApiController]
     public class ViewAllFundraiserController : ControllerBase
     {
-        private readonly FundraiserActivityRepository _fundraiserActivityRepository;
-        public ViewAllFundraiserController(FundraiserActivityRepository fundraiserActivityRepository)
+        private readonly Data.FundraiserActivity _fundraiserActivityRepository;
+        public ViewAllFundraiserController(Data.FundraiserActivity fundraiserActivityRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
         }

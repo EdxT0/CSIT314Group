@@ -1,21 +1,20 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.Entity;
 using CSIT_314_Group.DTO.FundraiserActivityDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace CSIT_314_Group.Controllers.FundraiserActivity
+namespace CSIT_314_Group.Controllers.FundraiserController
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CreateFundraiserController : ControllerBase
     {
-        private readonly FundraiserActivityRepository _fundraiserActivityRepository;
+        private readonly FundraiserActivity _fundraiserActivityRepository;
         private readonly UserFundraiserRepository _userFundraiserRepository;
-        private readonly CategoryRepository _categoryRepository;
-        public CreateFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, CategoryRepository categoryRepository)
+        private readonly Data.Category _categoryRepository;
+        public CreateFundraiserController(FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, Category categoryRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepository = userFundraiserRepo;
@@ -48,7 +47,7 @@ namespace CSIT_314_Group.Controllers.FundraiserActivity
 
             if (result == null)
             {
-                var fundraiser = new Fundraiser(createFundraiserDTO.name.ToLower(),
+                var fundraiser = new FundraiserActivity(createFundraiserDTO.name.ToLower(),
                                                 createFundraiserDTO.description,
                                                 parsedDeadline,
                                                 createFundraiserDTO.fraCategoryId,

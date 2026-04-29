@@ -1,18 +1,66 @@
 ﻿using CSIT_314_Group.DTO.FundraiserActivityDTO;
-using CSIT_314_Group.Entity;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 
 namespace CSIT_314_Group.Data
 {
-    public class FundraiserActivityRepository
+    public class FundraiserActivity
     {
         private readonly DbConnectionFactory _dbConnectionFactory;
-
-        public FundraiserActivityRepository(DbConnectionFactory dbConnectionFactory)
+        public int Id { get; set; }
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+        public DateTime Deadline { get; private set; }
+        public bool Status { get; private set; }
+        public double AmtRequested { get; private set; }
+        public double AmtDonated { get; private set; }
+        public int AmtOfViews { get; private set; }
+        public int? FraCategoryId { get; private set; }
+        public FundraiserActivity(string name, string description, DateTime deadline, int? fraCategoryId, double amtRequested)
+        {
+            Name = name;
+            Description = description;
+            Deadline = deadline;
+            FraCategoryId = fraCategoryId;
+            AmtRequested = amtRequested;
+            AmtDonated = 0;
+            AmtOfViews = 0;
+            Status = false;
+        }
+        public FundraiserActivity(int id, string name, string description, DateTime deadline, double amtRequested, double amtDonated, int amtOfViews, bool status)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            Deadline = deadline;
+            AmtRequested = amtRequested;
+            AmtDonated = amtDonated;
+            AmtOfViews = amtOfViews;
+            Status = status;
+        }
+        
+    
+        public FundraiserActivity(DbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
+        }
+        public void AddDonation(double amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Donation must be more than 0.");
+
+            AmtDonated += amount;
+        }
+
+        public void IncrementViews()
+        {
+            AmtOfViews++;
+        }
+
+        public void CloseFundraiser()
+        {
+            Status = false;
         }
 
         public async Task<double?> getAmtDonated(int fraId)
@@ -364,7 +412,7 @@ namespace CSIT_314_Group.Data
             return null;
         }
 
-        public async Task<int?> createFundraiser(Fundraiser fundraiser)
+        public async Task<int?> createFundraiser(FundraiserActivity fundraiser)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();

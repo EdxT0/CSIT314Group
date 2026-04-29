@@ -1,18 +1,17 @@
 using CSIT_314_Group.Data;
 using CSIT_314_Group.DTO.CategoryDTO;
-using CategoryEntity = CSIT_314_Group.Entity.Category;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSIT_314_Group.Controllers.Category
+namespace CSIT_314_Group.Controllers.CategoryController
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CreateCategoryController : ControllerBase
     {
-        private readonly CategoryRepository _categoryRepository;
+        private readonly Data.Category _categoryRepository;
 
-        public CreateCategoryController(CategoryRepository categoryRepository)
+        public CreateCategoryController(Data.Category categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
@@ -28,7 +27,7 @@ namespace CSIT_314_Group.Controllers.Category
                 return Conflict($"Category with name {createCategoryDto.Name} already exists");
             }
 
-            var category = new CategoryEntity(
+            var category = new Category(
                 createCategoryDto.Name.ToLower(),
                 createCategoryDto.Description
             );

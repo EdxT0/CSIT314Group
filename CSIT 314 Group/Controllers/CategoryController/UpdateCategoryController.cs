@@ -1,19 +1,18 @@
 using CSIT_314_Group.Data;
 using CSIT_314_Group.DTO.CategoryDTO;
-using CSIT_314_Group.Entity;
-using CategoryEntity = CSIT_314_Group.Entity.Category;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSIT_314_Group.Controllers.Category
+namespace CSIT_314_Group.Controllers.CategoryController
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UpdateCategoryController : ControllerBase
     {
-        private readonly CategoryRepository _categoryRepository;
+        private readonly Data.Category _categoryRepository;
 
-        public UpdateCategoryController(CategoryRepository categoryRepository)
+        public UpdateCategoryController(Data.Category categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
@@ -29,7 +28,7 @@ namespace CSIT_314_Group.Controllers.Category
                 return NotFound("Category not found");
             }
 
-            var category = new CategoryEntity(
+            var category = new Category(
                 updateCategoryDto.Name.ToLower(),
                 updateCategoryDto.Description
             );

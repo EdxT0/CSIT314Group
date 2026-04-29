@@ -7,7 +7,7 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SuspendUserProfileController(UserProfileRepository userProfileRepository) : ControllerBase
+public class SuspendUserProfileController(UserProfile userProfileRepository) : ControllerBase
 {
     [Authorize(Roles ="admin")]
     [HttpPut]

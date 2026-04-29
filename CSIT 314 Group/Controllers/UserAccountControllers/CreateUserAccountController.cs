@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.Entity;
 using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +12,11 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     [Route("api/[controller]")]
     public class CreateUserAccountController : ControllerBase
     {
-        private readonly UserAccountRepository _userAccountRepository;
-        private readonly UserProfileRepository _userProfileRepository;
+        private readonly Data.UserAccount _userAccountRepository;
+        private readonly Data.UserProfile _userProfileRepository;
 
 
-        public CreateUserAccountController(UserAccountRepository userAccountRepository, UserProfileRepository userProfileRepository)
+        public CreateUserAccountController(Data.UserAccount userAccountRepository, Data.UserProfile userProfileRepository)
         {
             _userAccountRepository = userAccountRepository;
             _userProfileRepository = userProfileRepository;

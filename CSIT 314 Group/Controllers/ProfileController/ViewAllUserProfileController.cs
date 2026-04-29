@@ -9,9 +9,9 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 
 public class ViewAllUserProfileController : ControllerBase
 {
-    private readonly UserProfileRepository _userProfileRepository;
+    private readonly UserProfile _userProfileRepository;
 
-    public ViewAllUserProfileController(UserProfileRepository userProfileRepository)
+    public ViewAllUserProfileController(UserProfile userProfileRepository)
     {
         _userProfileRepository = userProfileRepository;
     }

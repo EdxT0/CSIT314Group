@@ -8,8 +8,8 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     [Route("api/[controller]")]
     public class SearchUserAccountController : ControllerBase
     {
-        private readonly UserAccountRepository _userAccountRepository;
-        public SearchUserAccountController(UserAccountRepository userAccountRepository)
+        private readonly Data.UserAccount _userAccountRepository;
+        public SearchUserAccountController(Data.UserAccount userAccountRepository)
         {
             _userAccountRepository = userAccountRepository;
         }

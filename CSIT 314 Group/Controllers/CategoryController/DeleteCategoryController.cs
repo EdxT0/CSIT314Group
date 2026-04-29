@@ -2,15 +2,15 @@ using CSIT_314_Group.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSIT_314_Group.Controllers.Category
+namespace CSIT_314_Group.Controllers.CategoryController
 {
     [Route("api/[controller]")]
     [ApiController]
     public class DeleteCategoryController : ControllerBase
     {
-        private readonly CategoryRepository _categoryRepository;
+        private readonly Data.Category _categoryRepository;
 
-        public DeleteCategoryController(CategoryRepository categoryRepository)
+        public DeleteCategoryController(Data.Category categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }

@@ -12,9 +12,9 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     [ApiController]
     public class ViewUserAccountController : ControllerBase
     {
-        private readonly UserAccountRepository _userAccountRepository;
+        private readonly Data.UserAccount _userAccountRepository;
 
-        public ViewUserAccountController(UserAccountRepository userAccountRepository)
+        public ViewUserAccountController(Data.UserAccount userAccountRepository)
         {
             _userAccountRepository = userAccountRepository;
         }

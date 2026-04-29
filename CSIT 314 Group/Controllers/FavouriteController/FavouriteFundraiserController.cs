@@ -12,9 +12,9 @@ namespace CSIT_314_Group.Controllers.FavouriteController
     public class FavouriteFundraiserController : ControllerBase
     {
         private readonly FavouriteRepository _favouriteRepository;
-        private readonly FundraiserActivityRepository _fundraiserActivity;
+        private readonly Data.FundraiserActivity _fundraiserActivity;
 
-        public FavouriteFundraiserController(FavouriteRepository favouriteRepository, FundraiserActivityRepository fundraiserActivity)
+        public FavouriteFundraiserController(FavouriteRepository favouriteRepository, Data.FundraiserActivity fundraiserActivity)
         {
             _favouriteRepository = favouriteRepository;
             _fundraiserActivity = fundraiserActivity;

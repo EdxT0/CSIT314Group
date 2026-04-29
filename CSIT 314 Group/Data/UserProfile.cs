@@ -1,16 +1,23 @@
 using CSIT_314_Group.DTO.UserProfileDTO;
-using CSIT_314_Group.Entity;
 using Microsoft.Data.Sqlite;
 
 namespace CSIT_314_Group.Data;
 
-public class UserProfileRepository
+public class UserProfile
 {
+    public int Id { get; set; }
+    public string ProfileName { get; set; }
+    public string Description { get; set; }
+    public bool Status { get; set; }
+
     private readonly DbConnectionFactory _dbConnectionFactory;
 
-    public UserProfileRepository(DbConnectionFactory factory)
+    public UserProfile(DbConnectionFactory factory)
     {
         _dbConnectionFactory = factory;
+    }
+    public UserProfile()
+    {
     }
 
     // Check if profile exist
@@ -194,7 +201,7 @@ public class UserProfileRepository
 
         while (await reader.ReadAsync())
         {
-            profiles.Add(new UserProfile
+            profiles.Add(new UserProfile()
             {
                 Id = Convert.ToInt32(reader["Id"]),
                 ProfileName = reader["ProfileName"].ToString() ?? "",

@@ -1,6 +1,5 @@
 using CSIT_314_Group.Data;
 using CSIT_314_Group.DTO.UserProfileDTO;
-using CSIT_314_Group.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -11,9 +10,9 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 
 public class CreateUserProfileController : ControllerBase
 {
-    private readonly UserProfileRepository _userProfileRepository;
+    private readonly Data.UserProfile _userProfileRepository;
 
-    public CreateUserProfileController(UserProfileRepository userProfileRepository)
+    public CreateUserProfileController(Data.UserProfile userProfileRepository)
     {
         _userProfileRepository = userProfileRepository;
     }

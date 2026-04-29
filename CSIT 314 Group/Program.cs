@@ -1,6 +1,4 @@
-using CSIT_314_Group.Authentication;
 using CSIT_314_Group.Data;
-using CSIT_314_Group.Entity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -40,12 +38,12 @@ namespace CSIT_314_Group
 
             builder.Services.AddSingleton<DbConnectionFactory>();
 
-            builder.Services.AddSingleton<UserProfileRepository>();
-            builder.Services.AddScoped<UserAccountRepository>();
-            builder.Services.AddScoped<FundraiserActivityRepository>();
+            builder.Services.AddSingleton<UserProfile>();
+            builder.Services.AddScoped<UserAccount>();
+            builder.Services.AddScoped<FundraiserActivity>();
             builder.Services.AddScoped<UserFundraiserRepository>();
             builder.Services.AddScoped<FundraiserDonationsRepository>();
-            builder.Services.AddScoped<CategoryRepository>();
+            builder.Services.AddScoped<Category>();
             builder.Services.AddScoped<FavouriteRepository>(); 
 
             builder.Services.AddScoped<DatabaseInitialiser>();

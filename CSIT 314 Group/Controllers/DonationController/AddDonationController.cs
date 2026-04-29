@@ -12,9 +12,9 @@ namespace CSIT_314_Group.Controllers.DonationController
     public class AddDonationController : ControllerBase
     {
         private readonly FundraiserDonationsRepository _fundraiserDonationsRepository;
-        private readonly FundraiserActivityRepository _fundraiserActivity;
+        private readonly Data.FundraiserActivity _fundraiserActivity;
 
-        public AddDonationController(FundraiserDonationsRepository fundraiserDonationsRepository, FundraiserActivityRepository fundraiserActivity)
+        public AddDonationController(FundraiserDonationsRepository fundraiserDonationsRepository, Data.FundraiserActivity fundraiserActivity)
         {
             _fundraiserDonationsRepository = fundraiserDonationsRepository;
             _fundraiserActivity = fundraiserActivity;

@@ -10,8 +10,8 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     [Route("api/[controller]")]
     public class SuspendUserAccountController : ControllerBase
     {
-        private readonly UserAccountRepository _userAccountRepository;
-        public SuspendUserAccountController(UserAccountRepository userAccountRepository)
+        private readonly UserAccount _userAccountRepository;
+        public SuspendUserAccountController(Data.UserAccount userAccountRepository)
         {
             _userAccountRepository = userAccountRepository;
         }

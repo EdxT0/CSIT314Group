@@ -6,17 +6,17 @@ using CSIT_314_Group.DTO.FundraiserActivityDTO;
 using System.Globalization;
 using System.Security.Claims;
 
-namespace CSIT_314_Group.Controllers.FundraiserActivity
+namespace CSIT_314_Group.Controllers.FundraiserController
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UpdateFundraiserController : ControllerBase
     {
 
-        private readonly FundraiserActivityRepository _fundraiserActivityRepository;
+        private readonly Data.FundraiserActivity _fundraiserActivityRepository;
         private readonly UserFundraiserRepository _userFundraiserRepository;
-        private readonly CategoryRepository _categoryRepository;
-        public UpdateFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, CategoryRepository categoryRepository)
+        private readonly Data.Category _categoryRepository;
+        public UpdateFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, Data.Category categoryRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepository = userFundraiserRepo;

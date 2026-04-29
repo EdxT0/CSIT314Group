@@ -5,16 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 using SQLitePCL;
 using System.Security.Claims;
 
-namespace CSIT_314_Group.Controllers.FundraiserActivity
+namespace CSIT_314_Group.Controllers.FundraiserController
 {
     [Route("api/[controller]")]
     [ApiController]
     public class DeleteFundraiserController : ControllerBase
     {
 
-        private readonly FundraiserActivityRepository _fundraiserActivityRepository;
+        private readonly Data.FundraiserActivity _fundraiserActivityRepository;
         private readonly UserFundraiserRepository _userFundraiserRepository;
-        public DeleteFundraiserController(FundraiserActivityRepository fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
+        public DeleteFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepository = userFundraiserRepo;

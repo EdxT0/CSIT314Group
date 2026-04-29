@@ -11,9 +11,9 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     public class ViewMyAccountController : ControllerBase
     {
 
-        private readonly UserAccountRepository _userAccountRepository;
+        private readonly Data.UserAccount _userAccountRepository;
 
-        public ViewMyAccountController(UserAccountRepository userAccountRepository)
+        public ViewMyAccountController(Data.UserAccount userAccountRepository)
         {
             _userAccountRepository = userAccountRepository;
         }
