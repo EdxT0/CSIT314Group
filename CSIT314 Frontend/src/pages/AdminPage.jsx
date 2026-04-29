@@ -41,11 +41,10 @@ export default function AdminPage() {
     });
     if (!res.ok) return;
     const data = await res.json();
-    console.log("Profile data:", data); //remove after testing
     setProfiles(data);
   };
 
-  const handleSuspendAccount = async (email, suspend) => {
+  const handleSuspendAccount = async (id, suspend) => {
     setError("");
     const res = await fetch("/api/SuspendUserAccount", {
       method: "PUT",
@@ -63,7 +62,7 @@ export default function AdminPage() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ id, isSuspend }),
+      body: JSON.stringify({ userId, isSuspend }),
     });
     if (!res.ok) { setError(await res.text()); return; }
     fetchProfiles();
