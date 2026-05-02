@@ -75,20 +75,7 @@ namespace CSIT_314_Group.Controllers.Auth
         }
 
         //Testing to see if refreshing keeps the user logged in
-        [HttpGet("Me")]
-        public IActionResult Me()
-        {
-            if (!User.Identity.IsAuthenticated)
-                return Unauthorized();
 
-            return Ok(new
-            {
-                id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                name = User.FindFirst(ClaimTypes.Name)?.Value,
-                email = User.FindFirst(ClaimTypes.Email)?.Value,
-                role = User.FindFirst(ClaimTypes.Role)?.Value,
-            });
-        }
 
         [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
