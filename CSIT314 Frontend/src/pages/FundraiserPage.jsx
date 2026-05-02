@@ -5,7 +5,7 @@ import FRATable from "../components/fundraiser/FRATable";
 import FRAPopup from "../components/fundraiser/FRAPopup";
 import CreateFRAForm from "../components/fundraiser/CreateFRAForm";
 import EditFRAForm from "../components/fundraiser/EditFRAForm";
-import "../styles/adminpage.css";    // reuse admin styles
+import "../styles/adminpage.css"; 
 import "../styles/fundraiserpage.css";
 
 export default function FundraiserPage() {
