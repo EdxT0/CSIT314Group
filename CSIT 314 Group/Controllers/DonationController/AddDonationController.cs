@@ -25,25 +25,25 @@ namespace CSIT_314_Group.Controllers.DonationController
         public async Task<IActionResult> AddDonation([FromBody] AddDonationDTO addDonationDTO)
         {
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
-            if(user == null)
+            if (user == null)
             {
                 return BadRequest("No log in detected");
             }
             int userId = Convert.ToInt32(user.Value);
             var FundraiserAmtRequested = await _fundraiserActivity.getAmtRequested(addDonationDTO.FraId);
-            if(FundraiserAmtRequested == null)
+            if (FundraiserAmtRequested == null)
             {
                 return BadRequest("Fundraiser not found");
             }
             double FundraiserAmtDonated = Convert.ToDouble(await _fundraiserActivity.getAmtDonated(addDonationDTO.FraId));
             double amtRequested = Convert.ToDouble(FundraiserAmtRequested);
-            if(!isDonationValid(FundraiserAmtDonated, amtRequested, addDonationDTO.AmtDonatedByUser))
+            if (!isDonationValid(FundraiserAmtDonated, amtRequested, addDonationDTO.AmtDonatedByUser))
             {
                 return BadRequest("user Donated amount is bigger than amount requested after adding current donated amount");
             }
             DateTime dateTimeNow = DateTime.Now;
             double newAmountDonated = FundraiserAmtDonated + addDonationDTO.AmtDonatedByUser;
-            
+
             bool updateToFundraiserDonationSuccess = await _fundraiserDonationsRepository.AddDonation(userId, addDonationDTO.FraId, addDonationDTO.AmtDonatedByUser, dateTimeNow);
             if (updateToFundraiserDonationSuccess)
             {
