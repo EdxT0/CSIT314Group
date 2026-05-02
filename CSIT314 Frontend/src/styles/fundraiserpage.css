@@ -1,0 +1,144 @@
+/* src/styles/fundraiserpage.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: #111318;
+}
+
+.fundraiser-wrap {
+  display: flex;
+  min-height: 100vh;
+  min-width: 800px;
+  background-color: #111318;
+  overflow-x: auto;
+}
+
+/* Reuse all admin sidebar, table, metric, form, badge styles */
+/* by importing adminpage.css or copying the shared classes */
+
+/* Popup overlay */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.popup-card {
+  background-color: #1c1f26;
+  border: 0.5px solid #2e3240;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  padding: 1.5rem;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.popup-header h2 {
+  font-size: 15px;
+  font-weight: 500;
+  color: #e8e6e1;
+}
+
+.popup-close {
+  width: 28px;
+  height: 28px;
+  background: #22262f;
+  border: 0.5px solid #2e3240;
+  border-radius: 6px;
+  color: #9a9daa;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-close:hover {
+  color: #e8e6e1;
+  border-color: #534ab7;
+}
+
+.popup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 0.5px solid #2e3240;
+  font-size: 13px;
+  gap: 1rem;
+}
+
+.popup-row:last-of-type {
+  border-bottom: none;
+}
+
+.popup-label {
+  color: #7a7d8a;
+  flex-shrink: 0;
+}
+
+.popup-val {
+  color: #e8e6e1;
+  text-align: right;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 1.25rem;
+}
+
+.popup-edit-btn {
+  flex: 1;
+  height: 38px;
+  background-color: #534ab7;
+  color: #e8e6e1;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.popup-edit-btn:hover {
+  background-color: #3c3489;
+}
+
+.popup-delete-btn {
+  height: 38px;
+  padding: 0 16px;
+  background-color: #2a1a1a;
+  border: 0.5px solid #7a2020;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #f09595;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.popup-delete-btn:hover {
+  background-color: #3a1a1a;
+}
+
+.badge-completed {
+  background-color: #1a1f35;
+  color: #7f77dd;
+}

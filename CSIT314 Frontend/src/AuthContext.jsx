@@ -10,8 +10,10 @@ export function AuthProvider({ children }) {
     const checkSession = async () => {
       try {
         const res = await fetch("/api/Auth/Me", { credentials: "include" });
+        console.log("Me status:", res.status);  // ← add this
         if (res.ok) {
           const data = await res.json();
+          console.log("Me data:", data);        // ← add this
           setUser(data);
         }
       } catch (err) {
