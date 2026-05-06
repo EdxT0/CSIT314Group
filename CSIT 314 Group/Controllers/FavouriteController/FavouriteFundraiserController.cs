@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,13 +30,15 @@ namespace CSIT_314_Group.Controllers.FavouriteController
             if(fundraiserExist != null)
             {
                 int userId = Convert.ToInt32(user.Value);
-                FavouriteFundraiserResultEnum favouriteFundraiserResultEnum = await _favouriteRepository.FavouriteFundraiser(userId, favouriteFundraiserDTO.FraId);
-                return favouriteFundraiserResultEnum switch
+                var result = await _favouriteRepository.FavouriteFundraiser(userId, favouriteFundraiserDTO.FraId);
+                if (result.success)
                 {
-                    FavouriteFundraiserResultEnum.success => Ok("Fundraiser favourited"),
-                    FavouriteFundraiserResultEnum.duplicate => Conflict("Fundraiser is already favourited"),
-                    FavouriteFundraiserResultEnum.failed => BadRequest("failed to favourite fundraiser")
-                };
+                    return Ok(result.message);
+                }
+                else
+                {
+                    return BadRequest(result.message);
+                }
             }
             return BadRequest("fundraiser doesnt exist");
         }

@@ -1,8 +1,8 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.Results;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections;
 
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
@@ -21,24 +21,24 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             _userProfileRepository = userProfileRepository;
         }
 
-        [Authorize(Roles ="admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserAccount createUserRequest)
         {
 
             if (createUserRequest.ProfileId == null)
             {
-                return BadRequest($"Invalid Profile"); 
+                return BadRequest("Invalid Profile");
             }
-            if((await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.Email)).Count != 0)
+            if ((await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.Email)).Count != 0)
             {
-                return Conflict("email already exist");
+                return BadRequest("email already exist");
             }
 
-            if ( (await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.PhoneNumber)).Count != 0 )
+            if ((await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.PhoneNumber)).Count != 0)
 
             {
-                return Conflict("Phone Number already exist");
+                return BadRequest("Phone Number already exist");
             }
             var hasher = new PasswordHasher<UserAccount>();
 
@@ -46,18 +46,19 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             {
                 userDetails.setPassword(hasher.HashPassword(userDetails, createUserRequest.HashedPassword));
 
-                CreateUserResultEnum result = await _userAccountRepository.CreateUser(userDetails);
-                return result switch
+                var result = await _userAccountRepository.CreateUser(userDetails);
+                if (result.success)
                 {
-                    CreateUserResultEnum.Success => Ok($"User {userDetails.Name} Created"),
-                    CreateUserResultEnum.DuplicateEmail => Conflict("Email already exists"),
-                    CreateUserResultEnum.DuplicatePhoneNumber => Conflict("Phone number already exists"),
-                    CreateUserResultEnum.DuplicatePhoneNumberAndEmail => Conflict("Email or phone number already exist."),
-                    CreateUserResultEnum.Failed => Problem("unable to create user, please try again"),
-                    _ => StatusCode(500, "Could not create user.")
-                };
+                    return Ok(result.message);
+                }
+                else
+                {
+                    return BadRequest(result.message);
+                }
             }
-
+            ;
         }
+
     }
 }
+

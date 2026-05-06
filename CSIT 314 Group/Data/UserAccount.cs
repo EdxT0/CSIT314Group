@@ -1,5 +1,4 @@
-﻿using CSIT_314_Group.Results;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using System.Data;
 using System.Xml;
@@ -178,7 +177,7 @@ namespace CSIT_314_Group.Data
 
         }
 
-        public async Task<CreateUserResultEnum> CreateUser(UserAccount userDetails)
+        public async Task<(bool success, string message)> CreateUser(UserAccount userDetails)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -203,28 +202,28 @@ namespace CSIT_314_Group.Data
                 if (rowsAffected != 1)
                 {
                     await transaction.RollbackAsync();
-                    return CreateUserResultEnum.Failed;
+                    return (false,"failed to create user");
                 }
                 await transaction.CommitAsync();
-                return CreateUserResultEnum.Success;
+                return (true, "user succesfully created");
             }
             catch (SqliteException ex) when (ex.SqliteExtendedErrorCode == 2067)
             {
                 if (ex.Message.Contains("UserAccount.email", StringComparison.OrdinalIgnoreCase))
                 {
-                    return CreateUserResultEnum.DuplicateEmail;
+                    return (false, "email exists already");
                 }
                 if (ex.Message.Contains("UserAccount.phoneNumber", StringComparison.OrdinalIgnoreCase))
                 {
-                    return CreateUserResultEnum.DuplicatePhoneNumber;
+                    return (false, "phone number exists already");
                 }
-                return CreateUserResultEnum.DuplicatePhoneNumberAndEmail;
+                return (false, "Both phone number and email exists already");
             }
             catch (SqliteException ex)
             {
                 Console.WriteLine(ex);
                 await transaction.RollbackAsync();
-                return CreateUserResultEnum.Failed;
+                return (false, "failed to create user");
             }
 
         }
