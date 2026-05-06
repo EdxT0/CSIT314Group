@@ -11,10 +11,10 @@ namespace CSIT_314_Group.Controllers.DonationController
     [ApiController]
     public class ViewDonationHistoryController : ControllerBase
     {
-        private readonly FundraiserDonationsRepository _fundraiserDonationsRepository;
+        private readonly FundraiserDonations _fundraiserDonationsRepository;
 
 
-        public ViewDonationHistoryController(FundraiserDonationsRepository fundraiserDonationsRepository)
+        public ViewDonationHistoryController(FundraiserDonations fundraiserDonationsRepository)
         {
             _fundraiserDonationsRepository = fundraiserDonationsRepository;
         }

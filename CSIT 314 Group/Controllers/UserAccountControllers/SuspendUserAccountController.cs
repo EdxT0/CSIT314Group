@@ -1,7 +1,6 @@
 ﻿using CSIT_314_Group.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CSIT_314_Group.DTO.UserAccountDTO;
 
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
@@ -18,26 +17,26 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
 
         [Authorize(Roles = "admin")]
         [HttpPut]
-        public async Task<IActionResult> SuspendUserAccount([FromBody] SuspendUserDTO suspendUserDTO)
+        public async Task<IActionResult> SuspendUserAccount([FromQuery] int userId , [FromQuery] bool suspendUser)
         {
-            var user = await _userAccountRepository.GetById(suspendUserDTO.userId);
+            var user = await _userAccountRepository.GetById(userId);
             if( user == null)
             {
                 return BadRequest("User Not Found");
             }
-            var isSuspended = await _userAccountRepository.GetSuspendStatusWithId(suspendUserDTO.userId);
-            if (isSuspended == true && suspendUserDTO.SuspendUser == true)
+            var isSuspended = await _userAccountRepository.GetSuspendStatusWithId(userId);
+            if (isSuspended == true && suspendUser == true)
             {
                 return Conflict($"User already suspended");
-            }else if (isSuspended == true == false && suspendUserDTO.SuspendUser == false)
+            }else if (isSuspended == true == false && suspendUser == false)
             {
                 return Conflict($"User already unsuspended");
             }
-            var boolResult = await _userAccountRepository.SuspendUserWithId(suspendUserDTO.userId, suspendUserDTO.SuspendUser);
-            if (boolResult && suspendUserDTO.SuspendUser == true)
+            var boolResult = await _userAccountRepository.SuspendUserWithId(userId, suspendUser);
+            if (boolResult && suspendUser == true)
             {
                 return Ok("User suspended");
-            }else if (boolResult && suspendUserDTO.SuspendUser == false)
+            }else if (boolResult && suspendUser == false)
             {
                 return Ok("User unsuspended");
             }

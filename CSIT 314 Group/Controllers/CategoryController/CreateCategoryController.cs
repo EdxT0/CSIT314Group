@@ -1,5 +1,4 @@
 using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.CategoryDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +17,7 @@ namespace CSIT_314_Group.Controllers.CategoryController
 
         [Authorize(Roles = "platform manager")]
         [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDTO createCategoryDto)
+        public async Task<IActionResult> CreateCategory([FromBody] Category createCategoryDto)
         {
             var existingCategory = await _categoryRepository.GetByName(createCategoryDto.Name);
 

@@ -1,5 +1,4 @@
-﻿using CSIT_314_Group.DTO.FundraiserActivityDTO;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 
@@ -9,15 +8,29 @@ namespace CSIT_314_Group.Data
     {
         private readonly DbConnectionFactory _dbConnectionFactory;
         public int Id { get; set; }
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public DateTime Deadline { get; private set; }
-        public bool Status { get; private set; }
-        public double AmtRequested { get; private set; }
-        public double AmtDonated { get; private set; }
-        public int AmtOfViews { get; private set; }
-        public int? FraCategoryId { get; private set; }
-        public FundraiserActivity(string name, string description, DateTime deadline, int? fraCategoryId, double amtRequested)
+        public string Name { get; set; } = "";
+        public string Description { get;  set; } = "";
+        public DateTime Deadline { get;  set; }
+        public string DeadlineInString { get;  set; } = "";
+        public bool Status { get;  set; }
+        public double? AmtRequested { get;  set; }
+        public double AmtDonated { get;  set; }
+        public int AmtOfViews { get;  set; }
+        public int FraCategoryId { get;  set; }
+        public string FraCategoryName { get;  set; } = "";
+        public FundraiserActivity(int id, string name, string description, string deadlineInString, double? amtRequested, double amtDonated, int amtOfViews, bool status, string fraCategoryName)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            DeadlineInString = deadlineInString;
+            AmtRequested = amtRequested;
+            AmtDonated = amtDonated;
+            AmtOfViews = amtOfViews;
+            Status = status;
+            FraCategoryName = fraCategoryName;
+        }
+        public FundraiserActivity(string name, string description, DateTime deadline, int fraCategoryId, double? amtRequested)
         {
             Name = name;
             Description = description;
@@ -28,7 +41,7 @@ namespace CSIT_314_Group.Data
             AmtOfViews = 0;
             Status = false;
         }
-        public FundraiserActivity(int id, string name, string description, DateTime deadline, double amtRequested, double amtDonated, int amtOfViews, bool status)
+        public FundraiserActivity(int id, string name, string description, DateTime deadline, double? amtRequested, double amtDonated, int amtOfViews, bool status)
         {
             Id = id;
             Name = name;
@@ -39,8 +52,19 @@ namespace CSIT_314_Group.Data
             AmtOfViews = amtOfViews;
             Status = status;
         }
-        
-    
+
+        public FundraiserActivity(string name, string description, string deadlineInString, double? amtRequested, int fraCategoryId)
+        {
+            Name = name;
+            Description = description;
+            DeadlineInString = deadlineInString;
+            FraCategoryId = fraCategoryId;
+            AmtRequested = amtRequested;
+        }
+        public FundraiserActivity( )
+        {
+        }
+
         public FundraiserActivity(DbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
@@ -124,7 +148,7 @@ namespace CSIT_314_Group.Data
 
         public async Task<bool> UpdateFundraiserView(int fundraiserId)
         {
-            ViewFundraiserDTO fundraiser = await GetById(fundraiserId);
+            FundraiserActivity fundraiser = await GetById(fundraiserId);
             int viewsAfterIncrement = 1 + fundraiser.AmtOfViews;
             if(fundraiser != null)
             {
@@ -291,7 +315,7 @@ namespace CSIT_314_Group.Data
             return false;
         }
 
-        public async Task<ViewFundraiserDTO> GetByName(string name)
+        public async Task<FundraiserActivity> GetByName(string name)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -317,7 +341,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                return new ViewFundraiserDTO(
+                return new FundraiserActivity(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetString(reader.GetOrdinal("FraName")),
                             reader.GetString(reader.GetOrdinal("Description")),
@@ -331,7 +355,7 @@ namespace CSIT_314_Group.Data
             }
             return null;
         }
-        public async Task<ViewFundraiserDTO> SearchByName(string name)
+        public async Task<FundraiserActivity> SearchByName(string name)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -357,7 +381,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                return new ViewFundraiserDTO(
+                return new FundraiserActivity(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetString(reader.GetOrdinal("FraName")),
                             reader.GetString(reader.GetOrdinal("Description")),
@@ -371,7 +395,7 @@ namespace CSIT_314_Group.Data
             }
             return null;
         }
-        public async Task<ViewFundraiserDTO> GetById(int id)
+        public async Task<FundraiserActivity> GetById(int id)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -397,7 +421,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                return new ViewFundraiserDTO(
+                return new FundraiserActivity(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetString(reader.GetOrdinal("FraName")),
                             reader.GetString(reader.GetOrdinal("Description")),
@@ -462,9 +486,9 @@ namespace CSIT_314_Group.Data
 
         }
 
-        public async Task<List<ViewFundraiserDTO>> ViewAllFundraisers()
+        public async Task<List<FundraiserActivity>> ViewAllFundraisers()
         {
-            List<ViewFundraiserDTO> result = new List<ViewFundraiserDTO>();
+            List<FundraiserActivity> result = new List<FundraiserActivity>();
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
@@ -487,7 +511,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                result.Add(new ViewFundraiserDTO(
+                result.Add(new FundraiserActivity(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetString(reader.GetOrdinal("FraName")),
                             reader.GetString(reader.GetOrdinal("Description")),

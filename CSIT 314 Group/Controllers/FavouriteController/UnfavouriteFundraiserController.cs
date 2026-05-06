@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.FavouriteDTO;
 using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,16 +11,16 @@ namespace CSIT_314_Group.Controllers.FavouriteController
     [ApiController]
     public class UnfavouriteFundraiserController : ControllerBase
     {
-        private readonly FavouriteRepository _favouriteRepository;
+        private readonly Favourite _favouriteRepository;
 
 
-        public UnfavouriteFundraiserController(FavouriteRepository favouriteRepository)
+        public UnfavouriteFundraiserController(Favourite favouriteRepository)
         {
             _favouriteRepository = favouriteRepository;
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UnfavouriteFundraiser([FromBody] FavouriteFundraiserDTO favouriteFundraiserDTO)
+        public async Task<IActionResult> UnfavouriteFundraiser([FromBody] Favourite favouriteFundraiserDTO)
         {
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             if (user == null)
@@ -29,7 +28,7 @@ namespace CSIT_314_Group.Controllers.FavouriteController
                 return NotFound("no logged in user found");
             }
             int userId = Convert.ToInt32(user.Value);
-            bool favouriteResult = await _favouriteRepository.UnfavouriteFundraiser(userId, favouriteFundraiserDTO.fraId);
+            bool favouriteResult = await _favouriteRepository.UnfavouriteFundraiser(userId, favouriteFundraiserDTO.FraId);
             if (favouriteResult)
             {
                 return Ok("fundraiser unfavourited");

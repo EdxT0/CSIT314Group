@@ -1,15 +1,44 @@
-﻿using CSIT_314_Group.DTO.DonationDTO;
-using CSIT_314_Group.DTO.FundraiserActivityDTO;
+﻿
 using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 namespace CSIT_314_Group.Data
 {
-    public class FundraiserDonationsRepository
+    public class FundraiserDonations
     {
         private readonly DbConnectionFactory _dbConnectionFactory;
+        public int Id { get; set; }
+        public double UserDonatedAmt { get;  set; }
+        public string? DateDonated { get;  set; }
+        public string? Name { get;  set; }
+        public string? Description { get;  set; }
+        public string? Deadline { get;  set; }
+        public bool Status { get;  set; }
+        public double AmtRequested { get;  set; }
+        public double AmtDonated { get;  set; }
+        public int AmtOfViews { get;  set; }
 
-        public FundraiserDonationsRepository(DbConnectionFactory dbConnectionFactory)
+        public string? FraCategoryName { get;  set; }
+        public FundraiserDonations()
+        {
+        }
+        public FundraiserDonations(int id, int userDonatedAmount, string? dateDonated, string? name, string? description, string? deadline, double amtRequested, double amtDonated, int amtOfViews, bool status, string? fraCategoryName)
+        {
+            Id = id;
+            DateDonated = dateDonated;
+            UserDonatedAmt = userDonatedAmount;
+            Name = name;
+            Description = description;
+            Deadline = deadline;
+            AmtRequested = amtRequested;
+            AmtDonated = amtDonated;
+            AmtOfViews = amtOfViews;
+            Status = status;
+            FraCategoryName = fraCategoryName;
+        }
+    
+
+        public FundraiserDonations(DbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
@@ -61,11 +90,11 @@ namespace CSIT_314_Group.Data
             return false;
         }
 
-        public async Task<List<ViewDonationDTO>> ViewDonatedFundraiser(int userId)
+        public async Task<List<FundraiserDonations>> ViewDonatedFundraiser(int userId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
-            List<ViewDonationDTO> result = new List<ViewDonationDTO>();
+            List<FundraiserDonations> result = new List<FundraiserDonations>();
             string viewDonatedFundraiserQuery = @"SELECT fra.*, fraC.FraCategoryName , fraD.*
                                                     FROM FundraiserDonations fraD 
                                                     JOIN FundraiserActivity fra 
@@ -103,7 +132,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                result.Add(new ViewDonationDTO(
+                result.Add(new FundraiserDonations(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetInt32(reader.GetOrdinal("AmtDonatedByUser")),
                             DonationDate.ToString("dd-MM-yyyy"),
@@ -121,9 +150,9 @@ namespace CSIT_314_Group.Data
             
         }
 
-        public async Task<List<ViewDonationDTO>> SearchDonations(string fraName, int userId)
+        public async Task<List<FundraiserDonations>> SearchDonations(string fraName, int userId)
         {
-            List<ViewDonationDTO> result = new List<ViewDonationDTO>();
+            List<FundraiserDonations> result = new List<FundraiserDonations>();
 
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -168,7 +197,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                result.Add(new ViewDonationDTO(
+                result.Add(new FundraiserDonations(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetInt32(reader.GetOrdinal("AmtDonatedByUser")),
                             DonationDate.ToString("dd-MM-yyyy"),

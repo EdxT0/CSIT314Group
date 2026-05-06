@@ -1,4 +1,3 @@
-using CSIT_314_Group.DTO.CategoryDTO;
 using Microsoft.Data.Sqlite;
 
 
@@ -12,8 +11,17 @@ public class Category
     public string Name { get; set; }
     public string Description { get; set; }
 
+    public Category()
+    {
+    }
     public Category(string name, string description)
     {
+        Name = name;
+        Description = description;
+    }
+    public Category(int id, string name, string description)
+    {
+        Id = id;
         Name = name;
         Description = description;
     }
@@ -22,7 +30,7 @@ public class Category
         _dbConnectionFactory = dbConnectionFactory;
     }
 
-    public async Task<ViewCategoryDTO?> GetById(int? id)
+    public async Task<Category?> GetById(int? id)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -35,7 +43,7 @@ public class Category
 
         if (await reader.ReadAsync())
         {
-            return new ViewCategoryDTO(
+            return new Category(
                 reader.GetInt32(reader.GetOrdinal("Id")),
                 reader.GetString(reader.GetOrdinal("FraCategoryName")),
                 reader.GetString(reader.GetOrdinal("Desc"))
@@ -45,7 +53,7 @@ public class Category
         return null;
     }
 
-    public async Task<ViewCategoryDTO?> GetByName(string name)
+    public async Task<Category?> GetByName(string name)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -58,7 +66,7 @@ public class Category
 
         if (await reader.ReadAsync())
         {
-            return new ViewCategoryDTO(
+            return new Category(
                 reader.GetInt32(reader.GetOrdinal("Id")),
                 reader.GetString(reader.GetOrdinal("FraCategoryName")),
                 reader.GetString(reader.GetOrdinal("Desc"))
@@ -86,9 +94,9 @@ public class Category
         return rowsAffected == 1;
     }
 
-    public async Task<List<ViewCategoryDTO>> ViewAllCategories()
+    public async Task<List<Category>> ViewAllCategories()
     {
-        List<ViewCategoryDTO> result = new List<ViewCategoryDTO>();
+        List<Category> result = new List<Category>();
 
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -100,7 +108,7 @@ public class Category
 
         while (await reader.ReadAsync())
         {
-            result.Add(new ViewCategoryDTO(
+            result.Add(new Category(
                 reader.GetInt32(reader.GetOrdinal("Id")),
                 reader.GetString(reader.GetOrdinal("FraCategoryName")),
                 reader.GetString(reader.GetOrdinal("Desc"))
@@ -146,9 +154,9 @@ public class Category
         return rowsAffected == 1;
     }
 
-    public async Task<List<ViewCategoryDTO>> SearchCategories(string keyword)
+    public async Task<List<Category>> SearchCategories(string keyword)
     {
-        List<ViewCategoryDTO> result = new List<ViewCategoryDTO>();
+        List<Category> result = new List<Category>();
 
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -162,7 +170,7 @@ public class Category
 
         while (await reader.ReadAsync())
         {
-            result.Add(new ViewCategoryDTO(
+            result.Add(new Category(
                 reader.GetInt32(reader.GetOrdinal("Id")),
                 reader.GetString(reader.GetOrdinal("FraCategoryName")),
                 reader.GetString(reader.GetOrdinal("Desc"))

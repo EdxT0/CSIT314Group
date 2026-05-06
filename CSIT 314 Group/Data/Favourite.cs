@@ -1,16 +1,23 @@
-﻿using CSIT_314_Group.DTO.FundraiserActivityDTO;
-using CSIT_314_Group.Results;
+﻿using CSIT_314_Group.Results;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 namespace CSIT_314_Group.Data
 {
-    public class FavouriteRepository
+    public class Favourite
     {
 
         private readonly DbConnectionFactory _dbConnectionFactory;
+        public int FraId { get; set; }
 
-        public FavouriteRepository(DbConnectionFactory dbConnectionFactory)
+        public Favourite(int fraId)
+        {
+            FraId = fraId;
+        }
+        public Favourite()
+        {
+        }
+        public Favourite(DbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
@@ -65,11 +72,11 @@ namespace CSIT_314_Group.Data
             return null;
 
         }
-        public async Task<List<ViewFundraiserDTO>> GetFavouritesList(int userId)
+        public async Task<List<FundraiserActivity>> GetFavouritesList(int userId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
-            List<ViewFundraiserDTO> result = new List<ViewFundraiserDTO>();
+            List<FundraiserActivity> result = new List<FundraiserActivity>();
 
             string getFavouritesQuery = @"Select fra.* , fraC.FraCategoryName FROM FavouriteList FL INNER JOIN FundraiserActivity fra on fra.Id = FL.FraId JOIN FundraiserCategory fraC ON fra.FraCategoryId = fraC.Id WHERE UserId = @userId ";
             using var getFavouriteQueryCommand = new SqliteCommand(getFavouritesQuery, connection);
@@ -90,7 +97,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                result.Add(new ViewFundraiserDTO(
+                result.Add(new FundraiserActivity(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetString(reader.GetOrdinal("FraName")),
                             reader.GetString(reader.GetOrdinal("Description")),
@@ -105,9 +112,9 @@ namespace CSIT_314_Group.Data
             return result;
         }
 
-        public async Task <List<ViewFundraiserDTO>> SearchFavourites(string fraName, int userId)
+        public async Task <List<FundraiserActivity>> SearchFavourites(string fraName, int userId)
         {
-            List<ViewFundraiserDTO> result = new List<ViewFundraiserDTO>();
+            List<FundraiserActivity> result = new List<FundraiserActivity>();
 
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -140,7 +147,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                result.Add(new ViewFundraiserDTO(
+                result.Add(new FundraiserActivity(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetString(reader.GetOrdinal("FraName")),
                             reader.GetString(reader.GetOrdinal("Description")),

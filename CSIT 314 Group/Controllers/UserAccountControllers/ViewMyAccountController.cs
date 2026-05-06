@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserAccountDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -30,7 +29,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             
             int userId = Convert.ToInt32(user);
 
-            UserAccountDTO userDTO = await _userAccountRepository.GetById(userId);
+            UserAccount userDTO = await _userAccountRepository.GetById(userId);
 
             return Ok(userDTO);
         }

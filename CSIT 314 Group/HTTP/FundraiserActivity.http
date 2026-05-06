@@ -6,11 +6,11 @@ Content-Type: application/json
 Accept: application/json
 Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-RMJXNzQ3bRmiwHTYfad9KwkyiacdK4h0uQsBDpYXrot9AXhPPnLSd2mT5X_EmoXzOuxvkk8aGwFv98JrLFXHz0AOrEohKB_zrfY6wqw2tiUM-Zr4J8Te0WZsNxq-P1A6A4VDXE1dcRMuC3uq1L4kjgt1Q_E-rFutRb1C3tE8nmwkkiozt_uIw7-iSqn6QKM83p-P7ByBYJL46F3wdkOuiNFgc-TywDV41Tf7IQCtgJaknh-NNdbzN4OR_kWlwD28y-tqn4F5jCN3XUz240QSpr23DnegoRt8vrYIFJeNQvdI3ceDK2qIHMIsYK9yY0pQ_xNPPHKlh8TUNY8uU0uHThjMyrgdo6A38IVJwRJwIq2C-6Pb1siEPx0nZoluBggxMirkrKrZWomyEwvXYaDlBGeiaAjY-rtEuZ1Aycl_PQ0Un-nwqRkR-bJu5COBq_xKyVjVhgHgtcLF3gHRgY1DVItO4Shv8E_a6VuEsrUBSpDp9zCBhf0aNBQ6-jQyDnVHTVE-ANCg46rINO6IyHHVyETlA2oXSTqq_oZqJmMIpTuFGRz8jEqsuyFLqkVfw-UIg_8WOHNRzYD5Aag9w
 {
-  "Name" : "test6",
-  "Description" : "ThisIsATestFraDesc6",
-  "deadline": "10-02-2025",
-  "amtRequested" : "23232",
-  "fraCategoryId" : 3
+  "Name" : "test12",
+  "Description" : "ThisIsATestFraDesc12",
+  "deadlineInString": "10-02-2023",
+  "amtRequested" : "1219191",
+  "fraCategoryId" : 4
 }
 ###
 
@@ -27,30 +27,31 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oMFKEkF_nSfSUXPhqxNxDzsDykn
 PUT {{CSIT_314_Group_HostAddress}}/api/UpdateFundraiser
 Content-Type : application/json
 Accept: application/json
-Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6o86JVl71Qj-gcPUQpGbHUyJ_Pbc3wiIsOE11f6JcfnUSGW-289E108L4LALrvC6zXO-Zo7FTStdbEnC1d9x9NcWl1SNV3ofaslIdI4nYSRRZZLPDg8Y4cn5NNFEMA5m-VxcBkjhhWL78_egIG-VgJj9zEAf5ZiaTdftodd84ddXt9ezAsZvWlU6UYRbrgVl2HAGSGTGOTF8KXcvHBj4U0pawm-ZoCjjuAeN18ojrl9LCx76CmF3JCyyFON8AxVN1awd0vScyz9YsGG_0K-R0MdyfWlfRFNPsvM3xUPwQ8O0FuPq1hhv7r0Mc7gukOEMZQm6Ue37OjZ9T_3ga7ZCRNlIWGrKF_00PrNLba2o3-iNo79Fhxfi2LOMAQFM1eGu3Hv_unsc2VQ68GbN2Sxa3ZkGRT_UYvhRst9K_dUvAfD95ZhtHtAUVyomJU5sxDoU2sSZ7zVVkdTeqg9vqSmFpMgGPJb1ORsDGu305Yi6lNzFzhVS0XlZSlf0VbvNbG0toDEXOyVGFoPpmitRzz7ic1kgl7tuV5njDfzyMGfMTPMRP8IMSrZHOtrh9CuCgV4M7z_MRmG9nlVwQ8eoxl4pbVJyay9DtryZTyR5drZOrApspiFc21CdqGpr7JvcjfRTHA
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-RMJXNzQ3bRmiwHTYfad9KwkyiacdK4h0uQsBDpYXrot9AXhPPnLSd2mT5X_EmoXzOuxvkk8aGwFv98JrLFXHz0AOrEohKB_zrfY6wqw2tiUM-Zr4J8Te0WZsNxq-P1A6A4VDXE1dcRMuC3uq1L4kjgt1Q_E-rFutRb1C3tE8nmwkkiozt_uIw7-iSqn6QKM83p-P7ByBYJL46F3wdkOuiNFgc-TywDV41Tf7IQCtgJaknh-NNdbzN4OR_kWlwD28y-tqn4F5jCN3XUz240QSpr23DnegoRt8vrYIFJeNQvdI3ceDK2qIHMIsYK9yY0pQ_xNPPHKlh8TUNY8uU0uHThjMyrgdo6A38IVJwRJwIq2C-6Pb1siEPx0nZoluBggxMirkrKrZWomyEwvXYaDlBGeiaAjY-rtEuZ1Aycl_PQ0Un-nwqRkR-bJu5COBq_xKyVjVhgHgtcLF3gHRgY1DVItO4Shv8E_a6VuEsrUBSpDp9zCBhf0aNBQ6-jQyDnVHTVE-ANCg46rINO6IyHHVyETlA2oXSTqq_oZqJmMIpTuFGRz8jEqsuyFLqkVfw-UIg_8WOHNRzYD5Aag9w
 {
-  "fraId" : 2,
-  "fraCategoryId": 5
+  "Id" : 12,
+  "amtRequested": 19191,
+  "fraCategoryId": 4
 }
 ###
 
-DELETE {{CSIT_314_Group_HostAddress}}/api/DeleteFundraiser?fundraiserId=1
+DELETE {{CSIT_314_Group_HostAddress}}/api/DeleteFundraiser?fundraiserId=12
 Content-Type : application/json
-Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6pFzsJf5IyX4D_2p9nIVVbiSwIPJqrvMq5bzIF7lnF1_Co4c2ZjteAUqSsjT7twB9VlDcaVE7ph_ezJHY_p4HUjwbG9yldhtcVeMFq9RNoBhZ1Z7-klagSmCceknas-1jHhJEHMJrNb5jUDfb8Ey1Pb7HPqfVNoS5lODhmNHKgMlAlx-u_ZW3KlJyv1dTGYxbomsxoe9YWZ-gHA07QuRiBBGDPWySoRBbf_Mlt8Rnuu9apCfMdsDvHTfd37EabQfCneRBCuEXROlwYS2XTuN9sbrU8A9vqVBENYiFetY85Wtn7D0NFRcndD_BACKRxP4V1DlWCs--jV2f9QOi1u2pJ7tfwyZiZgodnAjHdJi-_TFWcuUgG8y0FPKUpY---jJoo78zolhnGwGcnzwrAzfZA2UOhJV4xI5wOKe1ovDoSakkjT-U4RkfV8ecCBYgb2hUpyWzEqP2k09kaNLafI_U8Sit7IX6MdMsUfPsg0_Ha7jWxUfLVANnVoCWsu9Ff7lANCumxt1gPmFQm1XDMTE57WpaNLK0bKjuvHV3SAzzNHuFTqvEq_XqCJ047Imekoqm-ugnT2yYAcqPhpaY0feAe-gOq6UXRPsJODQmdJ0paPs2ymEq3WA-MKokk9C1-nYgI
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-RMJXNzQ3bRmiwHTYfad9KwkyiacdK4h0uQsBDpYXrot9AXhPPnLSd2mT5X_EmoXzOuxvkk8aGwFv98JrLFXHz0AOrEohKB_zrfY6wqw2tiUM-Zr4J8Te0WZsNxq-P1A6A4VDXE1dcRMuC3uq1L4kjgt1Q_E-rFutRb1C3tE8nmwkkiozt_uIw7-iSqn6QKM83p-P7ByBYJL46F3wdkOuiNFgc-TywDV41Tf7IQCtgJaknh-NNdbzN4OR_kWlwD28y-tqn4F5jCN3XUz240QSpr23DnegoRt8vrYIFJeNQvdI3ceDK2qIHMIsYK9yY0pQ_xNPPHKlh8TUNY8uU0uHThjMyrgdo6A38IVJwRJwIq2C-6Pb1siEPx0nZoluBggxMirkrKrZWomyEwvXYaDlBGeiaAjY-rtEuZ1Aycl_PQ0Un-nwqRkR-bJu5COBq_xKyVjVhgHgtcLF3gHRgY1DVItO4Shv8E_a6VuEsrUBSpDp9zCBhf0aNBQ6-jQyDnVHTVE-ANCg46rINO6IyHHVyETlA2oXSTqq_oZqJmMIpTuFGRz8jEqsuyFLqkVfw-UIg_8WOHNRzYD5Aag9w
 
 ###
 
 GET {{CSIT_314_Group_HostAddress}}/api/SearchFundraiser?name=med
 Content-Type: application/json
 Accept: application/json
-Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oQjeNUh5PNnRl85b-_3223ojQRhZhDk533tdarqcgStv5KIAs19_hlsVB6jTgOfzAjj_Xi4__PLdmoW0fI5DcFwB0aa9B85jZyjRtBZAIwSLUKZVbJ9LWdVmDN4iu61iLza2H-_a5xKIVRUoS-T_eQkBO1JwO3cy1Hi-n3IQTvEVcwFFPNFS_lK-BGJxP4aOHmX1NY0Ld1QW316_Wnxru5Zm5uGQGLbTecfI2DTe5eHiYvvbA1oDf9TKElqC_3C7UHbcFMhbyPpNiPa1rauVRwyF7UGAaxxI3UAfgudkfl6O_J3i2CUnK6KUME16-GOEgDmcrXtBpZZ7HZDVXJDjNT6aTPmkErWnM6oCTxo4AbZSQiuJro2OD3_6tSFZDUtdg0qwqeEalhxNyh5gihb0J-cwzkPA0OQtXXTDCbSn9m7UTeI9As7SlNXOHv3M04ICNnAYNlxBJY8RkQVrhbLenrXq0X5sW3XyqegLqaXxhCYsOycJNDDMcLDZ9g0SfilLGlV7Q9lW2J9hkoucdUPB9x6uZHUAuaCuzs3KAX7LFDCoWCB7B9x79lRhjYU5ncG-0DttQgTRJ3bEmsB8-9-UP37Py_rHnFv2nE2oMGtO2Upxv777Ip5OA8w09yPnDRLg4
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-RMJXNzQ3bRmiwHTYfad9KwkyiacdK4h0uQsBDpYXrot9AXhPPnLSd2mT5X_EmoXzOuxvkk8aGwFv98JrLFXHz0AOrEohKB_zrfY6wqw2tiUM-Zr4J8Te0WZsNxq-P1A6A4VDXE1dcRMuC3uq1L4kjgt1Q_E-rFutRb1C3tE8nmwkkiozt_uIw7-iSqn6QKM83p-P7ByBYJL46F3wdkOuiNFgc-TywDV41Tf7IQCtgJaknh-NNdbzN4OR_kWlwD28y-tqn4F5jCN3XUz240QSpr23DnegoRt8vrYIFJeNQvdI3ceDK2qIHMIsYK9yY0pQ_xNPPHKlh8TUNY8uU0uHThjMyrgdo6A38IVJwRJwIq2C-6Pb1siEPx0nZoluBggxMirkrKrZWomyEwvXYaDlBGeiaAjY-rtEuZ1Aycl_PQ0Un-nwqRkR-bJu5COBq_xKyVjVhgHgtcLF3gHRgY1DVItO4Shv8E_a6VuEsrUBSpDp9zCBhf0aNBQ6-jQyDnVHTVE-ANCg46rINO6IyHHVyETlA2oXSTqq_oZqJmMIpTuFGRz8jEqsuyFLqkVfw-UIg_8WOHNRzYD5Aag9w
 
 ###
 
 GET {{CSIT_314_Group_HostAddress}}/api/ViewOneFundraiser?fraId=5
 Content-Type: application/json
 Accept: application/json
-Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oQjeNUh5PNnRl85b-_3223ojQRhZhDk533tdarqcgStv5KIAs19_hlsVB6jTgOfzAjj_Xi4__PLdmoW0fI5DcFwB0aa9B85jZyjRtBZAIwSLUKZVbJ9LWdVmDN4iu61iLza2H-_a5xKIVRUoS-T_eQkBO1JwO3cy1Hi-n3IQTvEVcwFFPNFS_lK-BGJxP4aOHmX1NY0Ld1QW316_Wnxru5Zm5uGQGLbTecfI2DTe5eHiYvvbA1oDf9TKElqC_3C7UHbcFMhbyPpNiPa1rauVRwyF7UGAaxxI3UAfgudkfl6O_J3i2CUnK6KUME16-GOEgDmcrXtBpZZ7HZDVXJDjNT6aTPmkErWnM6oCTxo4AbZSQiuJro2OD3_6tSFZDUtdg0qwqeEalhxNyh5gihb0J-cwzkPA0OQtXXTDCbSn9m7UTeI9As7SlNXOHv3M04ICNnAYNlxBJY8RkQVrhbLenrXq0X5sW3XyqegLqaXxhCYsOycJNDDMcLDZ9g0SfilLGlV7Q9lW2J9hkoucdUPB9x6uZHUAuaCuzs3KAX7LFDCoWCB7B9x79lRhjYU5ncG-0DttQgTRJ3bEmsB8-9-UP37Py_rHnFv2nE2oMGtO2Upxv777Ip5OA8w09yPnDRLg4
+Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-RMJXNzQ3bRmiwHTYfad9KwkyiacdK4h0uQsBDpYXrot9AXhPPnLSd2mT5X_EmoXzOuxvkk8aGwFv98JrLFXHz0AOrEohKB_zrfY6wqw2tiUM-Zr4J8Te0WZsNxq-P1A6A4VDXE1dcRMuC3uq1L4kjgt1Q_E-rFutRb1C3tE8nmwkkiozt_uIw7-iSqn6QKM83p-P7ByBYJL46F3wdkOuiNFgc-TywDV41Tf7IQCtgJaknh-NNdbzN4OR_kWlwD28y-tqn4F5jCN3XUz240QSpr23DnegoRt8vrYIFJeNQvdI3ceDK2qIHMIsYK9yY0pQ_xNPPHKlh8TUNY8uU0uHThjMyrgdo6A38IVJwRJwIq2C-6Pb1siEPx0nZoluBggxMirkrKrZWomyEwvXYaDlBGeiaAjY-rtEuZ1Aycl_PQ0Un-nwqRkR-bJu5COBq_xKyVjVhgHgtcLF3gHRgY1DVItO4Shv8E_a6VuEsrUBSpDp9zCBhf0aNBQ6-jQyDnVHTVE-ANCg46rINO6IyHHVyETlA2oXSTqq_oZqJmMIpTuFGRz8jEqsuyFLqkVfw-UIg_8WOHNRzYD5Aag9w
 ###
 
 POST {{CSIT_314_Group_HostAddress}}/api/CreateFundraiser
@@ -62,7 +63,7 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-
 {
   "Name": "Community Food Drive",
   "Description": "Raising funds to provide meals for low-income families.",
-  "deadline": "10-12-2026",
+  "deadlineInString": "10-12-2026",
   "amtRequested": "5000",
   "fraCategoryId": 1
 }
@@ -77,7 +78,7 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oMFKEkF_nSfSUXPhqxNxDzsDykn
 {
   "Name": "School Supplies Support",
   "Description": "Helping students purchase books, stationery, and learning materials.",
-  "deadline": "11-05-2028",
+  "deadlineInString": "11-05-2028",
   "amtRequested": "3500",
   "fraCategoryId": 2
 }
@@ -93,7 +94,7 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-
 {
   "Name": "Medical Treatment Aid",
   "Description": "Supporting medical bills and recovery expenses for patients in need.",
-  "deadline": "12-05-2026",
+  "deadlineInString": "12-05-2026",
   "amtRequested": "12000",
   "fraCategoryId": 3
 }
@@ -109,7 +110,7 @@ Cookie: .AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oMFKEkF_nSfSUXPhqxNxDzsDyk
 {
   "Name": "Animal Shelter Help",
   "Description": "Raising funds for food, medicine, and shelter maintenance for rescued animals.",
-  "deadline": "30-09-2027",
+  "deadlineInString": "30-09-2027",
   "amtRequested": "4200",
   "fraCategoryId": 4
 }
@@ -125,7 +126,7 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oMFKEkF_nSfSUXPhqxNxDzsDykn
 {
   "Name": "Clean Water Project",
   "Description": "Providing clean drinking water facilities for rural communities.",
-  "deadline": "08-10-2026",
+  "deadlineInString": "08-10-2026",
   "amtRequested": "15000",
   "fraCategoryId": 5
 }
@@ -141,7 +142,7 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6oMFKEkF_nSfSUXPhqxNxDzsDykn
 {
   "Name": "Elderly Care Support",
   "Description": "Funding essential supplies and care services for elderly residents.",
-  "deadline": "07-11-2028",
+  "deadlineInString": "07-11-2028",
   "amtRequested": "6800",
   "fraCategoryId": 1
 }
@@ -156,7 +157,7 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-
 {
   "Name": "Disaster Relief Fund",
   "Description": "Helping families affected by natural disasters with emergency supplies.",
-  "deadline": "06-12-2026",
+  "deadlineInString": "06-12-2026",
   "amtRequested": "20000",
   "fraCategoryId": 5
 }
@@ -172,7 +173,7 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-
 {
   "Name": "Youth Sports Program",
   "Description": "Supporting sports equipment and training fees for youth athletes.",
-  "deadline": "05-11-2026",
+  "deadlineInString": "05-11-2026",
   "amtRequested": "7500",
   "fraCategoryId": 3
 }
@@ -187,7 +188,7 @@ Cookie:.AspNetCore.Cookies=CfDJ8IKqO1yy17JCoelXFs6HW6qiaBErZ00Ml-Hqm2x_myFAyosK-
 {
   "Name": "Library Upgrade Fund",
   "Description": "Raising funds to upgrade library facilities and add new learning resources.",
-  "deadline": "04-12-2026",
+  "deadlineInString": "04-12-2026",
   "amtRequested": "9000",
   "fraCategoryId": 5
 }
@@ -202,7 +203,7 @@ Cookie:
 {
   "Name": "Homeless Support Campaign",
   "Description": "Providing temporary shelter, food, and basic necessities for homeless individuals.",
-  "deadline": "03-22-2026",
+  "deadlineInString": "03-22-2026",
   "amtRequested": "11000",
   "fraCategoryId": 1
 }

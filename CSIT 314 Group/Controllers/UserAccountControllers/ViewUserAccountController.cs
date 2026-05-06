@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserAccountDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +23,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
         public async Task<IActionResult> ViewUserAccount([FromQuery]int userId)
         {
 
-            UserAccountDTO userDTO = await _userAccountRepository.GetById(userId);
+            UserAccount userDTO = await _userAccountRepository.GetById(userId);
             if(userDTO != null)
             {
                 return Ok(userDTO);

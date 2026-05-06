@@ -11,9 +11,9 @@ namespace CSIT_314_Group.Controllers.FundraiserController
     public class ViewOneFundraiserController : ControllerBase
     {
         private readonly Data.FundraiserActivity _fundraiserActivityRepository;
-        private readonly UserFundraiserRepository _userFundraiserRepo;
+        private readonly UserFundraiser _userFundraiserRepo;
 
-        public ViewOneFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
+        public ViewOneFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiser userFundraiserRepo)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepo = userFundraiserRepo;

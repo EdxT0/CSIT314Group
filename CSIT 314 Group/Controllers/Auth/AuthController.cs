@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using CSIT_314_Group.DTO.UserAccountDTO;
 
 namespace CSIT_314_Group.Controllers.Auth
 {
@@ -23,15 +22,18 @@ namespace CSIT_314_Group.Controllers.Auth
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
+        public async Task<IActionResult> Login(
+            [FromQuery] string email,
+            [FromBody] string password
+            )
         {
 
-            var user = await _userAccountRepository.GetByEmail(loginDto.Email.ToLower());
+            var user = await _userAccountRepository.GetByEmail(email.ToLower());
 
             if (user == null)
                 return Unauthorized("invalid email or password");
 
-            var verifyPassword = _hasher.VerifyHashedPassword(user, user.HashedPassword, loginDto.Password);
+            var verifyPassword = _hasher.VerifyHashedPassword(user, user.HashedPassword, password);
 
             if (verifyPassword == PasswordVerificationResult.Failed)
                 return Unauthorized("invalid email or password");
@@ -74,7 +76,6 @@ namespace CSIT_314_Group.Controllers.Auth
             });
         }
 
-        //Testing to see if refreshing keeps the user logged in
 
 
         [HttpGet("Logout")]
@@ -83,5 +84,7 @@ namespace CSIT_314_Group.Controllers.Auth
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok("Logged out");
         }
+
+
     }
 }
