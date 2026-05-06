@@ -78,11 +78,8 @@ namespace CSIT_314_Group.Controllers.Auth
 
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 0714546 ( removed all DTOs and added ALL DTO Related Logic into Entity Classes instead, according to specification given)
         [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
         {
