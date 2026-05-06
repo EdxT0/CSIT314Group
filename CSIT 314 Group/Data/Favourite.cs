@@ -1,5 +1,4 @@
-﻿using CSIT_314_Group.Results;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 namespace CSIT_314_Group.Data
@@ -21,7 +20,7 @@ namespace CSIT_314_Group.Data
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
-        public async Task<FavouriteFundraiserResultEnum> FavouriteFundraiser(int userId, int fraId)
+        public async Task<(bool success, string message)> FavouriteFundraiser(int userId, int fraId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -38,15 +37,15 @@ namespace CSIT_314_Group.Data
                 if (rowsAffected == 1)
                 {
                     transaction.Commit();
-                    return FavouriteFundraiserResultEnum.success;
+                    return (true, "Fundraiser Favourited");
                 }
                 transaction.Rollback();
-                return FavouriteFundraiserResultEnum.failed;
+                return (false, "failed to favourite fundraiser");
             }
             catch (SqliteException ex) when (ex.SqliteExtendedErrorCode == 2067)
             {
                 transaction.Rollback();
-                return FavouriteFundraiserResultEnum.duplicate;
+                return (false, "fundraiser already favourited");
             }
             catch
             {
