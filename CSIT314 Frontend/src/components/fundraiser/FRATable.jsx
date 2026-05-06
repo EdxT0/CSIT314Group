@@ -1,78 +1,74 @@
-import "../../styles/adminpage.css";
+export default function FRATable({ fras, search, setSearch, onSelect }) {
+  const filtered = fras.filter(f =>
+    f.name?.toLowerCase().includes(search.toLowerCase()) ||
+    f.fraCategoryName?.toLowerCase().includes(search.toLowerCase())
+  );
 
-// Receives: fras[], search, setSearch, onView, onEdit, onDelete, loading
-export default function FRATable({ fras, search, setSearch, onView, onEdit, onDelete, loading }) {
-
-  function statusBadge(status) {
-    const map = {
-      0: { label: "Active",    cls: "badge-active" },
-      1: { label: "Completed", cls: "badge-completed" },
-      2: { label: "Paused",    cls: "badge-paused" },
-    };
-    // accept int or string
-    const entry = map[status] ?? map[status?.toString()] ?? { label: status ?? "Unknown", cls: "badge-draft" };
-    return <span className={`badge ${entry.cls}`}>{entry.label}</span>;
-  }
+  const active = filtered.filter(f => f.status === false || f.status === 0);
+  const completed = filtered.filter(f => f.status === true || f.status === 1);
+  const totalViews = filtered.reduce((sum, f) => sum + (f.amtOfViews ?? 0), 0);
 
   return (
     <>
       <div className="admin-topbar">
-        <h1>My Fundraising Activities</h1>
-      </div>
-
-      <div style={{ display: "flex", gap: "10px", marginBottom: "1rem" }}>
+        <h1>My fundraising activities</h1>
         <input
           className="admin-search"
-          type="text"
-          placeholder="Search by name…"
+          placeholder="Search activities..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
         />
+      </div>
+
+      <div className="admin-metrics">
+        <div className="metric">
+          <div className="metric-label">Total</div>
+          <div className="metric-val">{filtered.length}</div>
+        </div>
+        <div className="metric">
+          <div className="metric-label">Active</div>
+          <div className="metric-val">{active.length}</div>
+        </div>
+        <div className="metric">
+          <div className="metric-label">Completed</div>
+          <div className="metric-val">{completed.length}</div>
+        </div>
+        <div className="metric">
+          <div className="metric-label">Total views</div>
+          <div className="metric-val">{totalViews}</div>
+        </div>
       </div>
 
       <div className="admin-table-card">
         <table>
           <thead>
             <tr>
-              <th style={{ width: "28%" }}>Name</th>
-              <th style={{ width: "16%" }}>Category</th>
-              <th style={{ width: "10%" }}>Views</th>
-              <th style={{ width: "10%" }}>Shortlists</th>
-              <th style={{ width: "10%" }}>Status</th>
-              <th style={{ width: "12%" }}>Deadline</th>
-              <th style={{ width: "14%" }}>Actions</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Goal ($)</th>
+              <th>Deadline</th>
+              <th>Views</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={7} style={{ textAlign: "center", color: "#555870", padding: "2rem" }}>
-                  Loading…
-                </td>
-              </tr>
-            ) : fras.length === 0 ? (
-              <tr>
-                <td colSpan={7} style={{ textAlign: "center", color: "#555870", padding: "2rem" }}>
-                  No fundraising activities found.
-                </td>
-              </tr>
-            ) : (
-              fras.map((fra) => (
-                <tr key={fra.id}>
-                  <td title={fra.name}>{fra.name}</td>
-                  <td>{fra.categoryName ?? fra.fraCategoryId}</td>
-                  <td>{fra.views ?? 0}</td>
-                  <td>{fra.shortlists ?? 0}</td>
-                  <td>{statusBadge(fra.status)}</td>
-                  <td>{fra.deadline ? new Date(fra.deadline).toLocaleDateString("en-GB") : "—"}</td>
-                  <td>
-                    <button className="action-btn" onClick={() => onView(fra)}>View</button>
-                    <button className="action-btn" onClick={() => onEdit(fra)}>Edit</button>
-                    <button className="action-btn danger" onClick={() => onDelete(fra)}>Delete</button>
-                  </td>
-                </tr>
-              ))
+            {filtered.length === 0 && (
+              <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a" }}>No activities found</td></tr>
             )}
+            {filtered.map(f => (
+              <tr key={f.id} onClick={() => onSelect(f)} style={{ cursor: "pointer" }}>
+                <td>{f.name}</td>
+                <td>{f.fraCategoryName}</td>
+                <td>{f.amtRequested?.toLocaleString()}</td>
+                <td>{f.deadline}</td>
+                <td>{f.amtOfViews}</td>
+                <td>
+                  <span className={`badge ${!f.status ? "badge-active" : "badge-completed"}`}>
+                    {f.status ? "Completed" : "Active"}
+                  </span>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
