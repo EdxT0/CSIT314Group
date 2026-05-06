@@ -1,5 +1,4 @@
 using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.CategoryDTO;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ namespace CSIT_314_Group.Controllers.CategoryController
 
         [Authorize(Roles = "platform manager")]
         [HttpPut]
-        public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryDTO updateCategoryDto)
+        public async Task<IActionResult> UpdateCategory([FromBody] Category updateCategoryDto)
         {
             var existingCategory = await _categoryRepository.GetById(updateCategoryDto.Id);
 

@@ -1,5 +1,4 @@
 using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserProfileDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -11,7 +10,7 @@ public class UpdateUserProfileController(UserProfile userProfileRepository) : Co
 {
     [Authorize(Roles ="admin")]
     [HttpPut]
-    public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserProfileDTO request)
+    public async Task<IActionResult> UpdateUserProfile([FromBody] UserProfile request)
     {
         if (request == null)
             return BadRequest("Invalid request");

@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserAccountDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +23,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
         
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> UpdateUserAccount([FromBody] UpdateUserDTO updateUserDTO)
+        public async Task<IActionResult> UpdateUserAccount([FromBody] UserAccount updateUserDTO)
         {
             List<string> itemsUpdated = new List<string>();
             int userId = updateUserDTO.Id;
@@ -42,9 +41,9 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
                 return BadRequest($"Invalid Profile {updateUserDTO.ProfileName.ToLower()}");
             }
 
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.Password))
+            if (!string.IsNullOrWhiteSpace(updateUserDTO.HashedPassword))
             {
-                var verifyPassword = _passwordHasher.VerifyHashedPassword(user, user.HashedPassword, updateUserDTO.Password);
+                var verifyPassword = _passwordHasher.VerifyHashedPassword(user, user.HashedPassword, updateUserDTO.HashedPassword);
                 if (verifyPassword == PasswordVerificationResult.Success)
                 {
                     return Conflict("New password is same as old password");
@@ -53,7 +52,6 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
 
             if (!string.IsNullOrWhiteSpace(updateUserDTO.ProfileName))
             {
-
 
                 var result = await _userAccountRepository.UpdateProfileById(userId, profileId);
                 if (!result)
@@ -66,13 +64,22 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
 
             if (!string.IsNullOrWhiteSpace(updateUserDTO.Email))
             {
-                var result = await _userAccountRepository.UpdateEmailById(userId, updateUserDTO.Email.ToLower());
-                if (!result)
+                var currentUserWithEmail = await _userAccountRepository.GetByEmail(updateUserDTO.Email.ToLower());
+                if(currentUserWithEmail == null)
                 {
-                    return StatusCode(500, "Failed to update email");
-                }
+                    var result = await _userAccountRepository.UpdateEmailById(userId, updateUserDTO.Email.ToLower());
+                    if (!result)
+                    {
+                        return StatusCode(500, "Failed to update email");
+                    }
 
-                itemsUpdated.Add("Email");
+                    itemsUpdated.Add("Email");
+                }
+                else
+                {
+                    return BadRequest("Email already Registered");
+                }
+                
             }
 
             if (!string.IsNullOrWhiteSpace(updateUserDTO.PhoneNumber))
@@ -97,11 +104,11 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
                 itemsUpdated.Add("Name");
             }
 
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.Password))
+            if (!string.IsNullOrWhiteSpace(updateUserDTO.HashedPassword))
             {
 
 
-                string hashedPassword = _passwordHasher.HashPassword(user, updateUserDTO.Password);
+                string hashedPassword = _passwordHasher.HashPassword(user, updateUserDTO.HashedPassword);
                 var result = await _userAccountRepository.UpdatePasswordById(userId, hashedPassword);
                 if (!result)
                 {

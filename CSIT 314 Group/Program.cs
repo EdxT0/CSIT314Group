@@ -38,13 +38,13 @@ namespace CSIT_314_Group
 
             builder.Services.AddSingleton<DbConnectionFactory>();
 
-            builder.Services.AddSingleton<UserProfile>();
+            builder.Services.AddScoped<UserProfile>();
             builder.Services.AddScoped<UserAccount>();
             builder.Services.AddScoped<FundraiserActivity>();
-            builder.Services.AddScoped<UserFundraiserRepository>();
-            builder.Services.AddScoped<FundraiserDonationsRepository>();
+            builder.Services.AddScoped<UserFundraiser>();
+            builder.Services.AddScoped<FundraiserDonations>();
             builder.Services.AddScoped<Category>();
-            builder.Services.AddScoped<FavouriteRepository>(); 
+            builder.Services.AddScoped<Favourite>(); 
 
             builder.Services.AddScoped<DatabaseInitialiser>();
             builder.Services.AddScoped<PasswordHasher<UserAccount>>();

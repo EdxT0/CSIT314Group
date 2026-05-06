@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserAccountDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +17,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
 
         [Authorize(Roles = "admin")]
         [HttpGet]
-        public async Task<List<UserAccountDTO>> ViewAllUserAccounts()
+        public async Task<List<UserAccount>> ViewAllUserAccounts()
         {
             return await _userAccountRepo.ViewAllUserAccount();
 

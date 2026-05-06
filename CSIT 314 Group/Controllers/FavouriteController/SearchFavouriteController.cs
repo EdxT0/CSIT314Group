@@ -10,9 +10,9 @@ namespace CSIT_314_Group.Controllers.FavouriteController
     [ApiController]
     public class SearchFavouriteController : ControllerBase
     {
-        private readonly FavouriteRepository _favouriteRepository;
+        private readonly Favourite _favouriteRepository;
 
-        public SearchFavouriteController(FavouriteRepository favouriteRepository)
+        public SearchFavouriteController(Favourite favouriteRepository)
         {
             _favouriteRepository = favouriteRepository;
         }

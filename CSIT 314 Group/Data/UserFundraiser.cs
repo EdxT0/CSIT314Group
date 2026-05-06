@@ -1,14 +1,13 @@
-﻿using CSIT_314_Group.DTO.FundraiserActivityDTO;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 namespace CSIT_314_Group.Data
 {
-    public class UserFundraiserRepository
+    public class UserFundraiser
     {
         private readonly DbConnectionFactory _dbConnectionFactory;
 
-        public UserFundraiserRepository(DbConnectionFactory dbConnectionFactory)
+        public UserFundraiser(DbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
@@ -34,9 +33,9 @@ namespace CSIT_314_Group.Data
             return false;
         }
 
-        public async Task<List<ViewFundraiserDTO>> ViewMyFundraisers(int userId)
+        public async Task<List<FundraiserActivity>> ViewMyFundraisers(int userId)
         {
-            List<ViewFundraiserDTO> result = new List<ViewFundraiserDTO>();
+            List<FundraiserActivity> result = new List<FundraiserActivity>();
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
@@ -63,7 +62,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                result.Add(new ViewFundraiserDTO(
+                result.Add(new FundraiserActivity(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetString(reader.GetOrdinal("FraName")),
                             reader.GetString(reader.GetOrdinal("Description")),

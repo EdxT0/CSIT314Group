@@ -3,7 +3,6 @@ using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using CSIT_314_Group.DTO.UserAccountDTO;
 
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
@@ -24,13 +23,12 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
 
         [Authorize(Roles ="admin")]
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO createUserRequest)
+        public async Task<IActionResult> CreateUser([FromBody] UserAccount createUserRequest)
         {
-            string profileInputLowerCase = createUserRequest.ProfileName.ToLower();
-            int? ProfileId = await _userProfileRepository.getIdWithProfileName(profileInputLowerCase);
-            if (ProfileId == null)
+
+            if (createUserRequest.ProfileId == null)
             {
-                return BadRequest($"Invalid Profile {createUserRequest.ProfileName}"); 
+                return BadRequest($"Invalid Profile"); 
             }
             if((await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.Email)).Count != 0)
             {
@@ -40,13 +38,13 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             if ( (await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.PhoneNumber)).Count != 0 )
 
             {
-                return Conflict("email already exist");
+                return Conflict("Phone Number already exist");
             }
             var hasher = new PasswordHasher<UserAccount>();
 
-            var userDetails = new UserAccount(createUserRequest.Name.ToLower(), createUserRequest.Email.ToLower(), createUserRequest.PhoneNumber.ToLower(), ProfileId, createUserRequest.IsSuspended);
+            var userDetails = new UserAccount(createUserRequest.Name.ToLower(), createUserRequest.Email.ToLower(), createUserRequest.PhoneNumber.ToLower(), createUserRequest.ProfileId, createUserRequest.IsSuspended);
             {
-                userDetails.setPassword(hasher.HashPassword(userDetails, createUserRequest.Password));
+                userDetails.setPassword(hasher.HashPassword(userDetails, createUserRequest.HashedPassword));
 
                 CreateUserResultEnum result = await _userAccountRepository.CreateUser(userDetails);
                 return result switch

@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.FundraiserActivityDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +11,9 @@ namespace CSIT_314_Group.Controllers.FundraiserController
     public class CreateFundraiserController : ControllerBase
     {
         private readonly FundraiserActivity _fundraiserActivityRepository;
-        private readonly UserFundraiserRepository _userFundraiserRepository;
+        private readonly UserFundraiser _userFundraiserRepository;
         private readonly Data.Category _categoryRepository;
-        public CreateFundraiserController(FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, Category categoryRepository)
+        public CreateFundraiserController(FundraiserActivity fundraiserActivityRepository, UserFundraiser userFundraiserRepo, Category categoryRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepository = userFundraiserRepo;
@@ -23,10 +22,10 @@ namespace CSIT_314_Group.Controllers.FundraiserController
 
         [Authorize(Roles = "fundraiser manager, admin")]
         [HttpPost]
-        public async Task<IActionResult> CreateFundraiser([FromBody] CreateFundraiserDTO createFundraiserDTO)
+        public async Task<IActionResult> CreateFundraiser([FromBody] FundraiserActivity createFundraiserDTO)
         {
 
-            if (!DateTime.TryParseExact(createFundraiserDTO.deadline,
+            if (!DateTime.TryParseExact(createFundraiserDTO.DeadlineInString,
                                         "dd-MM-yyyy",
                                         null,
                                         System.Globalization.DateTimeStyles.None,
@@ -35,36 +34,32 @@ namespace CSIT_314_Group.Controllers.FundraiserController
                 return BadRequest("Deadline must be in dd-MM-yyyy format");
             }
 
-            if(createFundraiserDTO.fraCategoryId == null)
+            if(createFundraiserDTO.FraCategoryId == null)
             {
                 return BadRequest("Fundraiser Category cannot be empty! Please select existing Categories!");
             }
-            if (await _categoryRepository.GetById(createFundraiserDTO.fraCategoryId) == null)
+            if (await _categoryRepository.GetById(createFundraiserDTO.FraCategoryId) == null)
             {
                 return BadRequest("no such fundraiser category");
             }
-            var result = await _fundraiserActivityRepository.GetByName(createFundraiserDTO.name.ToLower());
+            var result = await _fundraiserActivityRepository.GetByName(createFundraiserDTO.Name.ToLower());
 
             if (result == null)
             {
-                var fundraiser = new FundraiserActivity(createFundraiserDTO.name.ToLower(),
-                                                createFundraiserDTO.description,
-                                                parsedDeadline,
-                                                createFundraiserDTO.fraCategoryId,
-                                                createFundraiserDTO.amtRequested);
+                createFundraiserDTO.Name = createFundraiserDTO.Name.ToLower();
 
-                int? fraId = await _fundraiserActivityRepository.createFundraiser(fundraiser);
+                int? fraId = await _fundraiserActivityRepository.createFundraiser(createFundraiserDTO);
                 if (fraId != null)
                 {
                     int userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value);
                     if (await _userFundraiserRepository.AddFRAToUser(userId, fraId))
                     {
-                        return Ok($"Created {fundraiser.Name} Fundraiser");
+                        return Ok($"Created {createFundraiserDTO.Name} Fundraiser");
                     }
                 }
                 return StatusCode(500, "Failed to create fundraiser");
             }
-            return Conflict($"Fundraiser with the same name ( {createFundraiserDTO.name} )exists already");
+            return Conflict($"Fundraiser with the same name ( {createFundraiserDTO.Name} )exists already");
         }
     }
 }

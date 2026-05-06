@@ -1,5 +1,4 @@
 using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserProfileDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,22 +10,22 @@ public class SuspendUserProfileController(UserProfile userProfileRepository) : C
 {
     [Authorize(Roles ="admin")]
     [HttpPut]
-    public async Task<IActionResult> SuspendUserProfile([FromBody]SuspendProfileDTO? SuspendProfileDTO)
+    public async Task<IActionResult> SuspendUserProfile([FromBody] UserProfile SuspendProfileDTO)
     {
         if (SuspendProfileDTO == null)
             return BadRequest("Request body cannot be empty");
         
-        if (SuspendProfileDTO.id <= 0)
+        if (SuspendProfileDTO.Id <= 0)
             return BadRequest("Invalid Profile ID");
         
         var result = await userProfileRepository.SuspendUserProfile(
-            SuspendProfileDTO.id, 
-            SuspendProfileDTO.isSuspend);
+            SuspendProfileDTO.Id, 
+            SuspendProfileDTO.Status);
 
         if (!result)
             return NotFound("User profile not found");
         
-        return Ok($"'User profile status updated to {SuspendProfileDTO.isSuspend}");
+        return Ok($"'User profile status updated to {SuspendProfileDTO.Status}");
     }
     
 }

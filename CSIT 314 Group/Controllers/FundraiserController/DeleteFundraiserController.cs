@@ -13,8 +13,8 @@ namespace CSIT_314_Group.Controllers.FundraiserController
     {
 
         private readonly Data.FundraiserActivity _fundraiserActivityRepository;
-        private readonly UserFundraiserRepository _userFundraiserRepository;
-        public DeleteFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
+        private readonly UserFundraiser _userFundraiserRepository;
+        public DeleteFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiser userFundraiserRepo)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepository = userFundraiserRepo;

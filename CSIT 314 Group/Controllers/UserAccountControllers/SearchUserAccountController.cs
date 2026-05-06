@@ -1,4 +1,4 @@
-﻿using CSIT_314_Group.DTO.UserAccountDTO;
+﻿using CSIT_314_Group.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
@@ -8,7 +8,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     public class SearchUserAccountController : ControllerBase
     {
         private readonly Data.UserAccount _userAccountRepository;
-        public SearchUserAccountController(Data.UserAccount userAccountRepository)
+        public SearchUserAccountController(UserAccount userAccountRepository)
         {
             _userAccountRepository = userAccountRepository;
         }
@@ -22,7 +22,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
                 return NotFound("User not found");
             }
 
-            List<UserAccountDTO> users = new List<UserAccountDTO>();
+            List<UserAccount> users = new List<UserAccount>();
             for(int i = 0; i < userIds.Count; i++)
             {
                 users.Add(await _userAccountRepository.GetById(userIds[i]));

@@ -1,4 +1,3 @@
-using CSIT_314_Group.DTO.UserProfileDTO;
 using Microsoft.Data.Sqlite;
 
 namespace CSIT_314_Group.Data;
@@ -6,8 +5,8 @@ namespace CSIT_314_Group.Data;
 public class UserProfile
 {
     public int Id { get; set; }
-    public string ProfileName { get; set; }
-    public string Description { get; set; }
+    public string ProfileName { get; set; } = "";
+    public string Description { get; set; } = "";
     public bool Status { get; set; }
 
     private readonly DbConnectionFactory _dbConnectionFactory;
@@ -18,6 +17,11 @@ public class UserProfile
     }
     public UserProfile()
     {
+    }
+    public UserProfile(int id, bool status)
+    {
+        Id = id;
+        Status = status;
     }
 
     // Check if profile exist
@@ -136,7 +140,7 @@ public class UserProfile
 
 
     // Update 
-    public async Task<bool> UpdateUserProfile(UpdateUserProfileDTO request)
+    public async Task<bool> UpdateUserProfile(UserProfile request)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();

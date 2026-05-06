@@ -1,5 +1,4 @@
 ﻿using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserDonationDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +10,10 @@ namespace CSIT_314_Group.Controllers.DonationController
     [ApiController]
     public class AddDonationController : ControllerBase
     {
-        private readonly FundraiserDonationsRepository _fundraiserDonationsRepository;
-        private readonly Data.FundraiserActivity _fundraiserActivity;
+        private readonly FundraiserDonations _fundraiserDonationsRepository;
+        private readonly FundraiserActivity _fundraiserActivity;
 
-        public AddDonationController(FundraiserDonationsRepository fundraiserDonationsRepository, Data.FundraiserActivity fundraiserActivity)
+        public AddDonationController(FundraiserDonations fundraiserDonationsRepository, Data.FundraiserActivity fundraiserActivity)
         {
             _fundraiserDonationsRepository = fundraiserDonationsRepository;
             _fundraiserActivity = fundraiserActivity;
@@ -22,7 +21,7 @@ namespace CSIT_314_Group.Controllers.DonationController
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddDonation([FromBody] AddDonationDTO addDonationDTO)
+        public async Task<IActionResult> AddDonation( [FromBody] FundraiserDonations fundraiserDonations)
         {
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             if (user == null)
@@ -30,24 +29,24 @@ namespace CSIT_314_Group.Controllers.DonationController
                 return BadRequest("No log in detected");
             }
             int userId = Convert.ToInt32(user.Value);
-            var FundraiserAmtRequested = await _fundraiserActivity.getAmtRequested(addDonationDTO.FraId);
+            var FundraiserAmtRequested = await _fundraiserActivity.getAmtRequested(fundraiserDonations.Id);
             if (FundraiserAmtRequested == null)
             {
                 return BadRequest("Fundraiser not found");
             }
-            double FundraiserAmtDonated = Convert.ToDouble(await _fundraiserActivity.getAmtDonated(addDonationDTO.FraId));
+            double FundraiserAmtDonated = Convert.ToDouble(await _fundraiserActivity.getAmtDonated(fundraiserDonations.Id));
             double amtRequested = Convert.ToDouble(FundraiserAmtRequested);
-            if (!isDonationValid(FundraiserAmtDonated, amtRequested, addDonationDTO.AmtDonatedByUser))
+            if (!isDonationValid(FundraiserAmtDonated, amtRequested, fundraiserDonations.AmtDonated))
             {
                 return BadRequest("user Donated amount is bigger than amount requested after adding current donated amount");
             }
             DateTime dateTimeNow = DateTime.Now;
-            double newAmountDonated = FundraiserAmtDonated + addDonationDTO.AmtDonatedByUser;
+            double newAmountDonated = FundraiserAmtDonated + fundraiserDonations.AmtDonated;
 
-            bool updateToFundraiserDonationSuccess = await _fundraiserDonationsRepository.AddDonation(userId, addDonationDTO.FraId, addDonationDTO.AmtDonatedByUser, dateTimeNow);
+            bool updateToFundraiserDonationSuccess = await _fundraiserDonationsRepository.AddDonation(userId, fundraiserDonations.Id, fundraiserDonations.AmtDonated, dateTimeNow);
             if (updateToFundraiserDonationSuccess)
             {
-                bool updateToFundraiserActivitySuccess = await _fundraiserActivity.UpdateAmtDonated(newAmountDonated, addDonationDTO.FraId);
+                bool updateToFundraiserActivitySuccess = await _fundraiserActivity.UpdateAmtDonated(newAmountDonated, fundraiserDonations.Id);
                 if (updateToFundraiserActivitySuccess)
                 {
                     return Ok("amount donated successfully");
@@ -55,7 +54,7 @@ namespace CSIT_314_Group.Controllers.DonationController
                 }
                 else
                 {
-                    bool deleteDonationSuccess = await _fundraiserDonationsRepository.DeleteDonation(userId, addDonationDTO.FraId, addDonationDTO.AmtDonatedByUser, dateTimeNow);
+                    bool deleteDonationSuccess = await _fundraiserDonationsRepository.DeleteDonation(userId, fundraiserDonations.Id, fundraiserDonations.AmtDonated, dateTimeNow);
                     if (deleteDonationSuccess)
                     {
                         return StatusCode(500, "Failed to add donations, but database successfully cleaned");

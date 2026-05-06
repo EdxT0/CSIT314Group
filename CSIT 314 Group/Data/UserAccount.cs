@@ -1,5 +1,4 @@
-﻿using CSIT_314_Group.DTO.UserAccountDTO;
-using CSIT_314_Group.Results;
+﻿using CSIT_314_Group.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using System.Data;
@@ -13,19 +12,50 @@ namespace CSIT_314_Group.Data
         private readonly DbConnectionFactory _dbConnectionFactory;
 
 
-        public int Id { get; private set; }
-        public string Name { get; private set; } = "";
-        public string Email { get; private set; } = "";
-        public string PhoneNumber { get; private set; } = "";
-        public string HashedPassword { get; private set; } = "";
-        public int? ProfileId { get; private set; }
-        public bool IsSuspended { get; private set; } = false;
+        public int Id { get;  set; }
+        public string Name { get;  set; } = "";
+        public string Email { get;  set; } = "";
+        public string PhoneNumber { get;  set; } = "";
+        public string HashedPassword { get;  set; } = "";
+        public int ProfileId { get;  set; }
+        public bool IsSuspended { get;  set; } = false;
+        public string ProfileName { get; set; } = "";
 
         public UserAccount(
             string name,
             string email,
             string phoneNumber,
-            int? profileId,
+            string hashedPassword, 
+            int profileId,
+            bool isSuspended)
+        {
+            Name = name;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            ProfileId = profileId;
+            IsSuspended = isSuspended;
+            HashedPassword = hashedPassword;
+        }
+        public UserAccount(
+            string name,
+            string email,
+            string phoneNumber,
+            string hashedPassword,
+            string profileName,
+            bool isSuspended)
+        {
+            Name = name;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            ProfileName = profileName;
+            IsSuspended = isSuspended;
+            HashedPassword = hashedPassword;
+        }
+        public UserAccount(
+            string name,
+            string email,
+            string phoneNumber,
+            int profileId,
             bool isSuspended
             )
         {
@@ -41,7 +71,7 @@ namespace CSIT_314_Group.Data
            string email,
            string phoneNumber,
            string hashedPassword,
-           int? profileId,
+           int profileId,
            bool isSuspended)
         {
             Id = id;
@@ -59,6 +89,10 @@ namespace CSIT_314_Group.Data
         public UserAccount(DbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
+        }
+        public UserAccount()
+        {
+
         }
 
         public void UpdateContactDetails(string name, string email, string phoneNumber)
@@ -82,7 +116,7 @@ namespace CSIT_314_Group.Data
             HashedPassword = newHashedPassword;
         }
 
-        public async Task<UserAccountDTO> GetById(int id)
+        public async Task<UserAccount> GetById(int id)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             connection.Open();
@@ -94,7 +128,7 @@ namespace CSIT_314_Group.Data
 
             if (await reader.ReadAsync())
             {
-                return new UserAccountDTO
+                return new UserAccount
                 {
                     Name = reader.GetString(reader.GetOrdinal("Name")),
                     PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
@@ -195,7 +229,7 @@ namespace CSIT_314_Group.Data
 
         }
 
-        public async Task<UserAccountDTO> ViewUserAccount(int id)
+        public async Task<UserAccount> ViewUserAccount(int id)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -211,9 +245,9 @@ namespace CSIT_314_Group.Data
 
             if (await reader.ReadAsync())
             {
-                return new UserAccountDTO
+                return new UserAccount
                 {
-                    id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
                     Name = reader.GetString(reader.GetOrdinal("Name")),
                     PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
                     Email = reader.GetString(reader.GetOrdinal("Email")),
@@ -224,7 +258,7 @@ namespace CSIT_314_Group.Data
             return null;
         }
 
-        public async Task<List<UserAccountDTO>> ViewAllUserAccount()
+        public async Task<List<UserAccount>> ViewAllUserAccount()
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -232,13 +266,13 @@ namespace CSIT_314_Group.Data
             string viewAllUserAccountQuery = @"SELECT UA.Id, UA.Name, UA.Email, UA.PhoneNumber, UP.ProfileName, UA.IsSuspended FROM UserAccount UA JOIN USERPROFILE UP ON UA.ProfileID = UP.Id";
             var viewAllUserAccountQueryCommand = new SqliteCommand(viewAllUserAccountQuery, connection);
             using var reader = await viewAllUserAccountQueryCommand.ExecuteReaderAsync();
-            List<UserAccountDTO> listOfAllUserAccount = new List<UserAccountDTO>();
+            List<UserAccount> listOfAllUserAccount = new List<UserAccount>();
 
             while (await reader.ReadAsync())
             {
-                listOfAllUserAccount.Add(new UserAccountDTO
+                listOfAllUserAccount.Add(new UserAccount
                 {
-                    id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
                     Name = reader.GetString(reader.GetOrdinal("Name")),
                     PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
                     Email = reader.GetString(reader.GetOrdinal("Email")),

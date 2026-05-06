@@ -9,8 +9,8 @@ namespace CSIT_314_Group.Controllers.FundraiserController
     [ApiController]
     public class ViewMyFundraisersController : ControllerBase
     {
-        private readonly UserFundraiserRepository _userFundraiserRepo;
-        public ViewMyFundraisersController(UserFundraiserRepository userFundraiserRepo)
+        private readonly UserFundraiser _userFundraiserRepo;
+        public ViewMyFundraisersController(UserFundraiser userFundraiserRepo)
         {
             _userFundraiserRepo = userFundraiserRepo;
         }

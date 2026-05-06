@@ -1,5 +1,4 @@
 using CSIT_314_Group.Data;
-using CSIT_314_Group.DTO.UserProfileDTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -19,7 +18,7 @@ public class CreateUserProfileController : ControllerBase
     
     [Authorize(Roles ="admin")]
     [HttpPost]
-    public async Task<IActionResult> CreateProfile([FromBody] CreateUserProfileDTO request)
+    public async Task<IActionResult> CreateProfile([FromBody] UserProfile request)
     {
         if (string.IsNullOrWhiteSpace(request.ProfileName) ||
             string.IsNullOrWhiteSpace(request.Description))

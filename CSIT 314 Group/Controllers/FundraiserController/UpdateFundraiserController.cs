@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CSIT_314_Group.DTO.FundraiserActivityDTO;
 using System.Globalization;
 using System.Security.Claims;
 
@@ -14,9 +13,9 @@ namespace CSIT_314_Group.Controllers.FundraiserController
     {
 
         private readonly Data.FundraiserActivity _fundraiserActivityRepository;
-        private readonly UserFundraiserRepository _userFundraiserRepository;
+        private readonly UserFundraiser _userFundraiserRepository;
         private readonly Data.Category _categoryRepository;
-        public UpdateFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo, Data.Category categoryRepository)
+        public UpdateFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiser userFundraiserRepo, Data.Category categoryRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepository = userFundraiserRepo;
@@ -25,10 +24,10 @@ namespace CSIT_314_Group.Controllers.FundraiserController
 
         [Authorize(Roles = "fundraiser manager, admin")]
         [HttpPut]
-        public async Task<IActionResult> UpdateFundraiser([FromBody] UpdateFundraiserDTO updateFundraiserDTO)
+        public async Task<IActionResult> UpdateFundraiser([FromBody] FundraiserActivity updateFundraiserDTO)
         {
             List<string> itemsUpdated = new List<string>();
-            var fundraiser = await _fundraiserActivityRepository.GetById(updateFundraiserDTO.fraId);
+            var fundraiser = await _fundraiserActivityRepository.GetById(updateFundraiserDTO.Id);
             var userExist = User.FindFirst(ClaimTypes.NameIdentifier);
             if ( userExist == null)
             {
@@ -36,77 +35,70 @@ namespace CSIT_314_Group.Controllers.FundraiserController
             }
             int userId = Convert.ToInt32(userExist.Value);
 
-            bool doesFraBelongToUser = await _userFundraiserRepository.validateUserAndFundraiser(userId, updateFundraiserDTO.fraId);
+            bool doesFraBelongToUser = await _userFundraiserRepository.validateUserAndFundraiser(userId, updateFundraiserDTO.Id);
 
             if (doesFraBelongToUser || User.FindFirst(ClaimTypes.Role).Value == "admin")
             {
 
                 if (fundraiser == null)
                 {
-                    return BadRequest($"Failed to find Fundraiser: {updateFundraiserDTO.fraId}");
+                    return BadRequest($"Failed to find Fundraiser: {updateFundraiserDTO.Id}");
                 }
 
-                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.fraName))
+                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.Name))
                 {
-                    if (fundraiser.Name == updateFundraiserDTO.fraName)
+                    if (fundraiser.Name == updateFundraiserDTO.Name)
                     {
-                        return Conflict($"{updateFundraiserDTO.fraName} is the same as the previous name");
+                        return Conflict($"{updateFundraiserDTO.Name} is the same as the previous name");
                     }
                 }
-                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.deadline))
+                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.DeadlineInString))
                 {
-                    if (!DateTime.TryParseExact(updateFundraiserDTO.deadline,
+                    if (!DateTime.TryParseExact(updateFundraiserDTO.DeadlineInString,
                                             "dd-MM-yyyy",
                                             null,
                                             System.Globalization.DateTimeStyles.None,
                                             out DateTime parsedDeadline))
                     {
-                        return BadRequest($"{updateFundraiserDTO.deadline} must be in dd-MM-yyyy format");
+                        return BadRequest($"{updateFundraiserDTO.DeadlineInString} must be in dd-MM-yyyy format");
                     }
-                    if (fundraiser.Deadline == updateFundraiserDTO.deadline)
+                    if (fundraiser.DeadlineInString == updateFundraiserDTO.DeadlineInString)
                     {
-                        return Conflict($"{updateFundraiserDTO.deadline} is the same as the previous deadline");
-                    }
-                }
-                if (updateFundraiserDTO.status != null)
-                {
-                    if (fundraiser.Status == updateFundraiserDTO.status)
-                    {
-                        return Conflict($"{updateFundraiserDTO.status} is the same as the previous status");
+                        return Conflict($"{updateFundraiserDTO.DeadlineInString} is the same as the previous deadline");
                     }
                 }
 
-                if (updateFundraiserDTO.amtRequested != null)
+                if (updateFundraiserDTO.AmtRequested != null)
                 {
-                    if (fundraiser.AmtRequested == updateFundraiserDTO.amtRequested)
+                    if (fundraiser.AmtRequested == updateFundraiserDTO.AmtRequested)
                     {
-                        return Conflict($"{updateFundraiserDTO.amtRequested} is the same as the previous amount requested");
+                        return Conflict($"{updateFundraiserDTO.AmtRequested} is the same as the previous amount requested");
                     }
                 }
 
 
-                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.fraName))
+                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.Name))
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.updateName(updateFundraiserDTO.fraName, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.updateName(updateFundraiserDTO.Name, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Name");
                     }
-                    itemsUpdated.Add(updateFundraiserDTO.fraName);
+                    itemsUpdated.Add(updateFundraiserDTO.Name);
                 }
-                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.description))
+                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.Description))
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.UpdateDesc(updateFundraiserDTO.description, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateDesc(updateFundraiserDTO.Description, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Description");
                     }
-                    itemsUpdated.Add(updateFundraiserDTO.description);
+                    itemsUpdated.Add(updateFundraiserDTO.Description);
 
                 }
-                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.deadline))
+                if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.DeadlineInString))
                 {
-                    bool convertToDateTimesuccess = DateTime.TryParseExact(updateFundraiserDTO.deadline,
+                    bool convertToDateTimesuccess = DateTime.TryParseExact(updateFundraiserDTO.DeadlineInString,
                                            "dd-MM-yyyy",
                                            CultureInfo.InvariantCulture,
                                            DateTimeStyles.None,
@@ -124,43 +116,43 @@ namespace CSIT_314_Group.Controllers.FundraiserController
                     {
                         return StatusCode(500, "Failed to update Fundraiser Deadline");
                     }
-                    itemsUpdated.Add(updateFundraiserDTO.deadline);
+                    itemsUpdated.Add(updateFundraiserDTO.DeadlineInString);
 
                 }
-                if (updateFundraiserDTO.status != null)
+                if (updateFundraiserDTO.Status != null)
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.UpdateStatus(updateFundraiserDTO.status, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateStatus(updateFundraiserDTO.Status, fundraiser.Id);
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser Status");
                     }
-                    itemsUpdated.Add(updateFundraiserDTO.status.ToString());
+                    itemsUpdated.Add(updateFundraiserDTO.Status.ToString());
 
                 }
 
-                if (updateFundraiserDTO.amtRequested != null)
+                if (updateFundraiserDTO.AmtRequested != null)
                 {
-                    bool updateSuccess = await _fundraiserActivityRepository.UpdateAmtRequested(updateFundraiserDTO.amtRequested, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateAmtRequested(updateFundraiserDTO.AmtRequested, fundraiser.Id);
 
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser amount requested");
                     }
-                    itemsUpdated.Add(updateFundraiserDTO.amtRequested.ToString());
+                    itemsUpdated.Add(updateFundraiserDTO.AmtRequested.ToString());
                 }
-                if (updateFundraiserDTO.fraCategoryId != null)
+                if (updateFundraiserDTO.FraCategoryId != null)
                 {
-                    if(await _categoryRepository.GetById(updateFundraiserDTO.fraCategoryId) == null)
+                    if(await _categoryRepository.GetById(updateFundraiserDTO.FraCategoryId) == null)
                     {
                         return BadRequest("no such fundraiser category");
                     }
-                    bool updateSuccess = await _fundraiserActivityRepository.UpdateFraCate(updateFundraiserDTO.fraCategoryId, fundraiser.Id);
+                    bool updateSuccess = await _fundraiserActivityRepository.UpdateFraCate(updateFundraiserDTO.FraCategoryId, fundraiser.Id);
 
                     if (!updateSuccess)
                     {
                         return StatusCode(500, "Failed to update Fundraiser amount requested");
                     }
-                    itemsUpdated.Add(updateFundraiserDTO.fraCategoryId.ToString());
+                    itemsUpdated.Add(updateFundraiserDTO.FraCategoryId.ToString());
                 }
 
                 return Ok(itemsUpdated);

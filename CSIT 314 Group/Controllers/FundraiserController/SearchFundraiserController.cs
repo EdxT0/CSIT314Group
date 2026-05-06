@@ -11,7 +11,7 @@ namespace CSIT_314_Group.Controllers.FundraiserController
     {
 
         private readonly Data.FundraiserActivity _fundraiserActivityRepository;
-        public SearchFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiserRepository userFundraiserRepo)
+        public SearchFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiser userFundraiserRepo)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
         }
