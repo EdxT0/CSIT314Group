@@ -30,12 +30,12 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             {
                 return BadRequest("Invalid Profile");
             }
-            if ((await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.Email)).Count != 0)
+            if ((await _userAccountRepository.GetIdsWithQuery(createUserRequest.Email)).Count != 0)
             {
                 return BadRequest("email already exist");
             }
 
-            if ((await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(createUserRequest.PhoneNumber)).Count != 0)
+            if ((await _userAccountRepository.GetIdsWithQuery(createUserRequest.PhoneNumber)).Count != 0)
 
             {
                 return BadRequest("Phone Number already exist");

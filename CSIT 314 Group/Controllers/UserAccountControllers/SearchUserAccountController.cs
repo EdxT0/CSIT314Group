@@ -15,18 +15,9 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
         [HttpPost]
         public async Task<IActionResult> Search([FromQuery] string query)
         {
-            List<int> userIds = new List<int>();
-            userIds = await _userAccountRepository.GetIdsWithNameOrEmailOrPhone(query);
-            if(userIds.Count == 0 )
-            {
-                return NotFound("User not found");
-            }
 
-            List<UserAccount> users = new List<UserAccount>();
-            for(int i = 0; i < userIds.Count; i++)
-            {
-                users.Add(await _userAccountRepository.GetById(userIds[i]));
-            }   
+
+            List<UserAccount> users =  await _userAccountRepository.GetAllWithQuery(query);  
             
             return Ok(users);
         }

@@ -24,14 +24,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             {
                 return BadRequest("User Not Found");
             }
-            var isSuspended = await _userAccountRepository.GetSuspendStatusWithId(userId);
-            if (isSuspended == true && suspendUser == true)
-            {
-                return Conflict($"User already suspended");
-            }else if (isSuspended == true == false && suspendUser == false)
-            {
-                return Conflict($"User already unsuspended");
-            }
+
             var boolResult = await _userAccountRepository.SuspendUserWithId(userId, suspendUser);
             if (boolResult && suspendUser == true)
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.Xml;
 using System.Xml.Linq;
@@ -303,7 +304,38 @@ namespace CSIT_314_Group.Data
             return true;
         }
 
+        public async Task<List<UserAccount>> GetAllWithQuery(string query)
+        {
+            List<UserAccount> listOfAllUserAccount = new();
 
+            using var connection = new SqliteConnection("data source = app.db");
+            await connection.OpenAsync();
+
+            string GetAllWithQuery = "" +
+                "SELECT * FROM UserAccount JOIN UserProfile ON UserAccount.ProfileId = UserProfile.Id " +
+                "WHERE Name LIKE '%' || @query || '%'" +
+                " OR PhoneNumber LIKE '%' || @query || '%'" +
+                " OR Email LIKE '%' || @query || '%'";
+            using var GetAllWithQueryCommand = new SqliteCommand(GetAllWithQuery, connection);
+            GetAllWithQueryCommand.Parameters.AddWithValue("@query", query);
+
+            var reader = await GetAllWithQueryCommand.ExecuteReaderAsync();
+
+            while(await reader.ReadAsync())
+            {
+                listOfAllUserAccount.Add(new UserAccount
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                    PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                    Email = reader.GetString(reader.GetOrdinal("Email")),
+                    ProfileName = reader.GetString(reader.GetOrdinal("ProfileName")),
+                    IsSuspended = reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
+                });
+            }
+            return listOfAllUserAccount;
+        }
+        
         public async Task<bool> GetSuspendStatusWithId(int id)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
@@ -317,7 +349,7 @@ namespace CSIT_314_Group.Data
             return isSuspended;
         }
 
-        public async Task<List<int>> GetIdsWithNameOrEmailOrPhone(string nameOrEmailOrPhone)
+        public async Task<List<int>> GetIdsWithQuery(string nameOrEmailOrPhone)
         {
             List<int> ids = new List<int>();
 
