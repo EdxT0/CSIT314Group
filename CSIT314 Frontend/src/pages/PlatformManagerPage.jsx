@@ -16,7 +16,7 @@ export default function PlatformManagerPage() {
   const [fras, setFras] = useState([]);
   const [search, setSearch] = useState("");
   const [editingCategory, setEditingCategory] = useState(null);
-  const [error, setError] = useState("");
+  const [error, displayError] = useState("");
 
   useEffect(() => {
     fetchCategories();
@@ -24,10 +24,10 @@ export default function PlatformManagerPage() {
   }, []);
 
   const fetchCategories = async () => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/ViewAllCategory", { credentials: "include" });
     if (res.status === 404) { setCategories([]); return; }
-    if (!res.ok) { setError("Failed to load categories"); return; }
+    if (!res.ok) { displayError("Failed to load categories"); return; }
     setCategories(await res.json());
   };
 
@@ -39,12 +39,12 @@ export default function PlatformManagerPage() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
-    setError("");
+    displayError("");
     const res = await fetch(`/api/DeleteCategory/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
-    if (!res.ok) { setError(await res.text()); return; }
+    if (!res.ok) { displayError(await res.text()); return; }
     fetchCategories();
   };
 

@@ -17,7 +17,7 @@ export default function AdminPage() {
   const [profiles, setProfiles] = useState([]);
   const [accountSearch, setAccountSearch] = useState("");
   const [profileSearch, setProfileSearch] = useState("");
-  const [error, setError] = useState("");
+  const [error, displayError] = useState("");
   const [editingAccount, setEditingAccount] = useState(null);
   const [editingProfile, setEditingProfile] = useState(null);
   
@@ -28,10 +28,10 @@ export default function AdminPage() {
   }, []);
 
   const fetchAccounts = async () => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/ViewAllUserAccount", 
       { credentials: "include" });
-    if (!res.ok) { setError("Failed to load accounts"); return; }
+    if (!res.ok) { displayError("Failed to load accounts"); return; }
     setAccounts(await res.json());
   };
 
@@ -39,32 +39,28 @@ export default function AdminPage() {
     const res = await fetch("/api/ViewAllUserProfile", {
       credentials: "include" 
     });
-    if (!res.ok) return;
+    if (!res.ok) { displayError("Failed to load profiles"); return; }
     const data = await res.json();
     setProfiles(data);
   };
 
   const handleSuspendAccount = async (id, suspend) => {
-    setError("");
-    const res = await fetch("/api/SuspendUserAccount", {
+    displayError("");
+    const res = await fetch(`/api/SuspendUserAccount?userId=${encodeURIComponent(id)}&suspendUser=${encodeURIComponent(suspend)}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ userId: id, SuspendUser: suspend }),
     });
-    if (!res.ok) { setError(await res.text()); return; }
+    if (!res.ok) { displayError(await res.text()); return; }
     fetchAccounts();
   };
   
-  const handleSuspendProfile = async (id, isSuspend) => {
-    setError("");
-    const res = await fetch("/api/SuspendUserProfile", {
+  const handleSuspendProfile = async (id, suspend) => {
+    displayError("");
+    const res = await fetch(`/api/SuspendUserProfile?userId=${encodeURIComponent(id)}&suspendUser=${encodeURIComponent(suspend)}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ id, isSuspend }),
     });
-    if (!res.ok) { setError(await res.text()); return; }
+    if (!res.ok) { displayError(await res.text()); return; }
     fetchProfiles();
   };
 
