@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 export default function CreateProfileForm({ onSuccess, onCancel }) {
-  const [form, setForm] = useState({ profileName: "", description: "" });
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({ ProfileName: "", Description: "" });
+  const [error, displayError] = useState("");
 
   const handleSubmit = async () => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/CreateUserProfile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -13,7 +13,7 @@ export default function CreateProfileForm({ onSuccess, onCancel }) {
       body: JSON.stringify(form),
     });
     const text = await res.text();
-    if (!res.ok) { setError(text); return; }
+    if (!res.ok) { displayError(text); return; }
     onSuccess();
   };
 

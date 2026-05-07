@@ -2,13 +2,17 @@ import { useState } from "react";
 
 export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
   const [form, setForm] = useState({
-    name: "", email: "", phoneNumber: "",
-    password: "", profileName: "", isSuspended: false
+    Name: "", 
+    Email: "", 
+    PhoneNumber: "",
+    HashedPassword: "", 
+    ProfileId: "", 
+    IsSuspended: false
   });
-  const [error, setError] = useState("");
+  const [error, displayError] = useState("");
 
   const handleSubmit = async () => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/CreateUserAccount", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -16,7 +20,7 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
       body: JSON.stringify(form),
     });
     const text = await res.text();
-    if (!res.ok) { setError(text); return; }
+    if (!res.ok) { displayError(text); return; }
     onSuccess();
   };
 
@@ -25,11 +29,11 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
       <h2>Create account</h2>
       {error && <div className="form-error">{error}</div>}
 
-      {["name", "email", "phoneNumber", "password"].map(field => (
+      {["Name", "Email", "PhoneNumber", "HashedPassword"].map(field => (
         <div className="form-field" key={field}>
           <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
           <input
-            type={field === "password" ? "password" : "text"}
+            type={field === "HashedPassword" ? "password" : "text"}
             value={form[field]}
             onChange={e => setForm({ ...form, [field]: e.target.value })}
           />
@@ -39,12 +43,12 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
       <div className="form-field">
         <label>Profile</label>
         <select
-          value={form.profileName}
-          onChange={e => setForm({ ...form, profileName: e.target.value })}
+          value={form.ProfileId}
+          onChange={e => setForm({ ...form, ProfileId: e.target.value })}
         >
           <option value="">Select a profile...</option>
           {profiles.map(p => (
-            <option key={p.id} value={p.profileName}>{p.profileName}</option>
+            <option key={p.id} value={p.id}>{p.profileName}</option>
           ))}
         </select>
       </div>
