@@ -4,33 +4,14 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const res = await fetch("/api/Auth/Me", { credentials: "include" });
-        console.log("Me status:", res.status);  // ← add this
-        if (res.ok) {
-          const data = await res.json();
-          console.log("Me data:", data);        // ← add this
-          setUser(data);
-        }
-      } catch (err) {
-        console.error("Session check failed:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkSession();
-  }, []);
 
   const login = async (email, password) => {
-    const res = await fetch("/api/auth/Login", {
+    const res = await fetch(`/api/auth/Login?email=${encodeURIComponent(email)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(password),
     });
 
     const text = await res.text();
@@ -51,7 +32,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
