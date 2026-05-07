@@ -16,28 +16,28 @@ export default function FundraiserPage() {
   const [search, setSearch] = useState("");
   const [selectedFRA, setSelectedFRA] = useState(null);
   const [editingFRA, setEditingFRA] = useState(null);
-  const [error, setError] = useState("");
+  const [error, displayError] = useState("");
 
   useEffect(() => {
     fetchMyFRAs();
   }, []);
 
   const fetchMyFRAs = async () => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/ViewMyFundraisers", { credentials: "include" });
     if (res.status === 404) { setFras([]); return; }
-    if (!res.ok) { setError("Failed to load activities"); return; }
+    if (!res.ok) { displayError("Failed to load activities"); return; }
     setFras(await res.json());
   };
 
   const handleDelete = async (fraId) => {
     if (!window.confirm("Are you sure you want to delete this activity?")) return;
-    setError("");
+    displayError("");
     const res = await fetch(`/api/DeleteFundraiser?fundraiserId=${fraId}`, {
       method: "DELETE",
       credentials: "include",
     });
-    if (!res.ok) { setError(await res.text()); return; }
+    if (!res.ok) { displayError(await res.text()); return; }
     setSelectedFRA(null);
     fetchMyFRAs();
   };

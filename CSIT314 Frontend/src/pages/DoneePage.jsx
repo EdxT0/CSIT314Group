@@ -19,7 +19,7 @@ export default function DoneePage() {
   const [browseSearch, setBrowseSearch] = useState("");
   const [favSearch, setFavSearch] = useState("");
   const [donationSearch, setDonationSearch] = useState("");
-  const [error, setError] = useState("");
+  const [error, displayError] = useState("");
 
   useEffect(() => {
     fetchAllFRAs();
@@ -31,30 +31,29 @@ export default function DoneePage() {
   }, [activeTab]);
 
   const fetchAllFRAs = async () => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/ViewAllFundraiser", { credentials: "include" });
     if (res.status === 404) { setFras([]); return; }
-    if (!res.ok) { setError("Failed to load activities"); return; }
+    if (!res.ok) { displayError("Failed to load activities"); return; }
     setFras(await res.json());
   };
 
   const fetchFavourites = async () => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/ViewFundraiserFavourites", { credentials: "include" });
     if (res.status === 404) { setFavourites([]); return; }
-    if (!res.ok) { setError("Failed to load favourites"); return; }
+    if (!res.ok) { displayError("Failed to load favourites"); return; }
     setFavourites(await res.json());
   };
 
   const fetchDonationHistory = async () => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/ViewDonationHistory", { credentials: "include" });
-    if (!res.ok) { setDonations([]); return; }
+    if (!res.ok) { displayError("Failed to load donation history"); return; }
     setDonations(await res.json());
   };
 
   const handleSelectFRA = async (fra) => {
-    // fetch full details to increment view count
     const res = await fetch(`/api/ViewOneFundraiser?fraId=${fra.id}`, {
       credentials: "include"
     });
@@ -62,19 +61,19 @@ export default function DoneePage() {
       const data = await res.json();
       setSelectedFRA(data);
     } else {
-      setSelectedFRA(fra); // fallback to existing data
+      setSelectedFRA(fra);
     }
   };
 
   const handleUnfavourite = async (fraId) => {
-    setError("");
+    displayError("");
     const res = await fetch("/api/UnfavouriteFundraiser", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ fraId }),
     });
-    if (!res.ok) { setError(await res.text()); return; }
+    if (!res.ok) { displayError(await res.text()); return; }
     fetchFavourites();
   };
 

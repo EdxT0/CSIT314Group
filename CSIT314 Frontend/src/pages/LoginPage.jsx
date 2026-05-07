@@ -9,7 +9,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, displayError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +17,7 @@ export default function LoginPage() {
       await login(email, password);
       navigate("/", { replace: true}); 
     } catch (err) {
-      setError(err.message);
+      displayError(err.message);
     }
   };
 
