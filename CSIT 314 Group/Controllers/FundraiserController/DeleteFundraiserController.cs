@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using SQLitePCL;
 using System.Security.Claims;
 
@@ -37,11 +38,16 @@ namespace CSIT_314_Group.Controllers.FundraiserController
             bool fundraiserBelongToUser = await _userFundraiserRepository.validateUserAndFundraiser(Convert.ToInt32(userId), fundraiserId);
             if (fundraiserBelongToUser || User.FindFirstValue(ClaimTypes.Role) == "admin")
             {
-
-                bool success = await _fundraiserActivityRepository.DeleteFundraiser(fundraiserId);
-                if (success)
+                try
                 {
-                    return Ok($"Fundraiser {fundraiser.Name} Successfully deleted");
+                    bool success = await _fundraiserActivityRepository.DeleteFundraiser(fundraiserId);
+                    if (success)
+                    {
+                        return Ok($"Fundraiser {fundraiser.Name} Successfully deleted");
+                    }
+                
+                }catch(SqliteException ex) when (ex.SqliteErrorCode == 19){
+                    return BadRequest("Fundraiser has donations made to it already");
                 }
                 return StatusCode(500, "Failed to delete Fundraiser");
             }
