@@ -30,10 +30,10 @@ export default function FundraiserPage() {
     setFras(await res.json());
   };
 
-  const handleDelete = async (fraId) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this activity?")) return;
     displayError("");
-    const res = await fetch(`/api/DeleteFundraiser?fundraiserId=${fraId}`, {
+    const res = await fetch(`/api/DeleteFundraiser?fundraiserId=${id}`, {
       method: "DELETE",
       credentials: "include",
     });
