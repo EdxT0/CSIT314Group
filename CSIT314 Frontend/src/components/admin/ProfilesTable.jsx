@@ -1,4 +1,14 @@
 export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onEdit }) {
+  
+  function capitaliseNames(str) {
+    if (!str) return str;
+
+    return str
+      .split(" ")
+      .map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
+      .join(" ");
+  }
+  
   const filtered = profiles.filter(p =>
     p.profileName?.toLowerCase().includes(search.toLowerCase()) ||
     p.description?.toLowerCase().includes(search.toLowerCase())
@@ -44,7 +54,7 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
           <tbody>
             {filtered.map(p => (
               <tr key={p.id}>
-                <td>{p.profileName}</td>
+                <td>{capitaliseNames(p.profileName)}</td>
                 <td>{p.description}</td>
                 <td>
                   <span className={`badge ${p.status == 0 ? "badge-active" : "badge-suspended"}`}>

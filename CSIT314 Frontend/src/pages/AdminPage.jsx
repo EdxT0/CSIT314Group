@@ -56,9 +56,11 @@ export default function AdminPage() {
   
   const handleSuspendProfile = async (id, suspend) => {
     displayError("");
-    const res = await fetch(`/api/SuspendUserProfile?userId=${encodeURIComponent(id)}&suspendUser=${encodeURIComponent(suspend)}`, {
+    const res = await fetch(`/api/SuspendUserProfile`, {
       method: "PUT",
       credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ Id: id, Status: suspend })
     });
     if (!res.ok) { displayError(await res.text()); return; }
     fetchProfiles();
