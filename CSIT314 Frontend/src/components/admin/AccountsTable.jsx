@@ -1,4 +1,14 @@
 export default function AccountsTable({ accounts, search, setSearch, onSuspend, onEdit }) {
+  
+  function capitaliseNames(str) {
+    if (!str) return str;
+
+    return str
+      .split(" ")
+      .map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
+      .join(" ");
+  }
+  
   const filtered = accounts.filter(acc =>
     acc.name?.toLowerCase().includes(search.toLowerCase()) ||
     acc.email?.toLowerCase().includes(search.toLowerCase()) ||
@@ -53,7 +63,7 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
           <tbody>
             {filtered.map(acc => (
               <tr key={acc.id}>
-                <td>{acc.name}</td>
+                <td>{capitaliseNames(acc.name)}</td>
                 <td>{acc.email}</td>
                 <td>{acc.phoneNumber}</td>
                 <td>{capitaliseNames(acc.profileName)}</td>
