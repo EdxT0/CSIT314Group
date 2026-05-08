@@ -29,7 +29,7 @@ export default function FRADetailPopup({ fra, onClose, onFavourited }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ fraId: fra.id, amtDonatedByUser: parseFloat(donationAmt) }),
+      body: JSON.stringify({ id: fra.id, amtDonated: parseFloat(donationAmt) }),
     });
     const text = await res.text();
     if (!res.ok) { setError(text); return; }
