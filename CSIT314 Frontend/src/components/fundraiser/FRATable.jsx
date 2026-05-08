@@ -1,4 +1,14 @@
 export default function FRATable({ fras, search, setSearch, onSelect }) {
+  
+  function capitaliseNames(str) {
+    if (!str) return str;
+
+    return str
+      .split(" ")
+      .map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
+      .join(" ");
+  }
+  
   const filtered = fras.filter(f =>
     f.name?.toLowerCase().includes(search.toLowerCase()) ||
     f.fraCategoryName?.toLowerCase().includes(search.toLowerCase())
@@ -57,8 +67,8 @@ export default function FRATable({ fras, search, setSearch, onSelect }) {
             )}
             {filtered.map(f => (
               <tr key={f.id} onClick={() => onSelect(f)} style={{ cursor: "pointer" }}>
-                <td>{f.name}</td>
-                <td>{f.fraCategoryName}</td>
+                <td>{capitaliseNames(f.name)}</td>
+                <td>{capitaliseNames(f.fraCategoryName)}</td>
                 <td>{f.amtRequested?.toLocaleString()}</td>
                 <td>{f.deadline}</td>
                 <td>{f.amtOfViews}</td>
