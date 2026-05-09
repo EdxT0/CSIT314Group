@@ -1,45 +1,42 @@
-export default function AccountsTable({ accounts, search, setSearch, onSuspend, onEdit }) {
-  
+export default function AccountsTable({ accounts, search, setSearch, onSuspend, onEdit, onSearch, onReset }) {
+
   function capitaliseNames(str) {
     if (!str) return str;
-
     return str
       .split(" ")
       .map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
       .join(" ");
   }
-  
-  const filtered = accounts.filter(acc =>
-    acc.name?.toLowerCase().includes(search.toLowerCase()) ||
-    acc.email?.toLowerCase().includes(search.toLowerCase()) ||
-    acc.phoneNumber?.toLowerCase().includes(search.toLowerCase()) ||
-    acc.profileName?.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <>
       <div className="admin-topbar">
         <h1>User accounts</h1>
-        <input
-          className="admin-search"
-          placeholder="Search name, email or phone..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
+        <div style={{ display: "flex", gap: "8px" }}>  {/* ← wrap in div */}
+          <input
+            className="admin-search"
+            placeholder="Search name, email or phone..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && onSearch()}
+          />
+          <button className="admin-btn" onClick={onSearch}>Search</button>
+          <button className="admin-btn" onClick={onReset}>Reset</button>
+        </div>
       </div>
 
       <div className="admin-metrics">
         <div className="metric">
           <div className="metric-label">Total accounts</div>
-          <div className="metric-val">{filtered.length}</div>
+          <div className="metric-val">{accounts.length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Active</div>
-          <div className="metric-val">{filtered.filter(a => !a.isSuspended).length}</div>
+          <div className="metric-val">{accounts.filter(a => !a.isSuspended).length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Suspended</div>
-          <div className="metric-val">{filtered.filter(a => a.isSuspended).length}</div>
+          <div className="metric-val">{accounts.filter(a => a.isSuspended).length}</div>
         </div>
       </div>
 
@@ -56,8 +53,11 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
             </tr>
           </thead>
           <tbody>
-            {filtered.map(acc => (
-              <tr key={acc.id}>
+            {accounts.length === 0 && (
+              <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No accounts found</td></tr>
+            )}
+            {accounts.map((acc, index) => ( 
+              <tr key={`${acc.id}-${index}`}>
                 <td>{capitaliseNames(acc.name)}</td>
                 <td>{acc.email}</td>
                 <td>{acc.phoneNumber}</td>

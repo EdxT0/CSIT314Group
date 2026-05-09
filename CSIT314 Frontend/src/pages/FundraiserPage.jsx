@@ -24,9 +24,9 @@ export default function FundraiserPage() {
 
   const fetchMyFRAs = async () => {
     displayError("");
-    const res = await fetch("/api/ViewMyFundraisers", { credentials: "include" });
+    const res = await fetch("/api/ViewAllFundraiser", { credentials: "include" });
     if (res.status === 404) { setFras([]); return; }
-    if (!res.ok) { displayError("Failed to load activities"); return; }
+    if (!res.ok) { setError("Failed to load activities"); return; }
     setFras(await res.json());
   };
 
