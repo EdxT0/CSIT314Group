@@ -312,7 +312,7 @@ namespace CSIT_314_Group.Data
             await connection.OpenAsync();
 
             string GetAllWithQuery = "" +
-                "SELECT * FROM UserAccount JOIN UserProfile ON UserAccount.ProfileId = UserProfile.Id " +
+                "SELECT UA.*, UP.ProfileName FROM UserAccount UA JOIN UserProfile UP ON UA.ProfileId = UP.Id " +
                 "WHERE Name LIKE '%' || @query || '%'" +
                 " OR PhoneNumber LIKE '%' || @query || '%'" +
                 " OR Email LIKE '%' || @query || '%'";
