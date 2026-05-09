@@ -54,6 +54,25 @@ export default function AdminPage() {
     fetchAccounts();
   };
   
+  const handleSearch = async () => {
+    if (!accountSearch.trim()) { fetchAccounts(); return; }
+    displayError("");
+    setAccounts([]);
+    const res = await fetch(`/api/SearchUserAccount?query=${encodeURIComponent(accountSearch)}`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!res.ok) { displayError(await res.text()); return; }
+    const data = await res.json();
+    console.log("Search results:", data);
+    setAccounts(Array.isArray(data) ? data : [data]);
+  };
+
+  const handleReset = () => {
+    setAccountSearch("");
+    fetchAccounts();
+  };
+
   const handleSuspendProfile = async (id, suspend) => {
     displayError("");
     const res = await fetch(`/api/SuspendUserProfile`, {
@@ -111,6 +130,8 @@ export default function AdminPage() {
             setSearch={setAccountSearch}
             onSuspend={handleSuspendAccount}
             onEdit={(acc) => { setEditingAccount(acc); setActiveTab("editAccount"); }}
+            onSearch={handleSearch}
+            onReset={handleReset}
           />
         )}
 
