@@ -129,7 +129,7 @@ export default function AdminPage() {
             search={accountSearch}
             setSearch={setAccountSearch}
             onSuspend={handleSuspendAccount}
-            onEdit={(acc) => { setEditingAccount(acc); setActiveTab("editAccount"); }}
+            onSuccess={fetchAccounts}
             onSearch={handleSearch}
             onReset={handleReset}
           />

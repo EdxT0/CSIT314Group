@@ -1,4 +1,8 @@
-export default function AccountsTable({ accounts, search, setSearch, onSuspend, onEdit, onSearch, onReset }) {
+import { useState } from "react";
+import AccountPopup from "./AccountPopup";
+
+export default function AccountsTable({ accounts, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
+  const [selectedAccount, setSelectedAccount] = useState(null);
 
   function capitaliseNames(str) {
     if (!str) return str;
@@ -12,7 +16,7 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
     <>
       <div className="admin-topbar">
         <h1>User accounts</h1>
-        <div style={{ display: "flex", gap: "8px" }}>  {/* ← wrap in div */}
+        <div style={{ display: "flex", gap: "8px" }}>
           <input
             className="admin-search"
             placeholder="Search name, email or phone..."
@@ -56,8 +60,12 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
             {accounts.length === 0 && (
               <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No accounts found</td></tr>
             )}
-            {accounts.map((acc, index) => ( 
-              <tr key={`${acc.id}-${index}`}>
+            {accounts.map((acc, index) => (
+              <tr
+                key={`${acc.id}-${index}`}
+                onClick={() => setSelectedAccount(acc)}          // ← click row opens popup in view mode
+                style={{ cursor: "pointer" }}
+              >
                 <td>{capitaliseNames(acc.name)}</td>
                 <td>{acc.email}</td>
                 <td>{acc.phoneNumber}</td>
@@ -68,10 +76,20 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
                   </span>
                 </td>
                 <td>
-                  <button className="action-btn" onClick={() => onEdit(acc)}>Edit</button>
+                  <button
+                    className="action-btn"
+                    onClick={e => {
+                      e.stopPropagation();                       // ← prevent row click
+                      setSelectedAccount({ ...acc, startEditing: true });  // ← opens in edit mode
+                    }}>
+                    Edit
+                  </button>
                   <button
                     className={`action-btn ${!acc.isSuspended ? "danger" : ""}`}
-                    onClick={() => onSuspend(acc.id, !acc.isSuspended)}>
+                    onClick={e => {
+                      e.stopPropagation();                       // ← prevent row click
+                      onSuspend(acc.id, !acc.isSuspended);
+                    }}>
                     {acc.isSuspended ? "Unsuspend" : "Suspend"}
                   </button>
                 </td>
@@ -80,6 +98,16 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
           </tbody>
         </table>
       </div>
+
+      {/* ← render popup here */}
+      {selectedAccount && (
+        <AccountPopup
+          acc={selectedAccount}
+          onClose={() => setSelectedAccount(null)}
+          onSuspend={onSuspend}
+          onSuccess={() => { setSelectedAccount(null); onSuccess?.(); }}
+        />
+      )}
     </>
   );
 }
