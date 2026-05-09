@@ -132,6 +132,7 @@ export default function AdminPage() {
             onSuccess={fetchAccounts}
             onSearch={handleSearch}
             onReset={handleReset}
+            profiles={profiles}
           />
         )}
 

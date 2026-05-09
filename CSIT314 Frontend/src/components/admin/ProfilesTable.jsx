@@ -1,5 +1,9 @@
-export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onEdit }) {
-  
+import { useState } from "react";
+import ProfilePopup from "./ProfilePopup";
+
+export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
+  const [selectedProfile, setSelectedProfile] = useState(null);
+
   function capitaliseNames(str) {
     if (!str) return str;
 
@@ -48,12 +52,15 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
               <th>Profile name</th>
               <th>Description</th>
               <th>Status</th>
-              <th>Actions</th>  {/* ← separate column for actions */}
+              <th>Actions</th>  
             </tr>
           </thead>
           <tbody>
             {filtered.map(p => (
-              <tr key={p.id}>
+              <tr key={p.id}
+                onClick={() => setSelectedProfile(p)}
+                style={{ cursor: "pointer" }}
+              >
                 <td>{capitaliseNames(p.profileName)}</td>
                 <td>{p.description}</td>
                 <td>
@@ -61,11 +68,20 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
                     {p.status == 0 ? "Active" : "Suspended"}
                   </span>
                 </td>
-                <td>  {/* ← actions in their own column */}
-                  <button className="action-btn" onClick={() => onEdit(p)}>Edit</button>
+                <td> 
+                  <button className="action-btn" 
+                    onClick={e => {
+                      e.stopPropagation();                       
+                      setSelectedProfile({ ...p, startEditing: true });  
+                    }}>
+                    Edit
+                  </button>
                   <button
                     className={`action-btn ${p.status == 1 ? "danger" : ""}`}
-                    onClick={() => onSuspend(p.id, p.status == 0)}>
+                    onClick={e => {
+                      e.stopPropagation();
+                      onSuspend(p.id, p.status == 0);
+                    }}>
                     {p.status == 0 ? "Suspend" : "Unsuspend"}
                   </button>
                 </td>
@@ -74,6 +90,16 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
           </tbody>
         </table>
       </div>
+
+      {selectedProfile && (
+        <ProfilePopup
+          profile={selectedProfile}
+          onClose={() => setSelectedProfile(null)}
+          onSuspend={onSuspend}
+          onSuccess={() => { setSelectedProfile(null); onSuccess?.(); }}
+          profiles={profiles}
+        />
+      )}
     </>
   );
 }

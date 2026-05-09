@@ -1,14 +1,11 @@
 import { useState } from "react";
 
-export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSuccess }) {
-  const [isEditing, setIsEditing] = useState(acc.startEditing ?? false);
+export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess }) {
+  const [isEditing, setIsEditing] = useState(profile.startEditing ?? false);
   const [form, setForm] = useState({
-    id: acc.id,
-    name: acc.name ?? "",
-    email: acc.email ?? "",
-    phoneNumber: acc.phoneNumber ?? "",
-    profileName: acc.profileName ?? "",
-    password: "",
+    id: profile.id,
+    profileName: profile.profileName,
+    description: profile.description,
   });
   const [error, displayError] = useState("");
   const [message, setMessage] = useState("");
@@ -30,7 +27,7 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
   };
 
   const handleSuspend = async () => {
-    await onSuspend(acc.id, !acc.isSuspended);
+    await onSuspend(profile.id, profile.status == 0);
     onClose();
   };
 
@@ -39,7 +36,7 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
       <div className="popup-card" style={{ maxWidth: "440px" }} onClick={e => e.stopPropagation()}>
 
         <div className="popup-header">
-          <h2>{isEditing ? "Edit account" : acc.name}</h2>
+          <h2>{isEditing ? "Edit profile" : profile.profileName}</h2>
           <button className="popup-close" onClick={onClose}>✕</button>
         </div>
 
@@ -54,25 +51,25 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
           <>
             <div className="popup-row">
               <span className="popup-label">Name</span>
-              <span className="popup-val">{acc.name}</span>
+              <span className="popup-val">{profile.profileName}</span>
             </div>
             <div className="popup-row">
-              <span className="popup-label">Email</span>
-              <span className="popup-val">{acc.email}</span>
+              <span className="popup-label">Description</span>
+              <span className="popup-val">{profile.description}</span>
             </div>
             <div className="popup-row">
               <span className="popup-label">Phone</span>
-              <span className="popup-val">{acc.phoneNumber}</span>
+              <span className="popup-val">{profile.phoneNumber}</span>
             </div>
             <div className="popup-row">
               <span className="popup-label">Profile</span>
-              <span className="popup-val">{acc.profileName}</span>
+              <span className="popup-val">{profile.profileName}</span>
             </div>
             <div className="popup-row">
               <span className="popup-label">Status</span>
               <span className="popup-val">
-                <span className={`badge ${acc.isSuspended ? "badge-suspended" : "badge-active"}`}>
-                  {acc.isSuspended ? "Suspended" : "Active"}
+                <span className={`badge ${profile.status == 0 ? "badge-active" : "badge-suspended"}`}>
+                  {profile.status == 0 ? "Active" : "Suspended"}
                 </span>
               </span>
             </div>
@@ -80,7 +77,7 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
             <div className="popup-actions">
               <button className="popup-edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
               <button className="popup-delete-btn" onClick={handleSuspend}>
-                {acc.isSuspended ? "Unsuspend" : "Suspend"}
+                {profile.status == 0 ? "Suspend" : "Unsuspend"}
               </button>
             </div>
           </>
@@ -92,7 +89,7 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
               Only fill in fields you want to change.
             </p>
 
-            {["name", "email", "phoneNumber"].map(field => (
+            {["profileName", "description"].map(field => (
               <div className="form-field" key={field}>
                 <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
                 <input
@@ -101,30 +98,6 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
                 />
               </div>
             ))}
-
-            <div className="form-field">
-                <label>Profile</label>
-                <select
-                    value={form.profileName}
-                    onChange={e => setForm({ ...form, profileName: e.target.value })}
-                    >
-                    <option value="">Select a profile...</option>
-                    {profiles.map(p => (
-                        <option key={p.id} value={p.profileName}>{p.profileName}</option>
-                    ))}
-                </select>
-            </div>
-
-
-            <div className="form-field">
-              <label>New password</label>
-              <input
-                type="password"
-                placeholder="Leave blank to keep current"
-                value={form.password}
-                onChange={e => setForm({ ...form, password: e.target.value })}
-              />
-            </div>
 
             <div className="popup-actions">
               <button className="popup-edit-btn" onClick={handleUpdate}>Save changes</button>

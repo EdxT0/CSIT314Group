@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AccountPopup from "./AccountPopup";
 
-export default function AccountsTable({ accounts, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
+export default function AccountsTable({ accounts, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
   const [selectedAccount, setSelectedAccount] = useState(null);
 
   function capitaliseNames(str) {
@@ -63,7 +63,7 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
             {accounts.map((acc, index) => (
               <tr
                 key={`${acc.id}-${index}`}
-                onClick={() => setSelectedAccount(acc)}          // ← click row opens popup in view mode
+                onClick={() => setSelectedAccount(acc)}
                 style={{ cursor: "pointer" }}
               >
                 <td>{capitaliseNames(acc.name)}</td>
@@ -87,7 +87,7 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
                   <button
                     className={`action-btn ${!acc.isSuspended ? "danger" : ""}`}
                     onClick={e => {
-                      e.stopPropagation();                       // ← prevent row click
+                      e.stopPropagation();                       
                       onSuspend(acc.id, !acc.isSuspended);
                     }}>
                     {acc.isSuspended ? "Unsuspend" : "Suspend"}
@@ -99,13 +99,13 @@ export default function AccountsTable({ accounts, search, setSearch, onSuspend, 
         </table>
       </div>
 
-      {/* ← render popup here */}
       {selectedAccount && (
         <AccountPopup
           acc={selectedAccount}
           onClose={() => setSelectedAccount(null)}
           onSuspend={onSuspend}
           onSuccess={() => { setSelectedAccount(null); onSuccess?.(); }}
+          profiles={profiles}
         />
       )}
     </>
