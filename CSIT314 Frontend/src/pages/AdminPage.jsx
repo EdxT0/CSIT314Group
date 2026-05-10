@@ -1,12 +1,11 @@
+//Admin page 
 import { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import AccountsTable from "../components/admin/AccountsTable";
 import CreateAccountForm from "../components/admin/CreateAccountForm";
-import EditAccountForm from "../components/admin/EditAccountForm";
 import ProfilesTable from "../components/admin/ProfilesTable";
 import CreateProfileForm from "../components/admin/CreateProfileForm";
-import EditProfileForm from "../components/admin/EditProfileForm";
 import "../styles/adminpage.css";
 
 export default function AdminPage() {
@@ -54,7 +53,7 @@ export default function AdminPage() {
     fetchAccounts();
   };
   
-  const handleSearch = async () => {
+  const handleSearchAccounts = async () => {
     if (!accountSearch.trim()) { fetchAccounts(); return; }
     displayError("");
     setAccounts([]);
@@ -68,9 +67,28 @@ export default function AdminPage() {
     setAccounts(Array.isArray(data) ? data : [data]);
   };
 
-  const handleReset = () => {
+  const handleSearchProfiles = async () => {
+    if (!profileSearch.trim()) { fetchProfiles(); return; }
+    displayError("");
+    setProfiles([]);
+    const res = await fetch(`/api/SearchUserProfile?keyword=${encodeURIComponent(profileSearch)}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (!res.ok) { displayError(await res.text()); return; }
+    const data = await res.json();
+    console.log("Search results:", data);
+    setProfiles(Array.isArray(data) ? data : [data]);
+  };
+
+  const handleResetAccounts = () => {
     setAccountSearch("");
     fetchAccounts();
+  };
+
+  const handleResetProfiles = () => {
+    setProfileSearch("");
+    fetchProfiles();
   };
 
   const handleSuspendProfile = async (id, suspend) => {
@@ -130,8 +148,8 @@ export default function AdminPage() {
             setSearch={setAccountSearch}
             onSuspend={handleSuspendAccount}
             onSuccess={fetchAccounts}
-            onSearch={handleSearch}
-            onReset={handleReset}
+            onSearch={handleSearchAccounts}
+            onReset={handleResetAccounts}
             profiles={profiles}
           />
         )}
@@ -144,22 +162,15 @@ export default function AdminPage() {
           />
         )}
 
-        {activeTab === "editAccount" && editingAccount && (
-          <EditAccountForm
-            account={editingAccount}
-            profiles={profiles}
-            onSuccess={() => { setActiveTab("accounts"); fetchAccounts(); }}
-            onCancel={() => setActiveTab("accounts")}
-          />
-        )}
-
         {activeTab === "profiles" && (
           <ProfilesTable
             profiles={profiles}
             search={profileSearch}
             setSearch={setProfileSearch}
             onSuspend={handleSuspendProfile}
-            onEdit={(p) => { setEditingProfile(p); setActiveTab("editProfile"); }}
+            onSuccess={fetchProfiles}
+            onSearch={handleSearchProfiles}
+            onReset={handleResetProfiles}
           />
         )}
 
@@ -170,13 +181,6 @@ export default function AdminPage() {
           />
         )}
 
-        {activeTab === "editProfile" && editingProfile && (
-          <EditProfileForm
-            profile={editingProfile}
-            onSuccess={() => { setActiveTab("profiles"); fetchProfiles(); }}
-            onCancel={() => setActiveTab("profiles")}
-          />
-        )}
       </main>
     </div>
   );

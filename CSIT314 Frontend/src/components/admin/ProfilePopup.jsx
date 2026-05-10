@@ -1,3 +1,4 @@
+//Profile popup 
 import { useState } from "react";
 
 export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess }) {
@@ -8,12 +9,11 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
     description: profile.description,
   });
   const [error, displayError] = useState("");
-  const [message, setMessage] = useState("");
 
   const handleUpdate = async () => {
     displayError("");
-    const res = await fetch("/api/UpdateUserAccount", {
-      method: "POST",
+    const res = await fetch("/api/UpdateUserProfile", {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(form),
@@ -21,9 +21,8 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
     const text = await res.text();
     console.log("Update response:", { status: res.status, text });
     if (!res.ok) { displayError(text); return; }
-    setMessage("Account updated successfully!");
     setIsEditing(false);
-    onSuccess?.();
+    await onSuccess?.("Profile updated successfully!"); 
   };
 
   const handleSuspend = async () => {
@@ -40,11 +39,6 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
           <button className="popup-close" onClick={onClose}>✕</button>
         </div>
 
-        {message && (
-          <div style={{ background: "#0f2e1a", border: "0.5px solid #1d9e75", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", color: "#5dcaa5", marginBottom: "1rem" }}>
-            {message}
-          </div>
-        )}
         {error && <div className="form-error">{error}</div>}
 
         {!isEditing && (
@@ -56,14 +50,6 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
             <div className="popup-row">
               <span className="popup-label">Description</span>
               <span className="popup-val">{profile.description}</span>
-            </div>
-            <div className="popup-row">
-              <span className="popup-label">Phone</span>
-              <span className="popup-val">{profile.phoneNumber}</span>
-            </div>
-            <div className="popup-row">
-              <span className="popup-label">Profile</span>
-              <span className="popup-val">{profile.profileName}</span>
             </div>
             <div className="popup-row">
               <span className="popup-label">Status</span>

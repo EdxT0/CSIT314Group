@@ -11,7 +11,7 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
     password: "",
   });
   const [error, displayError] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, displayMessage] = useState("");
 
   const handleUpdate = async () => {
     displayError("");
@@ -24,9 +24,9 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
     const text = await res.text();
     console.log("Update response:", { status: res.status, text });
     if (!res.ok) { displayError(text); return; }
-    setMessage("Account updated successfully!");
+    displayMessage("Account updated successfully!");
     setIsEditing(false);
-    onSuccess?.();
+    onSuccess?.("Account updated successfully!");  
   };
 
   const handleSuspend = async () => {

@@ -1,8 +1,10 @@
+//Profile table 
 import { useState } from "react";
 import ProfilePopup from "./ProfilePopup";
 
 export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");  // ← add this
 
   function capitaliseNames(str) {
     if (!str) return str;
@@ -12,40 +14,54 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
       .map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
       .join(" ");
   }
-  
-  const filtered = profiles.filter(p =>
-    p.profileName?.toLowerCase().includes(search.toLowerCase()) ||
-    p.description?.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <>
       <div className="admin-topbar">
         <h1>User profiles</h1>
-        <input
-          className="admin-search"
-          placeholder="Search profiles..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
+        <div style={{ display: "flex", gap: "8px" }}>
+          <input
+            className="admin-search"
+            placeholder="Search profiles..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && onSearch()}
+          />
+          <button className="admin-btn" onClick={onSearch}>Search</button>
+          <button className="admin-btn" onClick={onReset}>Reset</button>
+          </div>
       </div>
+
+      {successMessage && (
+        <div style={{
+          background: "#0f2e1a",
+          border: "0.5px solid #1d9e75",
+          borderRadius: "8px",
+          padding: "10px 12px",
+          fontSize: "13px",
+          color: "#5dcaa5",
+          marginBottom: "1rem"
+        }}>
+          {successMessage}
+        </div>
+      )}
 
       <div className="admin-metrics">
         <div className="metric">
           <div className="metric-label">Total profiles</div>
-          <div className="metric-val">{filtered.length}</div>
+          <div className="metric-val">{profiles.length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Active</div>
-          <div className="metric-val">{filtered.filter(p => p.status == 0).length}</div>
+          <div className="metric-val">{profiles.filter(p => p.status == 0).length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Suspended</div>
-          <div className="metric-val">{filtered.filter(p => p.status == 1).length}</div>
+          <div className="metric-val">{profiles.filter(p => p.status == 1).length}</div>
         </div>
       </div>
 
-      <div className="admin-table-card">
+      <div className="admin-table-card profile-table-card">
         <table>
           <thead>
             <tr>
@@ -56,8 +72,12 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
             </tr>
           </thead>
           <tbody>
-            {filtered.map(p => (
-              <tr key={p.id}
+            {profiles.length === 0 && (
+              <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No profiles found</td></tr>
+            )}            
+            {profiles.map((p, index) => (
+              <tr 
+                key={`${p.id}-${index}`}
                 onClick={() => setSelectedProfile(p)}
                 style={{ cursor: "pointer" }}
               >
@@ -96,8 +116,12 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
           profile={selectedProfile}
           onClose={() => setSelectedProfile(null)}
           onSuspend={onSuspend}
-          onSuccess={() => { setSelectedProfile(null); onSuccess?.(); }}
-          profiles={profiles}
+          onSuccess={async (message) => {        
+            await onSuccess?.();
+            setSelectedProfile(null);
+            setSuccessMessage(message);          
+            setTimeout(() => setSuccessMessage(""), 3000);  
+          }}
         />
       )}
     </>

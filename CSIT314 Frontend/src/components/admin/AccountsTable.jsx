@@ -3,6 +3,7 @@ import AccountPopup from "./AccountPopup";
 
 export default function AccountsTable({ accounts, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");  // ← add this
 
   function capitaliseNames(str) {
     if (!str) return str;
@@ -28,6 +29,20 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
           <button className="admin-btn" onClick={onReset}>Reset</button>
         </div>
       </div>
+
+      {successMessage && (
+        <div style={{
+          background: "#0f2e1a",
+          border: "0.5px solid #1d9e75",
+          borderRadius: "8px",
+          padding: "10px 12px",
+          fontSize: "13px",
+          color: "#5dcaa5",
+          marginBottom: "1rem"
+        }}>
+          {successMessage}
+        </div>
+      )}
 
       <div className="admin-metrics">
         <div className="metric">
@@ -79,8 +94,8 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
                   <button
                     className="action-btn"
                     onClick={e => {
-                      e.stopPropagation();                       // ← prevent row click
-                      setSelectedAccount({ ...acc, startEditing: true });  // ← opens in edit mode
+                      e.stopPropagation();                       
+                      setSelectedAccount({ ...acc, startEditing: true });  
                     }}>
                     Edit
                   </button>
@@ -104,7 +119,11 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
           acc={selectedAccount}
           onClose={() => setSelectedAccount(null)}
           onSuspend={onSuspend}
-          onSuccess={() => { setSelectedAccount(null); onSuccess?.(); }}
+            onSuccess={async (message) => {        
+            await onSuccess?.();
+            setSelectedAccount(null);
+            setSuccessMessage(message);          
+            setTimeout(() => setSuccessMessage(""), 3000); }}
           profiles={profiles}
         />
       )}

@@ -379,3 +379,25 @@ body {
 .submit-btn:active {
   transform: scale(0.98);
 }
+
+.profile-table-card th:nth-child(1),
+.profile-table-card td:nth-child(1) { width: 25%; }
+
+.profile-table-card th:nth-child(2),
+.profile-table-card td:nth-child(2) { width: 40%; }
+
+.profile-table-card th:nth-child(3),
+.profile-table-card td:nth-child(3) { width: 15%; }
+
+.profile-table-card th:nth-child(4),
+.profile-table-card td:nth-child(4) { width: 20%; }.profile-table-card th:nth-child(1),
+.profile-table-card td:nth-child(1) { width: 25%; }
+
+.profile-table-card th:nth-child(2),
+.profile-table-card td:nth-child(2) { width: 40%; }
+
+.profile-table-card th:nth-child(3),
+.profile-table-card td:nth-child(3) { width: 15%; }
+
+.profile-table-card th:nth-child(4),
+.profile-table-card td:nth-child(4) { width: 20%; }
