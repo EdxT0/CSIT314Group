@@ -1,8 +1,9 @@
 import { useState } from "react";
 import FRAPopup from "./FRAPopup";
 
-export default function FRATable({ fras, search, setSearch, onSuccess, onSearch, onReset }) {
+export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelete, onSearch, onReset }) {
   const [selectedFRA, setSelectedFRA] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   function capitaliseNames(str) {
     if (!str) return str;
@@ -19,11 +20,11 @@ export default function FRATable({ fras, search, setSearch, onSuccess, onSearch,
   return (
     <>
       <div className="admin-topbar">
-        <h1>Browse all activities</h1>
+        <h1>My fundraising activities</h1>
         <div style={{ display: "flex", gap: "8px" }}>
           <input
             className="admin-search"
-            placeholder="Search activities..."
+            placeholder="Search my activities..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             onKeyDown={e => e.key === "Enter" && onSearch()}
@@ -32,6 +33,20 @@ export default function FRATable({ fras, search, setSearch, onSuccess, onSearch,
           <button className="admin-btn" onClick={onReset}>Reset</button>
         </div>
       </div>
+
+      {successMessage && (
+        <div style={{
+          background: "#0f2e1a",
+          border: "0.5px solid #1d9e75",
+          borderRadius: "8px",
+          padding: "10px 12px",
+          fontSize: "13px",
+          color: "#5dcaa5",
+          marginBottom: "1rem"
+        }}>
+          {successMessage}
+        </div>
+      )}
 
       <div className="admin-metrics">
         <div className="metric">
@@ -62,11 +77,12 @@ export default function FRATable({ fras, search, setSearch, onSuccess, onSearch,
               <th>Deadline</th>
               <th>Views</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {fras.length === 0 && (
-              <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a" }}>No activities found</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: "center", color: "#7a7d8a" }}>No activities found</td></tr>
             )}
             {fras.map(f => (
               <tr
@@ -84,6 +100,16 @@ export default function FRATable({ fras, search, setSearch, onSuccess, onSearch,
                     {f.status ? "Completed" : "Active"}
                   </span>
                 </td>
+                <td>
+                  <button
+                    className="action-btn"
+                    onClick={e => {
+                      e.stopPropagation();
+                      setSelectedFRA({ ...f, startEditing: true });
+                    }}>
+                    Edit
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -94,9 +120,15 @@ export default function FRATable({ fras, search, setSearch, onSuccess, onSearch,
         <FRAPopup
           fra={selectedFRA}
           onClose={() => setSelectedFRA(null)}
+          onDelete={() => {
+            onDelete?.(selectedFRA.id);
+            setSelectedFRA(null);
+          }}
           onSuccess={async (message) => {
             await onSuccess?.();
             setSelectedFRA(null);
+            setSuccessMessage(message);
+            setTimeout(() => setSuccessMessage(""), 3000);
           }}
         />
       )}

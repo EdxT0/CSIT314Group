@@ -2,6 +2,9 @@ import { useState } from "react";
 
 export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSuccess }) {
   const [isEditing, setIsEditing] = useState(acc.startEditing ?? false);
+  const [error, displayError] = useState("");
+  const [message, displayMessage] = useState("");
+
   const [form, setForm] = useState({
     id: acc.id,
     name: acc.name ?? "",
@@ -10,8 +13,6 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
     profileName: acc.profileName ?? "",
     password: "",
   });
-  const [error, displayError] = useState("");
-  const [message, displayMessage] = useState("");
 
   const handleUpdate = async () => {
     displayError("");
