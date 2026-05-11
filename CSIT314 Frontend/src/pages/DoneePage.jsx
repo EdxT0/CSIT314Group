@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
-import FRAListTable from "../components/donee/FRAListTable";
+import DoneeFRATable from "../components/donee/DoneeFRATable";
 import FRADetailPopup from "../components/donee/FRADetailPopup";
 import FavouritesTable from "../components/donee/FavouritesTable";
 import DonationHistoryTable from "../components/donee/DonationHistoryTable";
@@ -77,6 +77,20 @@ export default function DoneePage() {
     fetchFavourites();
   };
 
+  const handleSearch = async () => {
+      if (!accountSearch.trim()) { fetchAccounts(); return; }
+    displayError("");
+    setAccounts([]);
+    const res = await fetch(`/api/SearchUserAccount?query=${encodeURIComponent(accountSearch)}`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!res.ok) { displayError(await res.text()); return; }
+    const data = await res.json();
+    console.log("Search results:", data);
+    setAccounts(Array.isArray(data) ? data : [data]);
+  };
+
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -114,7 +128,7 @@ export default function DoneePage() {
         {error && <div className="form-error">{error}</div>}
 
         {activeTab === "browse" && (
-          <FRAListTable
+          <DoneeFRATable
             fras={fras}
             search={browseSearch}
             setSearch={setBrowseSearch}

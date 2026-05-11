@@ -94,6 +94,7 @@ export default function FRATable({ fras, search, setSearch, onSuccess, onSearch,
         <FRAPopup
           fra={selectedFRA}
           onClose={() => setSelectedFRA(null)}
+          readOnly={true}
           onSuccess={async (message) => {
             await onSuccess?.();
             setSelectedFRA(null);

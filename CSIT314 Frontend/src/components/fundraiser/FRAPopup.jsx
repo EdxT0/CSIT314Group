@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-export default function FRAPopup({ fra, onClose, onDelete, onSuccess }) {
-  const [isEditing, setIsEditing] = useState(fra.startEditing ?? false);  // ← reads startEditing
+export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }) {
+  const [isEditing, setIsEditing] = useState(fra.startEditing ?? false);  
   const [error, displayError] = useState("");
   const [form, setForm] = useState({
     Id: fra.id,
@@ -81,8 +81,21 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess }) {
             </div>
 
             <div className="popup-actions">
-              <button className="popup-edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
-              <button className="popup-delete-btn" onClick={onDelete}>Delete</button>
+              {!readOnly && (                              
+                <button className="popup-edit-btn" onClick={() => setIsEditing(true)}>
+                  Edit
+                </button>
+              )}
+              {!readOnly && onDelete && (                 
+                <button className="popup-delete-btn" onClick={onDelete}>
+                  Delete
+                </button>
+              )}
+              {readOnly && (                              
+                <button className="popup-edit-btn" onClick={onClose}>
+                  Close
+                </button>
+              )}
             </div>
           </>
         )}

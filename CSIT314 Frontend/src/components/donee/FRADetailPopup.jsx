@@ -85,10 +85,9 @@ export default function FRADetailPopup({ fra, onClose, onFavourited }) {
           </span>
         </div>
 
-        {/* Donate section */}
         {!fra.status && (
-          <div style={{ marginTop: "1.25rem", borderTop: "0.5px solid #2e3240", paddingTop: "1.25rem" }}>
-            <div style={{ fontSize: "12px", color: "#9a9daa", marginBottom: "8px", fontWeight: "500" }}>Make a donation</div>
+          <div style={{ marginTop: "8px" }}>
+            <div style={{ fontSize: "14px", color: "#9a9daa", marginBottom: "8px", fontWeight: "500" }}>Make a donation</div>
             <div style={{ display: "flex", gap: "8px" }}>
               <input
                 type="number"
@@ -106,7 +105,7 @@ export default function FRADetailPopup({ fra, onClose, onFavourited }) {
         )}
 
         <div className="popup-actions">
-          <button className="popup-edit-btn" onClick={handleFavourite}>Save to favourites</button>
+          <button className="popup-edit-btn" onClick={handleFavourite}>Add to favourites</button>
         </div>
       </div>
     </div>
