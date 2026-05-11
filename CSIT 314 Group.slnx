@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="backend.Tests/backend.Tests.csproj" Id="3ba626f3-856e-4707-9068-861b47aadc45" />
   <Project Path="CSIT 314 Group/CSIT 314 Group.csproj" />
 </Solution>

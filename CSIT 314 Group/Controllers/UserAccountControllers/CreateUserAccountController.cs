@@ -11,11 +11,11 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     [Route("api/[controller]")]
     public class CreateUserAccountController : ControllerBase
     {
-        private readonly Data.UserAccount _userAccountRepository;
-        private readonly Data.UserProfile _userProfileRepository;
+        private readonly UserAccount _userAccountRepository;
+        private readonly UserProfile _userProfileRepository;
 
 
-        public CreateUserAccountController(Data.UserAccount userAccountRepository, Data.UserProfile userProfileRepository)
+        public CreateUserAccountController(UserAccount userAccountRepository, UserProfile userProfileRepository)
         {
             _userAccountRepository = userAccountRepository;
             _userProfileRepository = userProfileRepository;
