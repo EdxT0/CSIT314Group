@@ -11,8 +11,8 @@ namespace CSIT_314_Group.Controllers.Auth
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly Data.UserAccount _userAccountRepository;
-        private readonly Data.UserProfile _userProfileRepository;
+        private readonly UserAccount _userAccountRepository;
+        private readonly UserProfile _userProfileRepository;
         private readonly PasswordHasher<UserAccount> _hasher;
         public AuthController(Data.UserAccount userAccountRepository, Data.UserProfile userProfileRepository, PasswordHasher<UserAccount> hasher)
         {
