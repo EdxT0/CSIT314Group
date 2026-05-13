@@ -40,11 +40,13 @@ public class CreateUserProfileController : ControllerBase
             Status = false
         };
 
-        var result = await _userProfileRepository.CreateUserProfile(userProfile);
+        var result = await _userProfileRepository.CreateProfile(userProfile);
 
-        if (result)
-            return Ok("Profile created successfully");
+        if (result.Contains("successfully"))
+        {
+            return Ok(result);
+        }
 
-        return BadRequest("Profile creation failed");
+        return BadRequest(result);
     }
 }

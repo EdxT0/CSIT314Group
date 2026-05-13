@@ -41,7 +41,7 @@ public class UserProfile
     }
 
     // Create Profile
-    public async Task<bool> CreateUserProfile(UserProfile userProfile)
+    public async Task<String> CreateProfile(UserProfile userProfile)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -63,18 +63,19 @@ public class UserProfile
             if (rowsAffected != 1)
             {
                 await transaction.RollbackAsync();
-                return false;
+                return "Profile creation failed";
             }
 
             await transaction.CommitAsync();
-            return true;
+            return "Profile created successfully";
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
             Console.WriteLine("CreateUserProfile Error: " + ex.Message);
             Console.WriteLine(ex.StackTrace);
-            throw;
+
+            return "An error occurred while creating profile";
         }
     }
 
@@ -245,10 +246,10 @@ public class UserProfile
     }
 
     // Suspend User Profile
-    public async Task<bool> SuspendUserProfile(UserProfile userprofile)
+    public async Task<string> SuspendUserProfile(UserProfile userprofile)
     {
         if (userprofile.Id <= 0)
-            return false;
+            return "Invalid profile ID";
 
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -270,16 +271,16 @@ public class UserProfile
             if (rowsAffected != 1)
             {
                 await transaction.RollbackAsync();
-                return false;
+                return "User profile not found";
             }
 
             await transaction.CommitAsync();
-            return true;
+            return $"User profile status updated to {userprofile.Status}";
         }
         catch
         {
             await transaction.RollbackAsync();
-            throw;
+            return "Failed to suspend user profile";
         }
     }
 
