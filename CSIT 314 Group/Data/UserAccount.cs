@@ -92,9 +92,39 @@ namespace CSIT_314_Group.Data
         }
         public UserAccount()
         {
-
         }
 
+        public async Task<string> UpdateDetailsById(UserAccount userAccount)
+        {
+            using SqliteConnection connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string updateDetailsQuery = @" UPDATE UserAccount 
+                                            SET Name=@name, 
+                                                Email=@email,
+                                                PhoneNumber=@phoneNumber,
+                                                ProfileId=@profileId,
+                                                HashedPassword=@hashedPassword
+                                            WHERE Id = @id";
+
+            var updateDetailsQueryCommmand = new SqliteCommand(updateDetailsQuery, connection, transaction);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@name", userAccount.Name);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@email", userAccount.Email);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@phoneNumber", userAccount.PhoneNumber);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@profileId", userAccount.ProfileId);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@hashedPassword", userAccount.HashedPassword);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@id", userAccount.Id);
+
+            int rowsAffected = await updateDetailsQueryCommmand.ExecuteNonQueryAsync();
+            if(rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return "successfully updated user";
+            }
+            await transaction.RollbackAsync();
+            return "failed to update user";
+        }
         public void UpdateContactDetails(string name, string email, string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(name))

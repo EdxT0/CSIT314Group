@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Globalization;
+using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 
 
 namespace CSIT_314_Group.Data
@@ -355,8 +357,9 @@ namespace CSIT_314_Group.Data
             }
             return null;
         }
-        public async Task<FundraiserActivity> SearchByName(string name)
+        public async Task<List<FundraiserActivity>> SearchByName(string name)
         {
+            List<FundraiserActivity> result = new List<FundraiserActivity>();
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
@@ -381,7 +384,7 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                return new FundraiserActivity(
+                 result.Add(new FundraiserActivity(
                             reader.GetInt32(reader.GetOrdinal("Id")),
                             reader.GetString(reader.GetOrdinal("FraName")),
                             reader.GetString(reader.GetOrdinal("Description")),
@@ -391,9 +394,9 @@ namespace CSIT_314_Group.Data
                             reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
                             reader.GetBoolean(reader.GetOrdinal("Status")),
                             reader.GetString(reader.GetOrdinal("FraCategoryName"))
-                            );
+                           ) );
             }
-            return null;
+            return result;
         }
         public async Task<FundraiserActivity> GetById(int id)
         {
@@ -436,6 +439,42 @@ namespace CSIT_314_Group.Data
             return null;
         }
 
+        public async Task<string> UpdateDetailsById(FundraiserActivity fundraiserActivity)
+        {
+            using var connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction =  connection.BeginTransaction();
+
+            string updateDetailsByIdQuery = @"UPDATE FundraiserActivity 
+                                              SET FraName = @name,
+                                                  Description = @description,
+                                                  Deadline = @deadline,
+                                                  AmtRequested = @amtRequested,
+                                                  Status = @status,
+                                                  FraCategoryId = @fraCategoryId
+                                              WHERE Id = @id";
+
+            using var updateDetailsByIdQueryCommand = new SqliteCommand(updateDetailsByIdQuery, connection, transaction);
+
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@name", fundraiserActivity.Name);
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@description", fundraiserActivity.Description);
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@deadline", fundraiserActivity.Deadline.ToString("O"));
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiserActivity.AmtRequested);
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@status", fundraiserActivity.Status);
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@fraCategoryId", fundraiserActivity.FraCategoryId);
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@id", fundraiserActivity.Id);
+
+            int rowsAffected = await updateDetailsByIdQueryCommand.ExecuteNonQueryAsync();
+
+            if(rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return "Fundraiser Successfully Updated";
+            }
+            await transaction.RollbackAsync();
+            return "Failed to Update Fundraiser";
+
+        }
         public async Task<int?> createFundraiser(FundraiserActivity fundraiser)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
