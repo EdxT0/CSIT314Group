@@ -75,7 +75,7 @@ namespace CSIT_314_Group.Data
                             ));
             }
             return result;
-        }
+        }   
 
 
         public async Task<bool> validateUserAndFundraiser(int userId, int fraId)

@@ -12,7 +12,7 @@ namespace CSIT_314_Group.Controllers.FundraiserController
     {
         private readonly FundraiserActivity _fundraiserActivityRepository;
         private readonly UserFundraiser _userFundraiserRepository;
-        private readonly Data.Category _categoryRepository;
+        private readonly Category _categoryRepository;
         public CreateFundraiserController(FundraiserActivity fundraiserActivityRepository, UserFundraiser userFundraiserRepo, Category categoryRepository)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
@@ -48,11 +48,13 @@ namespace CSIT_314_Group.Controllers.FundraiserController
             {
                 createFundraiserDTO.Name = createFundraiserDTO.Name.ToLower();
 
-                int? fraId = await _fundraiserActivityRepository.createFundraiser(createFundraiserDTO);
-                if (fraId != null)
+                var fraCreateResult = await _fundraiserActivityRepository.createFundraiser(createFundraiserDTO);
+
+                if (fraCreateResult.Equals("Fundraiser Created"))
                 {
                     int userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                    if (await _userFundraiserRepository.AddFRAToUser(userId, fraId))
+                    var fra = await _fundraiserActivityRepository.GetByName(createFundraiserDTO.Name);
+                    if (await _userFundraiserRepository.AddFRAToUser(userId, fra.Id))
                     {
                         return Ok($"Created {createFundraiserDTO.Name} Fundraiser");
                     }

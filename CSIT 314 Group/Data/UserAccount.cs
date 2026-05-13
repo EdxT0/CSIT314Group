@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
@@ -10,7 +11,8 @@ namespace CSIT_314_Group.Data
     public class UserAccount
     {
         private readonly DbConnectionFactory _dbConnectionFactory;
-
+        private readonly PasswordHasher<UserAccount> _passwordHasher;
+        private readonly UserProfile _userProfileRepository;
 
         public int Id { get;  set; }
         public string Name { get;  set; } = "";
@@ -83,18 +85,76 @@ namespace CSIT_314_Group.Data
             IsSuspended = isSuspended;
         }
 
-
-
-
         public UserAccount(DbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
+
+
+        public UserAccount(DbConnectionFactory dbConnectionFactory, PasswordHasher<UserAccount> passwordHasher, UserProfile userProfile)
+        {
+            _dbConnectionFactory = dbConnectionFactory;
+            _passwordHasher = passwordHasher;
+            _userProfileRepository = userProfile;
+        }
         public UserAccount()
         {
+        }
+        public async Task<bool> Login(string email, string password)
+        {
+            var user = await GetByEmail(email.ToLower());
 
+            if (user == null)
+                return false;
+
+            var verifyPassword = _passwordHasher.VerifyHashedPassword(user, user.HashedPassword, password);
+
+            if (verifyPassword == PasswordVerificationResult.Failed)
+                return false;
+
+            if (user.IsSuspended == true)
+                return false;
+
+            string profileName = await _userProfileRepository.getProfileNameWithId(user.ProfileId);
+
+            if (await _userProfileRepository.IsProfileSuspended(user.ProfileId))
+            {
+                return false;
+            }
+            return true;
         }
 
+        public async Task<string> UpdateDetailsById(UserAccount userAccount)
+        {
+            using SqliteConnection connection = _dbConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            string updateDetailsQuery = @" UPDATE UserAccount 
+                                            SET Name=@name, 
+                                                Email=@email,
+                                                PhoneNumber=@phoneNumber,
+                                                ProfileId=@profileId,
+                                                HashedPassword=@hashedPassword
+                                            WHERE Id = @id";
+
+            var updateDetailsQueryCommmand = new SqliteCommand(updateDetailsQuery, connection, transaction);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@name", userAccount.Name);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@email", userAccount.Email);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@phoneNumber", userAccount.PhoneNumber);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@profileId", userAccount.ProfileId);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@hashedPassword", userAccount.HashedPassword);
+            updateDetailsQueryCommmand.Parameters.AddWithValue("@id", userAccount.Id);
+
+            int rowsAffected = await updateDetailsQueryCommmand.ExecuteNonQueryAsync();
+            if(rowsAffected == 1)
+            {
+                await transaction.CommitAsync();
+                return "successfully updated user";
+            }
+            await transaction.RollbackAsync();
+            return "failed to update user";
+        }
         public void UpdateContactDetails(string name, string email, string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -178,7 +238,7 @@ namespace CSIT_314_Group.Data
 
         }
 
-        public async Task<(bool success, string message)> CreateUser(UserAccount userDetails)
+        public async Task<string> CreateUser(UserAccount userDetails)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -203,28 +263,28 @@ namespace CSIT_314_Group.Data
                 if (rowsAffected != 1)
                 {
                     await transaction.RollbackAsync();
-                    return (false,"failed to create user");
+                    return "failed to create user";
                 }
                 await transaction.CommitAsync();
-                return (true, "user succesfully created");
+                return "user succesfully created";
             }
             catch (SqliteException ex) when (ex.SqliteExtendedErrorCode == 2067)
             {
                 if (ex.Message.Contains("UserAccount.email", StringComparison.OrdinalIgnoreCase))
                 {
-                    return (false, "email exists already");
+                    return "email exists already";
                 }
                 if (ex.Message.Contains("UserAccount.phoneNumber", StringComparison.OrdinalIgnoreCase))
                 {
-                    return (false, "phone number exists already");
+                    return "phone number exists already";
                 }
-                return (false, "Both phone number and email exists already");
+                return "Both phone number and email exists already";
             }
             catch (SqliteException ex)
             {
                 Console.WriteLine(ex);
                 await transaction.RollbackAsync();
-                return (false, "failed to create user");
+                return "failed to create user";
             }
 
         }
@@ -282,7 +342,7 @@ namespace CSIT_314_Group.Data
             }
             return listOfAllUserAccount;
         }
-        public async Task<bool> SuspendUserWithId(int id, bool suspendUser)
+        public async Task<string> SuspendUserWithId(int id, bool suspendUser)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -298,10 +358,10 @@ namespace CSIT_314_Group.Data
             if (rowsAffected != 1)
             {
                 await transaction.RollbackAsync();
-                return false;
+                return "failed";
             }
             await transaction.CommitAsync();
-            return true;
+            return suspendUser ? "user suspended" : "user unsuspended";
         }
 
         public async Task<List<UserAccount>> GetAllWithQuery(string query)

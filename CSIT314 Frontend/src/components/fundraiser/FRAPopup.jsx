@@ -21,7 +21,7 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }
     if (form.Description.trim()) payload.Description = form.Description;
     if (form.DeadlineInString.trim()) payload.DeadlineInString = form.DeadlineInString;
     if (form.AmtRequested) payload.AmtRequested = parseFloat(form.AmtRequested);
-    if (form.FraCategoryId) payload.FraCategoryId = parseInt(form.FraCategoryId);
+    //if (form.FraCategoryId) payload.FraCategoryId = parseInt(form.FraCategoryId);
     if (form.Status !== null && form.Status !== undefined) payload.Status = form.Status;
 
     const res = await fetch("/api/UpdateFundraiser", {

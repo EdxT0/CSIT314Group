@@ -245,9 +245,9 @@ public class UserProfile
     }
 
     // Suspend User Profile
-    public async Task<bool> SuspendUserProfile(int id, bool status)
+    public async Task<bool> SuspendUserProfile(UserProfile userprofile)
     {
-        if (id <= 0)
+        if (userprofile.Id <= 0)
             return false;
 
         using var connection = _dbConnectionFactory.CreateConnection();
@@ -262,8 +262,8 @@ public class UserProfile
             WHERE Id = @Id";
 
             using var command = new SqliteCommand(query, connection, transaction);
-            command.Parameters.AddWithValue("@Status", status);
-            command.Parameters.AddWithValue("@Id", id);
+            command.Parameters.AddWithValue("@Status", userprofile.Status);
+            command.Parameters.AddWithValue("@Id", userprofile.Id);
 
             int rowsAffected = await command.ExecuteNonQueryAsync();
 

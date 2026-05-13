@@ -47,14 +47,10 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
                 userDetails.setPassword(hasher.HashPassword(userDetails, createUserRequest.HashedPassword));
 
                 var result = await _userAccountRepository.CreateUser(userDetails);
-                if (result.success)
-                {
-                    return Ok(result.message);
-                }
-                else
-                {
-                    return BadRequest(result.message);
-                }
+
+                return Ok(result);
+                
+
             }
             ;
         }

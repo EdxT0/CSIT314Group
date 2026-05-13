@@ -19,26 +19,22 @@ namespace CSIT_314_Group.Controllers.FavouriteController
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> FavouriteFundraiser([FromBody] Favourite favouriteFundraiserDTO)
+        public async Task<IActionResult> FavouriteFundraiser([FromBody] Favourite favouriteFundraiser)
         {
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             if(user == null)
             {
                 return NotFound("no logged in user found");
             }
-            var fundraiserExist = await _fundraiserActivity.GetById(favouriteFundraiserDTO.FraId);
+            var fundraiserExist = await _fundraiserActivity.GetById(favouriteFundraiser.FraId);
             if(fundraiserExist != null)
             {
                 int userId = Convert.ToInt32(user.Value);
-                var result = await _favouriteRepository.FavouriteFundraiser(userId, favouriteFundraiserDTO.FraId);
-                if (result.success)
-                {
-                    return Ok(result.message);
-                }
-                else
-                {
-                    return BadRequest(result.message);
-                }
+                var result = await _favouriteRepository.FavouriteFundraiser(userId, favouriteFundraiser.FraId);
+                
+               return Ok(result);
+                
+                
             }
             return BadRequest("fundraiser doesnt exist");
         }
