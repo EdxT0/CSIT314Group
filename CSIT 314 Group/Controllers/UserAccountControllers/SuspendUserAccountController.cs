@@ -26,14 +26,9 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             }
 
             var boolResult = await _userAccountRepository.SuspendUserWithId(userId, suspendUser);
-            if (boolResult && suspendUser == true)
-            {
-                return Ok("User suspended");
-            }else if (boolResult && suspendUser == false)
-            {
-                return Ok("User unsuspended");
-            }
-            return BadRequest();
+
+             return Ok(boolResult);
+
 
         }
     }

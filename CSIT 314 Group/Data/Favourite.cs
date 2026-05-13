@@ -20,7 +20,7 @@ namespace CSIT_314_Group.Data
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
-        public async Task<(bool success, string message)> FavouriteFundraiser(int userId, int fraId)
+        public async Task<string> FavouriteFundraiser(int userId, int fraId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -37,15 +37,15 @@ namespace CSIT_314_Group.Data
                 if (rowsAffected == 1)
                 {
                     transaction.Commit();
-                    return (true, "Fundraiser Favourited");
+                    return "Fundraiser Favourited";
                 }
                 transaction.Rollback();
-                return (false, "failed to favourite fundraiser");
+                return "failed to favourite fundraiser";
             }
             catch (SqliteException ex) when (ex.SqliteExtendedErrorCode == 2067)
             {
                 transaction.Rollback();
-                return (false, "fundraiser already favourited");
+                return "fundraiser already favourited";
             }
             catch
             {

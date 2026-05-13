@@ -1,9 +1,8 @@
 ﻿using CSIT_314_Group.Data;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
-using SQLitePCL;
+
 using System.Security.Claims;
 
 namespace CSIT_314_Group.Controllers.FundraiserController
@@ -15,7 +14,7 @@ namespace CSIT_314_Group.Controllers.FundraiserController
 
         private readonly Data.FundraiserActivity _fundraiserActivityRepository;
         private readonly UserFundraiser _userFundraiserRepository;
-        public DeleteFundraiserController(Data.FundraiserActivity fundraiserActivityRepository, UserFundraiser userFundraiserRepo)
+        public DeleteFundraiserController(FundraiserActivity fundraiserActivityRepository, UserFundraiser userFundraiserRepo)
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
             _userFundraiserRepository = userFundraiserRepo;
@@ -40,8 +39,8 @@ namespace CSIT_314_Group.Controllers.FundraiserController
             {
                 try
                 {
-                    bool success = await _fundraiserActivityRepository.DeleteFundraiser(fundraiserId);
-                    if (success)
+                    var success = await _fundraiserActivityRepository.DeleteFundraiser(fundraiserId);
+                    if (success.Equals("deleted"))
                     {
                         return Ok($"Fundraiser {fundraiser.Name} Successfully deleted");
                     }

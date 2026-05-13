@@ -24,10 +24,10 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
 
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<IActionResult> UpdateUserAccount([FromBody] UserAccount updateUserDTO)
+        public async Task<IActionResult> UpdateUserAccount([FromBody] UserAccount updateUser)
         {
             List<string> itemsUpdated = new List<string>();
-            int userId = updateUserDTO.Id;
+            int userId = updateUser.Id;
 
             UserAccount? user = await _userAccountRepository.GetAllDetailsById(userId);
 
@@ -35,36 +35,36 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
             {
                 return NotFound($"User with Id {userId} not found");
             }
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.Name))
+            if (!string.IsNullOrWhiteSpace(updateUser.Name))
             {
-                user.Name = updateUserDTO.Name;
-                itemsUpdated.Add(updateUserDTO.Name);
+                user.Name = updateUser.Name;
+                itemsUpdated.Add(updateUser.Name);
             }
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.Email))
+            if (!string.IsNullOrWhiteSpace(updateUser.Email))
             {
-                user.Email = updateUserDTO.Email;
-                itemsUpdated.Add(updateUserDTO.Email);
+                user.Email = updateUser.Email;
+                itemsUpdated.Add(updateUser.Email);
 
             }
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.PhoneNumber))
+            if (!string.IsNullOrWhiteSpace(updateUser.PhoneNumber))
             {
-                user.PhoneNumber = updateUserDTO.PhoneNumber;
-                itemsUpdated.Add(updateUserDTO.PhoneNumber);
+                user.PhoneNumber = updateUser.PhoneNumber;
+                itemsUpdated.Add(updateUser.PhoneNumber);
             }
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.ProfileName))
+            if (!string.IsNullOrWhiteSpace(updateUser.ProfileName))
             {
-                int profileId = await _userProfileRepository.getIdWithProfileName(updateUserDTO.ProfileName.ToLower()) ?? -1;
+                int profileId = await _userProfileRepository.getIdWithProfileName(updateUser.ProfileName.ToLower()) ?? -1;
                 if (profileId == -1)
                 {
-                    return BadRequest($"no profile with {updateUserDTO.ProfileName} found");
+                    return BadRequest($"no profile with {updateUser.ProfileName} found");
                 }
                 user.ProfileId = profileId;
-                itemsUpdated.Add(updateUserDTO.ProfileName);
+                itemsUpdated.Add(updateUser.ProfileName);
             }
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.HashedPassword))
+            if (!string.IsNullOrWhiteSpace(updateUser.HashedPassword))
             {
-                user.HashedPassword = _passwordHasher.HashPassword(user, updateUserDTO.HashedPassword);
-                itemsUpdated.Add(updateUserDTO.HashedPassword);
+                user.HashedPassword = _passwordHasher.HashPassword(user, updateUser.HashedPassword);
+                itemsUpdated.Add(updateUser.HashedPassword);
             }
 
             string result = await _userAccountRepository.UpdateDetailsById(user);

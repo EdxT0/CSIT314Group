@@ -28,52 +28,31 @@ namespace CSIT_314_Group.Controllers.Auth
             )
         {
 
-            var user = await _userAccountRepository.GetByEmail(email.ToLower());
-
-            if (user == null)
-                return Unauthorized("invalid email or password");
-
-            var verifyPassword = _hasher.VerifyHashedPassword(user, user.HashedPassword, password);
-
-            if (verifyPassword == PasswordVerificationResult.Failed)
-                return Unauthorized("invalid email or password");
-
-            if (user.IsSuspended == true)
-                return Unauthorized("User suspended");
-
-            string profileName = await _userProfileRepository.getProfileNameWithId(user.ProfileId);
-
-            if (await _userProfileRepository.IsProfileSuspended(user.ProfileId))
+            var success = await _userAccountRepository.Login(email, password);
+            if (success)
             {
-                return Unauthorized($"Profile {profileName} is suspended");
+                var user = await _userAccountRepository.GetByEmail(email);
+
+                var claims = new List<Claim>{
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.ProfileName.ToLower())
+                 };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
+                {
+                    IsPersistent = false
+                });
+
+                return Ok(true);
             }
 
-            var claims = new List<Claim>{
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Name, user.Name),
-        new Claim(ClaimTypes.Email, user.Email),
-        new Claim(ClaimTypes.Role, profileName.ToLower())
-    };
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
-            {
-                IsPersistent = false
-            });
-
-            return Ok(new
-            {
-                message = "Logged in",
-                user = new
-                {
-                    id = user.Id,
-                    name = user.Name,
-                    email = user.Email,
-                    role = await _userProfileRepository.getProfileNameWithId(user.ProfileId)
-                }
-            });
+            return BadRequest(false);
+            
         }
 
 

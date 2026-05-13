@@ -1,9 +1,7 @@
 ﻿using CSIT_314_Group.Data;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using System.Security.Claims;
+
 
 namespace CSIT_314_Group.Controllers.UserAccountControllers
 {
@@ -13,7 +11,7 @@ namespace CSIT_314_Group.Controllers.UserAccountControllers
     {
         private readonly UserAccount _userAccountRepository;
 
-        public ViewUserAccountController(Data.UserAccount userAccountRepository)
+        public ViewUserAccountController(UserAccount userAccountRepository)
         {
             _userAccountRepository = userAccountRepository;
         }

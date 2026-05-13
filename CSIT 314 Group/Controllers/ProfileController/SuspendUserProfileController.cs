@@ -18,9 +18,7 @@ public class SuspendUserProfileController(UserProfile userProfileRepository) : C
         if (SuspendProfileDTO.Id <= 0)
             return BadRequest("Invalid Profile ID");
         
-        var result = await userProfileRepository.SuspendUserProfile(
-            SuspendProfileDTO.Id, 
-            SuspendProfileDTO.Status);
+        var result = await userProfileRepository.SuspendUserProfile( SuspendProfileDTO );
 
         if (!result)
             return NotFound("User profile not found");

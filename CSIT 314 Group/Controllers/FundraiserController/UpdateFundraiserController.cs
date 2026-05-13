@@ -68,9 +68,7 @@ namespace CSIT_314_Group.Controllers.FundraiserController
                 fundraiser.Deadline = parsedDeadline;
                 itemsUpdated.Add("Deadline");
             }
-                
 
-            
             if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.Status.ToString()))
             {
                 fundraiser.Status = updateFundraiserDTO.Status;

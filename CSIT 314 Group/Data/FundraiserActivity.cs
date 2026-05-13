@@ -175,7 +175,7 @@ namespace CSIT_314_Group.Data
             return false;
         }
 
-        public async Task<bool> DeleteFundraiser(int fundraiserId)
+        public async Task<string> DeleteFundraiser(int fundraiserId)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -190,10 +190,10 @@ namespace CSIT_314_Group.Data
             if(rowsAffected == 1)
             {
                 await transaction.CommitAsync();
-                return true;
+                return "deleted";
             }
             await transaction.RollbackAsync();
-            return false;
+            return "not deleted";
         }
         public async Task<bool> UpdateFraCate(int fraCategoryId, int fraId)
         {
@@ -475,7 +475,7 @@ namespace CSIT_314_Group.Data
             return "Failed to Update Fundraiser";
 
         }
-        public async Task<int?> createFundraiser(FundraiserActivity fundraiser)
+        public async Task<string> createFundraiser(FundraiserActivity fundraiser)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -487,9 +487,15 @@ namespace CSIT_314_Group.Data
                 string createFundraiserQuery = @"INSERT INTO FundraiserActivity (FraName, Description, Deadline, Status, AmtOfViews, AmtDonated, AmtRequested, FraCategoryId ) VALUES (@fraName, @description, @deadline, @status, @amtOfViews, @amtDonated, @amtRequested, @fraCategoryId)";
                 using var createFundraiserQueryCommand = new SqliteCommand(createFundraiserQuery, connection, transaction);
 
+                DateTime.TryParseExact(fundraiser.DeadlineInString,
+                        "dd-MM-yyyy",
+                        null,
+                        System.Globalization.DateTimeStyles.None,
+                        out DateTime parsedDeadline);
+
                 createFundraiserQueryCommand.Parameters.AddWithValue("@fraName", fundraiser.Name);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@description", fundraiser.Description);
-                createFundraiserQueryCommand.Parameters.AddWithValue("@deadline", fundraiser.Deadline.ToString("O"));
+                createFundraiserQueryCommand.Parameters.AddWithValue("@deadline", parsedDeadline.ToString("O"));
                 createFundraiserQueryCommand.Parameters.AddWithValue("@status", fundraiser.Status);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@amtOfViews", fundraiser.AmtOfViews);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@amtDonated", fundraiser.AmtDonated);
@@ -501,27 +507,19 @@ namespace CSIT_314_Group.Data
                 if (rowsAffected == 1)
                 {
                     await transaction.CommitAsync();
-                    string getIdquery = @"select Id FROM FundraiserActivity WHERE FraName = @fraName";
-                    using (var getIdQueryCommand = new SqliteCommand(getIdquery, connection))
-                    {
-                        getIdQueryCommand.Parameters.AddWithValue("@fraName", fundraiser.Name);
-                        object? result = await getIdQueryCommand.ExecuteScalarAsync();
-                        if (result != null)
-                        {
-                            fraId = Convert.ToInt16(result);
-                        }
-                    }
-                    return fraId;
+
+                    return "Fundraiser Created";
                 }
+
             }
             catch (SqliteException ex)
             {
                 Console.WriteLine(ex);
                 await transaction.RollbackAsync();
-                return null;
+                return "failed to create Fundraiser";
             }
             await transaction.RollbackAsync();
-            return null;
+            return "failed to create Fundraiser";
 
         }
 
