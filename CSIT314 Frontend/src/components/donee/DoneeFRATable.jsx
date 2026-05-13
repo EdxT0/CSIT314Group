@@ -2,7 +2,6 @@ import { useState } from "react";
 
 export default function DoneeFRATable({ fras, search, setSearch, onSelect}) {
   const [activeSearch, setActiveSearch] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
   const filtered = fras.filter(f =>
     f.name?.toLowerCase().includes(activeSearch.toLowerCase()) ||
@@ -43,20 +42,6 @@ export default function DoneeFRATable({ fras, search, setSearch, onSelect}) {
           </div>
       </div>
 
-      {successMessage && (
-        <div style={{
-          background: "#0f2e1a",
-          border: "0.5px solid #1d9e75",
-          borderRadius: "8px",
-          padding: "10px 12px",
-          fontSize: "13px",
-          color: "#5dcaa5",
-          marginBottom: "1rem"
-        }}>
-          {successMessage}
-        </div>
-      )}
-      
       <div className="admin-metrics">
         <div className="metric">
           <div className="metric-label">Total activities</div>

@@ -90,12 +90,13 @@ export default function FRATable({ fras, search, setSearch, onSuccess, onSearch,
         </table>
       </div>
 
+      {/* Read-only popup — no edit or delete */}
       {selectedFRA && (
         <FRAPopup
           fra={selectedFRA}
           onClose={() => setSelectedFRA(null)}
           readOnly={true}
-          onSuccess={async (message) => {
+          onSuccess={async () => {
             await onSuccess?.();
             setSelectedFRA(null);
           }}

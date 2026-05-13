@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AccountPopup from "./AccountPopup";
 
-export default function AccountsTable({ accounts, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
+export default function AccountsTable({ acc, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");  // ← add this
 
@@ -47,15 +47,15 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
       <div className="admin-metrics">
         <div className="metric">
           <div className="metric-label">Total accounts</div>
-          <div className="metric-val">{accounts.length}</div>
+          <div className="metric-val">{acc.length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Active</div>
-          <div className="metric-val">{accounts.filter(a => !a.isSuspended).length}</div>
+          <div className="metric-val">{acc.filter(a => !a.isSuspended).length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Suspended</div>
-          <div className="metric-val">{accounts.filter(a => a.isSuspended).length}</div>
+          <div className="metric-val">{acc.filter(a => a.isSuspended).length}</div>
         </div>
       </div>
 
@@ -72,22 +72,22 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
             </tr>
           </thead>
           <tbody>
-            {accounts.length === 0 && (
+            {acc.length === 0 && (
               <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No accounts found</td></tr>
             )}
-            {accounts.map((acc, index) => (
+            {acc.map((account, index) => (
               <tr
-                key={`${acc.id}-${index}`}
-                onClick={() => setSelectedAccount(acc)}
+                key={`${account.id}-${index}`}
+                onClick={() => setSelectedAccount(account)}
                 style={{ cursor: "pointer" }}
               >
-                <td>{capitaliseNames(acc.name)}</td>
-                <td>{acc.email}</td>
-                <td>{acc.phoneNumber}</td>
-                <td>{capitaliseNames(acc.profileName)}</td>
+                <td>{capitaliseNames(account.name)}</td>
+                <td>{account.email}</td>
+                <td>{account.phoneNumber}</td>
+                <td>{capitaliseNames(account.profileName)}</td>
                 <td>
-                  <span className={`badge ${acc.isSuspended ? "badge-suspended" : "badge-active"}`}>
-                    {acc.isSuspended ? "Suspended" : "Active"}
+                  <span className={`badge ${account.isSuspended ? "badge-suspended" : "badge-active"}`}>
+                    {account.isSuspended ? "Suspended" : "Active"}
                   </span>
                 </td>
                 <td>
@@ -95,17 +95,17 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
                     className="action-btn"
                     onClick={e => {
                       e.stopPropagation();                       
-                      setSelectedAccount({ ...acc, startEditing: true });  
+                      setSelectedAccount({ ...account, startEditing: true });  
                     }}>
                     Edit
                   </button>
                   <button
-                    className={`action-btn ${!acc.isSuspended ? "danger" : ""}`}
+                    className={`action-btn ${!account.isSuspended ? "danger" : ""}`}
                     onClick={e => {
                       e.stopPropagation();                       
-                      onSuspend(acc.id, !acc.isSuspended);
+                      onSuspend(account.id, !account.isSuspended);
                     }}>
-                    {acc.isSuspended ? "Unsuspend" : "Suspend"}
+                    {account.isSuspended ? "Unsuspend" : "Suspend"}
                   </button>
                 </td>
               </tr>
@@ -119,7 +119,7 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
           acc={selectedAccount}
           onClose={() => setSelectedAccount(null)}
           onSuspend={onSuspend}
-            onSuccess={async (message) => {        
+          onSuccess={async (message) => {        
             await onSuccess?.();
             setSelectedAccount(null);
             setSuccessMessage(message);          

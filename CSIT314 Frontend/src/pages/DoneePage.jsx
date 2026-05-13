@@ -20,6 +20,7 @@ export default function DoneePage() {
   const [favSearch, setFavSearch] = useState("");
   const [donationSearch, setDonationSearch] = useState("");
   const [error, displayError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     fetchAllFRAs();
@@ -127,6 +128,20 @@ export default function DoneePage() {
       <main className="admin-main">
         {error && <div className="form-error">{error}</div>}
 
+        {successMessage && (
+        <div style={{
+          background: "#0f2e1a",
+          border: "0.5px solid #1d9e75",
+          borderRadius: "8px",
+          padding: "10px 12px",
+          fontSize: "13px",
+          color: "#5dcaa5",
+          marginBottom: "1rem"
+        }}>
+          {successMessage}
+        </div>
+        )}
+      
         {activeTab === "browse" && (
           <DoneeFRATable
             fras={fras}
@@ -154,13 +169,18 @@ export default function DoneePage() {
           />
         )}
 
-        {/* Popup renders on top of any tab */}
         {selectedFRA && (
           <FRADetailPopup
             fra={selectedFRA}
             onClose={() => setSelectedFRA(null)}
             onFavourited={() => {
               if (activeTab === "favourites") fetchFavourites();
+            }}
+            onSuccess={async (message) => {
+            await onSuccess?.();
+            setSelectedFRA(null);
+            setSuccessMessage(message);
+            setTimeout(() => setSuccessMessage(""), 3000);
             }}
           />
         )}

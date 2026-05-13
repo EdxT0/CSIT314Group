@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-export default function FRADetailPopup({ fra, onClose, onFavourited }) {
+export default function FRADetailPopup({ fra, onClose, onSuccess, onFavourited }) {
   const [donationAmt, setDonationAmt] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [error, displayError] = useState("");
 
   const handleFavourite = async () => {
-    setError(""); setMessage("");
+    displayError(""); setMessage("");
     const res = await fetch("/api/FavouriteFundraiser", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -14,15 +14,15 @@ export default function FRADetailPopup({ fra, onClose, onFavourited }) {
       body: JSON.stringify({ fraId: fra.id }),
     });
     const text = await res.text();
-    if (!res.ok) { setError(text); return; }
+    if (!res.ok) { displayError(text); return; }
     setMessage("Added to favourites!");
     onFavourited?.();
   };
 
   const handleDonate = async () => {
-    setError(""); setMessage("");
+    displayError(""); setMessage("");
     if (!donationAmt || parseFloat(donationAmt) <= 0) {
-      setError("Please enter a valid donation amount");
+      displayError("Please enter a valid donation amount");
       return;
     }
     const res = await fetch("/api/AddDonation", {
@@ -32,8 +32,8 @@ export default function FRADetailPopup({ fra, onClose, onFavourited }) {
       body: JSON.stringify({ id: fra.id, amtDonated: parseFloat(donationAmt) }),
     });
     const text = await res.text();
-    if (!res.ok) { setError(text); return; }
-    setMessage("Donation successful!");
+    if (!res.ok) { displayError(text); return; }
+    await onSuccess?.("Donation successful!");
     setDonationAmt("");
   };
 
