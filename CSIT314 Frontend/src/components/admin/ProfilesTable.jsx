@@ -4,8 +4,6 @@ import ProfilePopup from "./ProfilePopup";
 export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, successMessage }) {
   const [selectedProfile, setSelectedProfile] = useState(null);
 
-  // ← remove const [successMessage, setSuccessMessage] = useState("");
-
   function capitaliseNames(str) {
     if (!str) return str;
     return str
@@ -31,19 +29,8 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
         </div>
       </div>
 
-      {successMessage && (      // ← uses prop directly
-        <div style={{
-          background: "#0f2e1a",
-          border: "0.5px solid #1d9e75",
-          borderRadius: "8px",
-          padding: "10px 12px",
-          fontSize: "13px",
-          color: "#5dcaa5",
-          marginBottom: "1rem"
-        }}>
-          {successMessage}
-        </div>
-      )}
+      {success && <div className="form-success">{success}</div>}  
+
 
       <div className="admin-metrics">
         <div className="metric">
@@ -116,8 +103,7 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
           onClose={() => setSelectedProfile(null)}
           onSuspend={onSuspend}
           onSuccess={async (message) => {
-            await onSuccess?.(message);    // ← passes message up to AdminPage
-            setSelectedProfile(null);
+            await onSuccess?.(message); 
           }}
         />
       )}

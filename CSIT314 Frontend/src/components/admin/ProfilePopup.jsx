@@ -1,4 +1,3 @@
-//Profile popup 
 import { useState } from "react";
 
 export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess }) {
@@ -8,9 +7,10 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
     profileName: profile.profileName,
     description: profile.description,
   });
-  const [error, displayError] = useState("");
+  const [error, displayError] = useState(""); // ← for displaying errors within the popup
+  const [success, displaySuccess] = useState(""); // ← for displaying success messages within the popup
 
-  const handleUpdate = async () => {
+  const handleUpdate = async () => {        // ← update profile details
     displayError("");
     const res = await fetch("/api/UpdateUserProfile", {
       method: "PUT",
@@ -19,15 +19,15 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
       body: JSON.stringify(form),
     });
     const text = await res.text();
-    console.log("Update response:", { status: res.status, text });
     if (!res.ok) { displayError(text); return; }
     setIsEditing(false);
-    await onSuccess?.("Profile updated successfully!"); 
+    displaySuccess("Profile updated successfully!"); // ← show success message within the popup
   };
 
   const handleSuspend = async () => {
+    displayError("");
     await onSuspend(profile.id, profile.status == 0);
-    onClose();
+    displaySuccess(profile.status == 0 ? "Profile suspended" : "Profile unsuspended"); // ← show status change message
   };
 
   return (
@@ -39,7 +39,8 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
           <button className="popup-close" onClick={onClose}>✕</button>
         </div>
 
-        {error && <div className="form-error">{error}</div>}
+        {error && <div className="form-error">{error}</div>} {/* ← Display error within the popup */}
+        {success && <div className="form-success">{success}</div>}  {/* ← Display success message within the popup */}
 
         {!isEditing && (
           <>
@@ -86,8 +87,8 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
             ))}
 
             <div className="popup-actions">
-              <button className="popup-edit-btn" onClick={handleUpdate}>Save changes</button>
-              <button className="admin-btn" onClick={() => { setIsEditing(false); displayError(""); }}>
+              <button className="popup-edit-btn" onClick={handleUpdate}>Save changes</button> {/* Finish editing but stay on popup */}
+              <button className="admin-btn" onClick={() => { setIsEditing(false); displayError(""); }}> 
                 Cancel
               </button>
             </div>
