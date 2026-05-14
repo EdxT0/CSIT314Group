@@ -1,3 +1,4 @@
+//ViewAllCategoryController.cs
 using CSIT_314_Group.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

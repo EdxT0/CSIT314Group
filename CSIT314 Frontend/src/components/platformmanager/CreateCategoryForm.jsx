@@ -2,10 +2,12 @@ import { useState } from "react";
 
 export default function CreateCategoryForm({ onSuccess, onCancel }) {
   const [form, setForm] = useState({ name: "", description: "" });
-  const [error, setError] = useState("");
+  const [error, displayError] = useState("");
+  const [success, displaySuccess] = useState("");
 
   const handleSubmit = async () => {
-    setError("");
+    displayError("");
+    displaySuccess("");
     const res = await fetch("/api/CreateCategory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -13,13 +15,16 @@ export default function CreateCategoryForm({ onSuccess, onCancel }) {
       body: JSON.stringify(form),
     });
     const text = await res.text();
-    if (!res.ok) { setError(text); return; }
-    onSuccess();
+    if (!res.ok) { displayError(text); return; }
+    displaySuccess("Category created successfully!");
+    setForm({ name: "", description: "" });  // ← reset form but stay on page
+    onSuccess?.();                            // ← refetch categories in background
   };
 
   return (
     <div className="admin-form-card">
       <h2>Create category</h2>
+      {success && <div className="form-success">{success}</div>}
       {error && <div className="form-error">{error}</div>}
 
       <div className="form-field">

@@ -3,8 +3,6 @@ import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import CategoryTable from "../components/platformmanager/CategoryTable";
 import CreateCategoryForm from "../components/platformmanager/CreateCategoryForm";
-import EditCategoryForm from "../components/platformmanager/EditCategoryForm";
-import ReportsTab from "../components/platformmanager/ReportsTab";
 import "../styles/adminpage.css";
 import "../styles/fundraiserpage.css";
 
@@ -14,8 +12,7 @@ export default function PlatformManagerPage() {
   const [activeTab, setActiveTab] = useState("categories");
   const [categories, setCategories] = useState([]);
   const [fras, setFras] = useState([]);
-  const [search, setSearch] = useState("");
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [categorySearch, setCategorySearch] = useState("");
   const [error, displayError] = useState("");
 
   useEffect(() => {
@@ -48,6 +45,24 @@ export default function PlatformManagerPage() {
     fetchCategories();
   };
 
+  const handleSearchCategories = async () => {
+    if (!categorySearch.trim()) { fetchCategories(); return; }
+    displayError("");
+    setCategories([]);
+    const res = await fetch(`/api/SearchCategory?keyword=${encodeURIComponent(categorySearch)}`, {
+      credentials: "include",
+    });
+    if (res.status === 404) { setCategories([]); return; }
+    if (!res.ok) { displayError(await res.text()); return; }
+    const data = await res.json();
+    setCategories(Array.isArray(data) ? data : [data]);
+  };
+
+  const handleResetCategories = () => {
+    setCategorySearch("");
+    fetchCategories();
+  };
+
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -60,20 +75,13 @@ export default function PlatformManagerPage() {
 
         <div className="sidebar-section">Categories</div>
         <div className={`nav-item ${activeTab === "categories" ? "active" : ""}`}
-          onClick={() => { setActiveTab("categories"); setSearch(""); }}>
+          onClick={() => setActiveTab("categories")}>
           View categories
         </div>
         <div className={`nav-item ${activeTab === "createCategory" ? "active" : ""}`}
           onClick={() => setActiveTab("createCategory")}>
           Create category
         </div>
-
-        <div className="sidebar-section">Reports</div>
-        <div className={`nav-item ${activeTab === "reports" ? "active" : ""}`}
-          onClick={() => setActiveTab("reports")}>
-          Activity reports
-        </div>
-
         <div className="sidebar-bottom">
           <div className="logout-btn" onClick={handleLogout}>Log out</div>
         </div>
@@ -85,30 +93,20 @@ export default function PlatformManagerPage() {
         {activeTab === "categories" && (
           <CategoryTable
             categories={categories}
-            search={search}
-            setSearch={setSearch}
-            onEdit={(c) => { setEditingCategory(c); setActiveTab("editCategory"); }}
+            search={categorySearch}
+            setSearch={setCategorySearch}
             onDelete={handleDelete}
+            onSuccess={fetchCategories}
+            onSearch={handleSearchCategories}
+            onReset={handleResetCategories}
           />
         )}
 
         {activeTab === "createCategory" && (
           <CreateCategoryForm
-            onSuccess={() => { setActiveTab("categories"); fetchCategories(); }}
+            onSuccess={fetchCategories}
             onCancel={() => setActiveTab("categories")}
           />
-        )}
-
-        {activeTab === "editCategory" && editingCategory && (
-          <EditCategoryForm
-            category={editingCategory}
-            onSuccess={() => { setActiveTab("categories"); fetchCategories(); }}
-            onCancel={() => setActiveTab("categories")}
-          />
-        )}
-
-        {activeTab === "reports" && (
-          <ReportsTab fras={fras} />
         )}
       </main>
     </div>
