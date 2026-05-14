@@ -141,7 +141,7 @@ public class UserProfile
 
 
     // Update 
-    public async Task<bool> UpdateUserProfile(UserProfile request)
+    public async Task<string> UpdateUserProfile(UserProfile request)
     {
         using var connection = _dbConnectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -165,11 +165,11 @@ public class UserProfile
             if (rowsAffected != 1)
             {
                 await transaction.RollbackAsync();
-                return false;
+                return "User profile not found or update failed";
             }
 
             await transaction.CommitAsync();
-            return true;
+            return "User profile updated successfully";
         }
         catch
         {

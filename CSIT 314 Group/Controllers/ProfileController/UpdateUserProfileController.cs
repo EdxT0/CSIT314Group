@@ -8,7 +8,7 @@ namespace CSIT_314_Group.Controllers.ProfileController;
 [Route("api/[controller]")]
 public class UpdateUserProfileController(UserProfile userProfileRepository) : ControllerBase
 {
-    [Authorize(Roles ="admin")]
+    //[Authorize(Roles ="admin")]
     [HttpPut]
     public async Task<IActionResult> UpdateUserProfile([FromBody] UserProfile request)
     {
@@ -23,9 +23,11 @@ public class UpdateUserProfileController(UserProfile userProfileRepository) : Co
 
         var result = await userProfileRepository.UpdateUserProfile(request);
 
-        if (result)
-            return Ok("User profile updated successfully");
-
-        return NotFound("User profile not found or update failed");
+        if (result.Contains("successfully"))
+        {
+            return Ok(result);
+        }
+    
+        return NotFound(result);
     }
 }
