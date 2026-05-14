@@ -25,18 +25,18 @@ export default function CreateProfileForm({ onSuccess, onCancel }) {
       <div className="form-field">
         <label>Profile name</label>
         <input
-          value={form.profileName}
+          value={form.ProfileName}              
           placeholder="e.g. fundraiser, donee"
-          onChange={e => setForm({ ...form, profileName: e.target.value })}
+          onChange={e => setForm({ ...form, ProfileName: e.target.value })}  
         />
       </div>
 
       <div className="form-field">
         <label>Description</label>
         <input
-          value={form.description}
+          value={form.Description}             
           placeholder="Brief description of this role"
-          onChange={e => setForm({ ...form, description: e.target.value })}
+          onChange={e => setForm({ ...form, Description: e.target.value })}  
         />
       </div>
 

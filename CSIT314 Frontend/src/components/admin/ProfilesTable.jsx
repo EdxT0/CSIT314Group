@@ -1,14 +1,13 @@
-//Profile table 
 import { useState } from "react";
 import ProfilePopup from "./ProfilePopup";
 
-export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
+export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, successMessage }) {
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");  // ← add this
+
+  // ← remove const [successMessage, setSuccessMessage] = useState("");
 
   function capitaliseNames(str) {
     if (!str) return str;
-
     return str
       .split(" ")
       .map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
@@ -29,10 +28,10 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
           />
           <button className="admin-btn" onClick={onSearch}>Search</button>
           <button className="admin-btn" onClick={onReset}>Reset</button>
-          </div>
+        </div>
       </div>
 
-      {successMessage && (
+      {successMessage && (      // ← uses prop directly
         <div style={{
           background: "#0f2e1a",
           border: "0.5px solid #1d9e75",
@@ -68,15 +67,15 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
               <th>Profile name</th>
               <th>Description</th>
               <th>Status</th>
-              <th>Actions</th>  
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {profiles.length === 0 && (
-              <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No profiles found</td></tr>
-            )}            
+              <tr><td colSpan={4} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No profiles found</td></tr>
+            )}
             {profiles.map((p, index) => (
-              <tr 
+              <tr
                 key={`${p.id}-${index}`}
                 onClick={() => setSelectedProfile(p)}
                 style={{ cursor: "pointer" }}
@@ -88,11 +87,11 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
                     {p.status == 0 ? "Active" : "Suspended"}
                   </span>
                 </td>
-                <td> 
-                  <button className="action-btn" 
+                <td>
+                  <button className="action-btn"
                     onClick={e => {
-                      e.stopPropagation();                       
-                      setSelectedProfile({ ...p, startEditing: true });  
+                      e.stopPropagation();
+                      setSelectedProfile({ ...p, startEditing: true });
                     }}>
                     Edit
                   </button>
@@ -116,11 +115,9 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
           profile={selectedProfile}
           onClose={() => setSelectedProfile(null)}
           onSuspend={onSuspend}
-          onSuccess={async (message) => {        
-            await onSuccess?.();
+          onSuccess={async (message) => {
+            await onSuccess?.(message);    // ← passes message up to AdminPage
             setSelectedProfile(null);
-            setSuccessMessage(message);          
-            setTimeout(() => setSuccessMessage(""), 3000);  
           }}
         />
       )}

@@ -1,4 +1,3 @@
-//Admin page 
 import { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +18,7 @@ export default function AdminPage() {
   const [error, displayError] = useState("");
   const [editingAccount, setEditingAccount] = useState(null);
   const [editingProfile, setEditingProfile] = useState(null);
-  
+  const [success, displaySuccess] = useState("");
 
   useEffect(() => {
     fetchAccounts();
@@ -28,19 +27,31 @@ export default function AdminPage() {
 
   const fetchAccounts = async () => {
     displayError("");
-    const res = await fetch("/api/ViewAllUserAccount", 
-      { credentials: "include" });
+    const res = await fetch("/api/ViewAllUserAccount", { credentials: "include" });
     if (!res.ok) { displayError("Failed to load accounts"); return; }
     setAccounts(await res.json());
   };
 
   const fetchProfiles = async () => {
-    const res = await fetch("/api/ViewAllUserProfile", {
-      credentials: "include" 
-    });
+    const res = await fetch("/api/ViewAllUserProfile", { credentials: "include" });
     if (!res.ok) { displayError("Failed to load profiles"); return; }
-    const data = await res.json();
-    setProfiles(data);
+    setProfiles(await res.json());
+  };
+
+  const handleAccountSuccess = async (message) => {
+    await fetchAccounts();
+    if (message) {
+      displaySuccess(message);
+      setTimeout(() => displaySuccess(""), 3000);
+    }
+  };
+
+  const handleProfileSuccess = async (message) => {
+    await fetchProfiles();
+      if (message) {
+        displaySuccess(message);
+        setTimeout(() => displaySuccess(""), 3000);
+      }
   };
 
   const handleSuspendAccount = async (id, suspend) => {
@@ -52,7 +63,7 @@ export default function AdminPage() {
     if (!res.ok) { displayError(await res.text()); return; }
     fetchAccounts();
   };
-  
+
   const handleSearchAccounts = async () => {
     if (!accountSearch.trim()) { fetchAccounts(); return; }
     displayError("");
@@ -63,7 +74,6 @@ export default function AdminPage() {
     });
     if (!res.ok) { displayError(await res.text()); return; }
     const data = await res.json();
-    console.log("Search results:", data);
     setAccounts(Array.isArray(data) ? data : [data]);
   };
 
@@ -77,7 +87,6 @@ export default function AdminPage() {
     });
     if (!res.ok) { displayError(await res.text()); return; }
     const data = await res.json();
-    console.log("Search results:", data);
     setProfiles(Array.isArray(data) ? data : [data]);
   };
 
@@ -143,21 +152,25 @@ export default function AdminPage() {
 
         {activeTab === "accounts" && (
           <AccountsTable
-            accounts={accounts}
+            accounts={accounts}              // ← renamed from acc to accounts
             search={accountSearch}
             setSearch={setAccountSearch}
             onSuspend={handleSuspendAccount}
-            onSuccess={fetchAccounts}
+            onSuccess={handleAccountSuccess} // ← handles message + refetch
             onSearch={handleSearchAccounts}
             onReset={handleResetAccounts}
             profiles={profiles}
+            successMessage={success}  // ← pass message down
           />
         )}
 
         {activeTab === "createAccount" && (
           <CreateAccountForm
             profiles={profiles}
-            onSuccess={() => { setActiveTab("accounts"); fetchAccounts(); }}
+            onSuccess={() => {
+              setActiveTab("accounts");
+              handleAccountSuccess("Account created successfully!"); // ← same handler
+            }}
             onCancel={() => setActiveTab("accounts")}
           />
         )}
@@ -168,19 +181,22 @@ export default function AdminPage() {
             search={profileSearch}
             setSearch={setProfileSearch}
             onSuspend={handleSuspendProfile}
-            onSuccess={fetchProfiles}
+            onSuccess={handleProfileSuccess}       // ← was fetchProfiles
             onSearch={handleSearchProfiles}
             onReset={handleResetProfiles}
+            successMessage={success}  // ← pass message down
           />
         )}
 
         {activeTab === "createProfile" && (
           <CreateProfileForm
-            onSuccess={() => { setActiveTab("profiles"); fetchProfiles(); }}
+            onSuccess={() => {
+              setActiveTab("profiles");
+              handleProfileSuccess("Profile created successfully!"); // ← add message
+            }}
             onCancel={() => setActiveTab("profiles")}
           />
         )}
-
       </main>
     </div>
   );

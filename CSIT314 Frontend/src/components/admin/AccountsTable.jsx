@@ -1,9 +1,10 @@
 import { useState } from "react";
 import AccountPopup from "./AccountPopup";
 
-export default function AccountsTable({ acc, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
+export default function AccountsTable({ accounts, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, successMessage }) {
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");  // ← add this
+
+  // ← remove internal successMessage state, use prop instead
 
   function capitaliseNames(str) {
     if (!str) return str;
@@ -30,7 +31,7 @@ export default function AccountsTable({ acc, profiles, search, setSearch, onSusp
         </div>
       </div>
 
-      {successMessage && (
+      {successMessage && (   // ← uses prop directly
         <div style={{
           background: "#0f2e1a",
           border: "0.5px solid #1d9e75",
@@ -47,15 +48,15 @@ export default function AccountsTable({ acc, profiles, search, setSearch, onSusp
       <div className="admin-metrics">
         <div className="metric">
           <div className="metric-label">Total accounts</div>
-          <div className="metric-val">{acc.length}</div>
+          <div className="metric-val">{accounts.length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Active</div>
-          <div className="metric-val">{acc.filter(a => !a.isSuspended).length}</div>
+          <div className="metric-val">{accounts.filter(a => !a.isSuspended).length}</div>
         </div>
         <div className="metric">
           <div className="metric-label">Suspended</div>
-          <div className="metric-val">{acc.filter(a => a.isSuspended).length}</div>
+          <div className="metric-val">{accounts.filter(a => a.isSuspended).length}</div>
         </div>
       </div>
 
@@ -72,10 +73,10 @@ export default function AccountsTable({ acc, profiles, search, setSearch, onSusp
             </tr>
           </thead>
           <tbody>
-            {acc.length === 0 && (
+            {accounts.length === 0 && (
               <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No accounts found</td></tr>
             )}
-            {acc.map((account, index) => (
+            {accounts.map((account, index) => (
               <tr
                 key={`${account.id}-${index}`}
                 onClick={() => setSelectedAccount(account)}
@@ -94,15 +95,15 @@ export default function AccountsTable({ acc, profiles, search, setSearch, onSusp
                   <button
                     className="action-btn"
                     onClick={e => {
-                      e.stopPropagation();                       
-                      setSelectedAccount({ ...account, startEditing: true });  
+                      e.stopPropagation();
+                      setSelectedAccount({ ...account, startEditing: true });
                     }}>
                     Edit
                   </button>
                   <button
                     className={`action-btn ${!account.isSuspended ? "danger" : ""}`}
                     onClick={e => {
-                      e.stopPropagation();                       
+                      e.stopPropagation();
                       onSuspend(account.id, !account.isSuspended);
                     }}>
                     {account.isSuspended ? "Unsuspend" : "Suspend"}
@@ -119,12 +120,11 @@ export default function AccountsTable({ acc, profiles, search, setSearch, onSusp
           acc={selectedAccount}
           onClose={() => setSelectedAccount(null)}
           onSuspend={onSuspend}
-          onSuccess={async (message) => {        
-            await onSuccess?.();
-            setSelectedAccount(null);
-            setSuccessMessage(message);          
-            setTimeout(() => setSuccessMessage(""), 3000); }}
           profiles={profiles}
+          onSuccess={async (message) => {
+            await onSuccess?.(message);    // ← passes message up to AdminPage
+            setSelectedAccount(null);
+          }}
         />
       )}
     </>
