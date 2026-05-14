@@ -15,7 +15,7 @@ namespace CSIT_314_Group.Controllers.FundraiserController
         {
             _fundraiserActivityRepository = fundraiserActivityRepository;
         }
-        [Authorize(Roles = "fundraiser manager, admin")]
+        [Authorize(Roles = "fundraiser manager, admin, donee")]
         [HttpGet]
         public async Task<IActionResult> SearchFundraiser([FromQuery] string name)
         {
