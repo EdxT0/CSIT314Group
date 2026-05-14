@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
+  const [error, displayError] = useState("");
+  const [success, displaySuccess] = useState("");
   const [form, setForm] = useState({
     Name: "", 
     Email: "", 
@@ -9,10 +11,11 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
     ProfileId: "", 
     IsSuspended: false
   });
-  const [error, displayError] = useState("");
+
 
   const handleSubmit = async () => {
     displayError("");
+    displaySuccess("");
     const res = await fetch("/api/CreateUserAccount", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -21,6 +24,7 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
     });
     const text = await res.text();
     if (!res.ok) { displayError(text); return; }
+    displaySuccess("Account created successfully!");
     onSuccess();
   };
 
@@ -28,6 +32,7 @@ export default function CreateAccountForm({ profiles, onSuccess, onCancel }) {
     <div className="admin-form-card">
       <h2>Create account</h2>
       {error && <div className="form-error">{error}</div>}
+      {success && <div className="form-success">{success}</div>}
 
       {["Name", "Email", "PhoneNumber", "HashedPassword"].map(field => (
         <div className="form-field" key={field}>

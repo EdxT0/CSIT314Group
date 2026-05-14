@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ProfilePopup from "./ProfilePopup";
 
-export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, successMessage }) {
+export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, success}) {
   const [selectedProfile, setSelectedProfile] = useState(null);
 
   function capitaliseNames(str) {
@@ -22,9 +22,9 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
             placeholder="Search profiles..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && onSearch()}
+            onKeyDown={e => e.key === "Enter" && onSearch()}// ← allows pressing Enter to trigger search
           />
-          <button className="admin-btn" onClick={onSearch}>Search</button>
+          <button className="admin-btn" onClick={onSearch}>Search</button>{/* ← search function in AdminPage: handleSearchProfiles */}
           <button className="admin-btn" onClick={onReset}>Reset</button>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
                     Edit
                   </button>
                   <button
-                    className={`action-btn ${p.status == 1 ? "danger" : ""}`}
+                    className={`action-btn ${p.status == 0 ? "danger" : ""}`}
                     onClick={e => {
                       e.stopPropagation();
                       onSuspend(p.id, p.status == 0);

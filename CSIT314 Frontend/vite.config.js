@@ -7,7 +7,7 @@ export default defineConfig({
     server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5135',  // ← your ASP.NET port here
+        target: 'http://localhost:5135', 
         changeOrigin: true,
         secure: false,
       }

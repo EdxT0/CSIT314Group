@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function CreateProfileForm({ onSuccess, onCancel }) {
   const [form, setForm] = useState({ ProfileName: "", Description: "" });
   const [error, displayError] = useState("");
+  const [success, displaySuccess] = useState("");
 
   const handleSubmit = async () => {
     displayError("");
@@ -14,6 +15,7 @@ export default function CreateProfileForm({ onSuccess, onCancel }) {
     });
     const text = await res.text();
     if (!res.ok) { displayError(text); return; }
+    displaySuccess("Profile created successfully!");
     onSuccess();
   };
 
@@ -21,6 +23,7 @@ export default function CreateProfileForm({ onSuccess, onCancel }) {
     <div className="admin-form-card">
       <h2>Create profile</h2>
       {error && <div className="form-error">{error}</div>}
+      {success && <div className="form-success">{success}</div>}
 
       <div className="form-field">
         <label>Profile name</label>

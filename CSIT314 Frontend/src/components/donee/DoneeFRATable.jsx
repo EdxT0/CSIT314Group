@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function DoneeFRATable({ fras, search, setSearch, onSelect}) {
+export default function DoneeFRATable({ fras, search, setSearch, onSelect, onSearch, onReset}) {
   const [activeSearch, setActiveSearch] = useState("");
 
   const filtered = fras.filter(f =>

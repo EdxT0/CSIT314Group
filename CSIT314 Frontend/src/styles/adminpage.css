@@ -411,3 +411,12 @@ body {
 
 .profile-table-card th:nth-child(4),
 .profile-table-card td:nth-child(4) { width: 20%; }
+
+.popup-success-btn {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.popup-success-btn:hover {
+  background-color: #1b5e20;
+}

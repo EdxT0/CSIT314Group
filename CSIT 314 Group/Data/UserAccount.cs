@@ -14,20 +14,20 @@ namespace CSIT_314_Group.Data
         private readonly PasswordHasher<UserAccount> _passwordHasher;
         private readonly UserProfile _userProfileRepository;
 
-        public int Id { get;  set; }
-        public string Name { get;  set; } = "";
-        public string Email { get;  set; } = "";
-        public string PhoneNumber { get;  set; } = "";
-        public string HashedPassword { get;  set; } = "";
-        public int ProfileId { get;  set; }
-        public bool IsSuspended { get;  set; } = false;
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string PhoneNumber { get; set; } = "";
+        public string HashedPassword { get; set; } = "";
+        public int ProfileId { get; set; }
+        public bool IsSuspended { get; set; } = false;
         public string ProfileName { get; set; } = "";
 
         public UserAccount(
             string name,
             string email,
             string phoneNumber,
-            string hashedPassword, 
+            string hashedPassword,
             int profileId,
             bool isSuspended)
         {
@@ -147,7 +147,7 @@ namespace CSIT_314_Group.Data
             updateDetailsQueryCommmand.Parameters.AddWithValue("@id", userAccount.Id);
 
             int rowsAffected = await updateDetailsQueryCommmand.ExecuteNonQueryAsync();
-            if(rowsAffected == 1)
+            if (rowsAffected == 1)
             {
                 await transaction.CommitAsync();
                 return "successfully updated user";
@@ -207,7 +207,10 @@ namespace CSIT_314_Group.Data
 
             try
             {
-                string getByEmailQuery = @"SELECT * FROM UserAccount WHERE Email = @email";
+                string getByEmailQuery = @"SELECT UA.*, UP.ProfileName 
+                                   FROM UserAccount UA 
+                                   JOIN UserProfile UP ON UA.ProfileId = UP.Id 
+                                   WHERE UA.Email = @email";
 
                 await using var getByEmailQueryCommand = new SqliteCommand(getByEmailQuery, connection);
                 getByEmailQueryCommand.Parameters.AddWithValue("@email", email);
@@ -225,19 +228,18 @@ namespace CSIT_314_Group.Data
                         reader.GetString(reader.GetOrdinal("HashedPassword")),
                         reader.GetInt32(reader.GetOrdinal("ProfileId")),
                         reader.GetBoolean(reader.GetOrdinal("IsSuspended"))
-                    );
+                    )
+                    {
+                        ProfileName = reader.GetString(reader.GetOrdinal("ProfileName")) // ← added
+                    };
                 }
                 return null;
-
             }
             catch
             {
-
                 throw;
             }
-
         }
-
         public async Task<string> CreateUser(UserAccount userDetails)
         {
             using var connection = _dbConnectionFactory.CreateConnection();
@@ -381,7 +383,7 @@ namespace CSIT_314_Group.Data
 
             var reader = await GetAllWithQueryCommand.ExecuteReaderAsync();
 
-            while(await reader.ReadAsync())
+            while (await reader.ReadAsync())
             {
                 listOfAllUserAccount.Add(new UserAccount
                 {
@@ -395,7 +397,7 @@ namespace CSIT_314_Group.Data
             }
             return listOfAllUserAccount;
         }
-        
+
         public async Task<bool> GetSuspendStatusWithId(int id)
         {
             using var connection = _dbConnectionFactory.CreateConnection();

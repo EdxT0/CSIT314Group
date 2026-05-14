@@ -1,4 +1,4 @@
-export default function FavouritesTable({ favourites, search, setSearch, onSelect, onUnfavourite }) {
+export default function FavouritesTable({ favourites, search, setSearch, onSelect, onUnfavourite, onSearch, onReset }) {
   const filtered = favourites.filter(f =>
     f.name?.toLowerCase().includes(search.toLowerCase()) ||
     f.fraCategoryName?.toLowerCase().includes(search.toLowerCase())
@@ -14,6 +14,8 @@ export default function FavouritesTable({ favourites, search, setSearch, onSelec
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+        <button className="admin-btn" onClick={onSearch}>Search</button>
+        <button className="admin-btn" onClick={onReset}>Reset</button>
       </div>
 
       <div className="admin-metrics">

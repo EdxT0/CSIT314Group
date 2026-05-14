@@ -138,6 +138,22 @@ body {
   background-color: #3a1a1a;
 }
 
+.popup-success-btn {
+  height: 38px;
+  padding: 0 16px;
+  background-color: #0f2e1a;
+  border: 0.5px solid #1d9e75;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #5dcaa5;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.popup-success-btn:hover {
+  background-color: #0a1f12;
+}
+
 .badge-completed {
   background-color: #1a1f35;
   color: #7f77dd;

@@ -1,10 +1,8 @@
 import { useState } from "react";
 import AccountPopup from "./AccountPopup";
 
-export default function AccountsTable({ accounts, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, successMessage }) {
+export default function AccountsTable({ accounts, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, success }) {
   const [selectedAccount, setSelectedAccount] = useState(null);
-
-  // ← remove internal successMessage state, use prop instead
 
   function capitaliseNames(str) {
     if (!str) return str;
@@ -24,26 +22,14 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
             placeholder="Search name, email or phone..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && onSearch()}
+            onKeyDown={e => e.key === "Enter" && onSearch()} // ← allows pressing Enter to trigger search
           />
-          <button className="admin-btn" onClick={onSearch}>Search</button>
+          <button className="admin-btn" onClick={onSearch}>Search</button> {/* ← search function in AdminPage: handleSearchAccounts */}
           <button className="admin-btn" onClick={onReset}>Reset</button>
         </div>
       </div>
 
-      {successMessage && (   // ← uses prop directly
-        <div style={{
-          background: "#0f2e1a",
-          border: "0.5px solid #1d9e75",
-          borderRadius: "8px",
-          padding: "10px 12px",
-          fontSize: "13px",
-          color: "#5dcaa5",
-          marginBottom: "1rem"
-        }}>
-          {successMessage}
-        </div>
-      )}
+      {success && <div className="form-success">{success}</div>}  
 
       <div className="admin-metrics">
         <div className="metric">

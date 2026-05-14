@@ -2,9 +2,9 @@ import { useState } from "react";
 
 export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSuccess }) {
   const [isEditing, setIsEditing] = useState(acc.startEditing ?? false);
-  const [error, displayError] = useState("");
-  const [message, displayMessage] = useState("");
-
+  const [error, displayError] = useState("");// ← for displaying errors within the popup
+  const [success, displaySuccess] = useState("");// ← for displaying success messages within the popup
+  const [localAccount, setLocalAccount] = useState(acc); // ← tracks live status inside the popup
   const [form, setForm] = useState({
     id: acc.id,
     name: acc.name ?? "",
@@ -25,16 +25,19 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
     const text = await res.text();
     console.log("Update response:", { status: res.status, text });
     if (!res.ok) { displayError(text); return; }
-    displayMessage("Account updated successfully!");
     setIsEditing(false);
-    onSuccess?.("Account updated successfully!");  
+    setLocalAccount({ ...localAccount, name: form.name, email: form.email, phoneNumber: form.phoneNumber, profileName: form.profileName }); // ← update localAccount to reflect changes
+    displaySuccess("Account updated successfully!");
+
   };
 
   const handleSuspend = async () => {
-    await onSuspend(acc.id, !acc.isSuspended);
-    onClose();
+    await onSuspend(localAccount.id, !localAccount.isSuspended);
+    const newSuspended = !localAccount.isSuspended;
+      setLocalAccount({ ...localAccount, isSuspended: newSuspended });
+      displaySuccess(newSuspended ? "Account suspended" : "Account unsuspended");
   };
-
+  
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card" style={{ maxWidth: "440px" }} onClick={e => e.stopPropagation()}>
@@ -44,12 +47,8 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
           <button className="popup-close" onClick={onClose}>✕</button>
         </div>
 
-        {message && (
-          <div style={{ background: "#0f2e1a", border: "0.5px solid #1d9e75", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", color: "#5dcaa5", marginBottom: "1rem" }}>
-            {message}
-          </div>
-        )}
-        {error && <div className="form-error">{error}</div>}
+        {success && <div className="form-success">{success}</div>}  {/* ← Display success message within the popup */}
+        {error && <div className="form-error">{error}</div>}  {/* ← Display error within the popup */}
 
         {!isEditing && (
           <>
@@ -72,16 +71,18 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
             <div className="popup-row">
               <span className="popup-label">Status</span>
               <span className="popup-val">
-                <span className={`badge ${acc.isSuspended ? "badge-suspended" : "badge-active"}`}>
-                  {acc.isSuspended ? "Suspended" : "Active"}
+                <span className={`badge ${localAccount.isSuspended ? "badge-suspended" : "badge-active"}`}>
+                  {localAccount.isSuspended ? "Suspended" : "Active"}
                 </span>
               </span>
             </div>
 
             <div className="popup-actions">
-              <button className="popup-edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
-              <button className="popup-delete-btn" onClick={handleSuspend}>
-                {acc.isSuspended ? "Unsuspend" : "Suspend"}
+              <button className="popup-edit-btn" onClick={() => { setIsEditing(true); displaySuccess(""); displayError(""); }}>Edit</button>
+              <button 
+                className={`popup-delete-btn ${localAccount.isSuspended ? "popup-success-btn" : ""}`}
+                onClick={handleSuspend}>
+                {localAccount.isSuspended ? "Unsuspend" : "Suspend"}
               </button>
             </div>
           </>

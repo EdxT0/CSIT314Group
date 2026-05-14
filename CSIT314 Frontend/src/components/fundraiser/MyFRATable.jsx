@@ -3,7 +3,7 @@ import FRAPopup from "./FRAPopup";
 
 export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelete, onSearch, onReset }) {
   const [selectedFRA, setSelectedFRA] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [success, displaySuccess] = useState("");
 
   function capitaliseNames(str) {
     if (!str) return str;
@@ -34,19 +34,7 @@ export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelet
         </div>
       </div>
 
-      {successMessage && (
-        <div style={{
-          background: "#0f2e1a",
-          border: "0.5px solid #1d9e75",
-          borderRadius: "8px",
-          padding: "10px 12px",
-          fontSize: "13px",
-          color: "#5dcaa5",
-          marginBottom: "1rem"
-        }}>
-          {successMessage}
-        </div>
-      )}
+        {success && <div className="form-success">{success}</div>}  {/* ← Display success message within the popup */}
 
       <div className="admin-metrics">
         <div className="metric">

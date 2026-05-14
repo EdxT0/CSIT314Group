@@ -38,22 +38,6 @@ export default function AdminPage() {
     setProfiles(await res.json());
   };
 
-  const handleAccountSuccess = async (message) => {
-    await fetchAccounts();
-    if (message) {
-      displaySuccess(message);
-      setTimeout(() => displaySuccess(""), 3000);
-    }
-  };
-
-  const handleProfileSuccess = async (message) => {
-    await fetchProfiles();
-      if (message) {
-        displaySuccess(message);
-        setTimeout(() => displaySuccess(""), 3000);
-      }
-  };
-
   const handleSuspendAccount = async (id, suspend) => {
     displayError("");
     const res = await fetch(`/api/SuspendUserAccount?userId=${encodeURIComponent(id)}&suspendUser=${encodeURIComponent(suspend)}`, {
@@ -156,21 +140,17 @@ export default function AdminPage() {
             search={accountSearch}
             setSearch={setAccountSearch}
             onSuspend={handleSuspendAccount}
-            onSuccess={handleAccountSuccess} // ← handles message + refetch
             onSearch={handleSearchAccounts}
             onReset={handleResetAccounts}
             profiles={profiles}
-            successMessage={success}  // ← pass message down
+            success={success}  // ← pass message down
           />
         )}
 
         {activeTab === "createAccount" && (
           <CreateAccountForm
             profiles={profiles}
-            onSuccess={() => {
-              setActiveTab("accounts");
-              handleAccountSuccess("Account created successfully!"); // ← same handler
-            }}
+            onSuccess={fetchAccounts}  // ← refresh accounts list after creating
             onCancel={() => setActiveTab("accounts")}
           />
         )}
@@ -181,19 +161,15 @@ export default function AdminPage() {
             search={profileSearch}
             setSearch={setProfileSearch}
             onSuspend={handleSuspendProfile}
-            onSuccess={handleProfileSuccess}       // ← was fetchProfiles
             onSearch={handleSearchProfiles}
             onReset={handleResetProfiles}
-            successMessage={success}  // ← pass message down
+            success={success}  // ← pass message down
           />
         )}
 
         {activeTab === "createProfile" && (
           <CreateProfileForm
-            onSuccess={() => {
-              setActiveTab("profiles");
-              handleProfileSuccess("Profile created successfully!"); // ← add message
-            }}
+            onSuccess={fetchProfiles}  // ← refresh profiles list after creating
             onCancel={() => setActiveTab("profiles")}
           />
         )}

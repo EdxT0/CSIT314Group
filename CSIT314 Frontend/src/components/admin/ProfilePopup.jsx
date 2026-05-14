@@ -1,16 +1,17 @@
 import { useState } from "react";
-
 export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess }) {
   const [isEditing, setIsEditing] = useState(profile.startEditing ?? false);
+  const [error, displayError] = useState(""); // ← for displaying errors within the popup
+  const [success, displaySuccess] = useState(""); // ← for displaying success messages within the popup
+  const [localProfile, setLocalProfile] = useState(profile); // ← tracks live status inside the popup
   const [form, setForm] = useState({
     id: profile.id,
     profileName: profile.profileName,
     description: profile.description,
   });
-  const [error, displayError] = useState(""); // ← for displaying errors within the popup
-  const [success, displaySuccess] = useState(""); // ← for displaying success messages within the popup
 
-  const handleUpdate = async () => {        // ← update profile details
+  // Function to handle profile update
+  const handleUpdate = async () => {
     displayError("");
     const res = await fetch("/api/UpdateUserProfile", {
       method: "PUT",
@@ -21,21 +22,24 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
     const text = await res.text();
     if (!res.ok) { displayError(text); return; }
     setIsEditing(false);
+    setLocalProfile({ ...localProfile, profileName: form.profileName, description: form.description }); // ← update localProfile to reflect changes
     displaySuccess("Profile updated successfully!"); // ← show success message within the popup
   };
 
   const handleSuspend = async () => {
     displayError("");
     await onSuspend(profile.id, profile.status == 0);
-    displaySuccess(profile.status == 0 ? "Profile suspended" : "Profile unsuspended"); // ← show status change message
+
+    const newStatus = localProfile.status == 0 ? 1 : 0; // ← update local status immediately so the UI changes
+    setLocalProfile({ ...localProfile, status: newStatus });
+    displaySuccess(newStatus == 1 ? "Profile suspended" : "Profile unsuspended");
   };
 
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card" style={{ maxWidth: "440px" }} onClick={e => e.stopPropagation()}>
-
         <div className="popup-header">
-          <h2>{isEditing ? "Edit profile" : profile.profileName}</h2>
+          <h2>{isEditing ? "Edit profile" : localProfile.profileName}</h2> {/* Use localProfile for display */}
           <button className="popup-close" onClick={onClose}>✕</button>
         </div>
 
@@ -46,26 +50,28 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
           <>
             <div className="popup-row">
               <span className="popup-label">Name</span>
-              <span className="popup-val">{profile.profileName}</span>
+              <span className="popup-val">{localProfile.profileName}</span> {/* Use localProfile for display */}
             </div>
             <div className="popup-row">
               <span className="popup-label">Description</span>
-              <span className="popup-val">{profile.description}</span>
+              <span className="popup-val">{localProfile.description}</span> {/* Use localProfile for display */}
             </div>
             <div className="popup-row">
               <span className="popup-label">Status</span>
               <span className="popup-val">
-                <span className={`badge ${profile.status == 0 ? "badge-active" : "badge-suspended"}`}>
-                  {profile.status == 0 ? "Active" : "Suspended"}
+                <span className={`badge ${localProfile.status == 0 ? "badge-active" : "badge-suspended"}`}>
+                  {localProfile.status == 0 ? "Active" : "Suspended"}
                 </span>
               </span>
             </div>
 
             <div className="popup-actions">
-              <button className="popup-edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
-              <button className="popup-delete-btn" onClick={handleSuspend}>
-                {profile.status == 0 ? "Suspend" : "Unsuspend"}
-              </button>
+              <button className="popup-edit-btn" onClick={() => { setIsEditing(true); displaySuccess(""); displayError(""); }}>Edit</button>
+              <button 
+                className={`popup-delete-btn ${localProfile.status == 1 ? "popup-success-btn" : ""}`}
+                onClick={handleSuspend}>
+                {localProfile.status == 0 ? "Suspend" : "Unsuspend"}
+              </button>            
             </div>
           </>
         )}
@@ -88,7 +94,7 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
 
             <div className="popup-actions">
               <button className="popup-edit-btn" onClick={handleUpdate}>Save changes</button> {/* Finish editing but stay on popup */}
-              <button className="admin-btn" onClick={() => { setIsEditing(false); displayError(""); }}> 
+              <button className="admin-btn" onClick={() => { setIsEditing(false); displayError(""); displaySuccess(""); }}> 
                 Cancel
               </button>
             </div>

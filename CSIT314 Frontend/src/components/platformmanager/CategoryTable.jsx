@@ -1,4 +1,4 @@
-export default function CategoryTable({ categories, search, setSearch, onEdit, onDelete }) {
+export default function CategoryTable({ categories, search, setSearch, onEdit, onSearch, onReset, onDelete }) {
   const filtered = categories.filter(c =>
     c.name?.toLowerCase().includes(search.toLowerCase()) ||
     c.description?.toLowerCase().includes(search.toLowerCase())
@@ -14,6 +14,9 @@ export default function CategoryTable({ categories, search, setSearch, onEdit, o
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+        <button className="admin-btn" onClick={onSearch}>Search</button>
+        <button className="admin-btn" onClick={onReset}>Reset</button>
+
       </div>
 
       <div className="admin-metrics">

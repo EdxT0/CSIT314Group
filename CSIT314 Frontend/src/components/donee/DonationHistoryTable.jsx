@@ -1,4 +1,4 @@
-export default function DonationHistoryTable({ donations, search, setSearch }) {
+export default function DonationHistoryTable({ donations, search, setSearch, onSearch, onReset }) {
   const filtered = donations.filter(d =>
     d.name?.toLowerCase().includes(search.toLowerCase()) ||
     d.fraCategoryName?.toLowerCase().includes(search.toLowerCase())
@@ -16,6 +16,8 @@ export default function DonationHistoryTable({ donations, search, setSearch }) {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
+        <button className="admin-btn" onClick={onSearch}>Search</button>
+        <button className="admin-btn" onClick={onReset}>Reset</button>
       </div>
 
       <div className="admin-metrics">

@@ -1,21 +1,57 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/loginpage.css";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth(); // ← add user
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, displayError] = useState("");
 
+  // ← add this
+  useEffect(() => {
+    if (user) {
+      switch (user.role) {
+        case "admin":
+          navigate("/admin", { replace: true });
+          break;
+        case "donee":
+          navigate("/donee", { replace: true });
+          break;
+        case "fundraiser manager":
+          navigate("/fundraiser", { replace: true });
+          break;
+        case "platform manager":
+          navigate("/platform", { replace: true });
+          break;
+        default:
+          navigate("/", { replace: true });
+      }
+    }
+  }, [user]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate("/", { replace: true}); 
+      const userData = await login(email, password);
+      switch (userData.role) {
+        case "admin":
+          navigate("/admin", { replace: true });
+          break;
+        case "donee":
+          navigate("/donee", { replace: true });
+          break;
+        case "fundraiser manager":
+          navigate("/fundraiser", { replace: true });
+          break;
+        case "platform manager":
+          navigate("/platform", { replace: true });
+          break;
+        default:
+          navigate("/", { replace: true });
+      }
     } catch (err) {
       displayError(err.message);
     }
@@ -40,14 +76,11 @@ export default function LoginPage() {
             <label>Password</label>
             <input type="password" placeholder="••••••••"
               value={password} onChange={e => setPassword(e.target.value)} />
-            {/* <a className="login-forgot" href="#">Forgot password?</a> */}
           </div>
 
           <button type="submit" className="login-btn">Sign in</button>
         </form>
-
       </div>
     </div>
   );
-
 }
