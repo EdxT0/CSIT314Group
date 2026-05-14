@@ -16,9 +16,6 @@ export default function AdminPage() {
   const [accountSearch, setAccountSearch] = useState("");
   const [profileSearch, setProfileSearch] = useState("");
   const [error, displayError] = useState("");
-  const [editingAccount, setEditingAccount] = useState(null);
-  const [editingProfile, setEditingProfile] = useState(null);
-  const [success, displaySuccess] = useState("");
 
   useEffect(() => {
     fetchAccounts();
@@ -136,21 +133,25 @@ export default function AdminPage() {
 
         {activeTab === "accounts" && (
           <AccountsTable
-            accounts={accounts}              // ← renamed from acc to accounts
+            accounts={accounts}
             search={accountSearch}
             setSearch={setAccountSearch}
             onSuspend={handleSuspendAccount}
             onSearch={handleSearchAccounts}
             onReset={handleResetAccounts}
             profiles={profiles}
-            success={success}  // ← pass message down
+            onClose={fetchAccounts}
+            onSuccess={fetchAccounts}
           />
         )}
 
         {activeTab === "createAccount" && (
           <CreateAccountForm
             profiles={profiles}
-            onSuccess={fetchAccounts}  // ← refresh accounts list after creating
+            onSuccess={() => {
+              setActiveTab("accounts");
+              fetchAccounts();
+            }}
             onCancel={() => setActiveTab("accounts")}
           />
         )}
@@ -163,13 +164,17 @@ export default function AdminPage() {
             onSuspend={handleSuspendProfile}
             onSearch={handleSearchProfiles}
             onReset={handleResetProfiles}
-            success={success}  // ← pass message down
+            onClose={fetchProfiles}
+            onSuccess={fetchProfiles}
           />
         )}
 
         {activeTab === "createProfile" && (
           <CreateProfileForm
-            onSuccess={fetchProfiles}  // ← refresh profiles list after creating
+            onSuccess={() => {
+              setActiveTab("profiles");
+              fetchProfiles();
+            }}
             onCancel={() => setActiveTab("profiles")}
           />
         )}

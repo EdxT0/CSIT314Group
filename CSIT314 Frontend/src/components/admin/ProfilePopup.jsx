@@ -24,17 +24,18 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
     setIsEditing(false);
     setLocalProfile({ ...localProfile, profileName: form.profileName, description: form.description }); // ← update localProfile to reflect changes
     displaySuccess("Profile updated successfully!"); // ← show success message within the popup
+    await onSuccess?.();
   };
 
   const handleSuspend = async () => {
     displayError("");
-    await onSuspend(profile.id, profile.status == 0);
+    await onSuspend(localProfile.id, localProfile.status == 0);  // ← was profile.id, profile.status
 
-    const newStatus = localProfile.status == 0 ? 1 : 0; // ← update local status immediately so the UI changes
+    const newStatus = localProfile.status == 0 ? 1 : 0;
     setLocalProfile({ ...localProfile, status: newStatus });
     displaySuccess(newStatus == 1 ? "Profile suspended" : "Profile unsuspended");
+    await onSuccess?.();
   };
-
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card" style={{ maxWidth: "440px" }} onClick={e => e.stopPropagation()}>

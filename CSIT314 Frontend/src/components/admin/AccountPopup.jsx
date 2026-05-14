@@ -23,19 +23,24 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
       body: JSON.stringify(form),
     });
     const text = await res.text();
-    console.log("Update response:", { status: res.status, text });
     if (!res.ok) { displayError(text); return; }
     setIsEditing(false);
-    setLocalAccount({ ...localAccount, name: form.name, email: form.email, phoneNumber: form.phoneNumber, profileName: form.profileName }); // ← update localAccount to reflect changes
+    setLocalAccount({ 
+      ...localAccount, 
+      name: form.name, 
+      email: form.email, 
+      phoneNumber: form.phoneNumber, 
+      profileName: form.profileName 
+    });
     displaySuccess("Account updated successfully!");
-
+    onSuccess?.("Account updated successfully!");  // ← refetches table in background
   };
-
   const handleSuspend = async () => {
     await onSuspend(localAccount.id, !localAccount.isSuspended);
     const newSuspended = !localAccount.isSuspended;
       setLocalAccount({ ...localAccount, isSuspended: newSuspended });
       displaySuccess(newSuspended ? "Account suspended" : "Account unsuspended");
+      await onSuccess?.();
   };
   
   return (
@@ -43,7 +48,7 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
       <div className="popup-card" style={{ maxWidth: "440px" }} onClick={e => e.stopPropagation()}>
 
         <div className="popup-header">
-          <h2>{isEditing ? "Edit account" : acc.name}</h2>
+          <h2>{isEditing ? "Edit account" : localAccount.name}</h2>
           <button className="popup-close" onClick={onClose}>✕</button>
         </div>
 
@@ -54,19 +59,19 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
           <>
             <div className="popup-row">
               <span className="popup-label">Name</span>
-              <span className="popup-val">{acc.name}</span>
+              <span className="popup-val">{localAccount.name}</span>       {/* ← was acc.name */}
             </div>
             <div className="popup-row">
               <span className="popup-label">Email</span>
-              <span className="popup-val">{acc.email}</span>
+              <span className="popup-val">{localAccount.email}</span>      {/* ← was acc.email */}
             </div>
             <div className="popup-row">
               <span className="popup-label">Phone</span>
-              <span className="popup-val">{acc.phoneNumber}</span>
+              <span className="popup-val">{localAccount.phoneNumber}</span> {/* ← was acc.phoneNumber */}
             </div>
             <div className="popup-row">
               <span className="popup-label">Profile</span>
-              <span className="popup-val">{acc.profileName}</span>
+              <span className="popup-val">{localAccount.profileName}</span> {/* ← was acc.profileName */}
             </div>
             <div className="popup-row">
               <span className="popup-label">Status</span>
@@ -79,7 +84,7 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
 
             <div className="popup-actions">
               <button className="popup-edit-btn" onClick={() => { setIsEditing(true); displaySuccess(""); displayError(""); }}>Edit</button>
-              <button 
+              <button
                 className={`popup-delete-btn ${localAccount.isSuspended ? "popup-success-btn" : ""}`}
                 onClick={handleSuspend}>
                 {localAccount.isSuspended ? "Unsuspend" : "Suspend"}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AccountPopup from "./AccountPopup";
 
-export default function AccountsTable({ accounts, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, success }) {
+export default function AccountsTable({ accounts, profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
   const [selectedAccount, setSelectedAccount] = useState(null);
 
   function capitaliseNames(str) {
@@ -22,14 +22,12 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
             placeholder="Search name, email or phone..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && onSearch()} // ← allows pressing Enter to trigger search
+            onKeyDown={e => e.key === "Enter" && onSearch()}
           />
-          <button className="admin-btn" onClick={onSearch}>Search</button> {/* ← search function in AdminPage: handleSearchAccounts */}
+          <button className="admin-btn" onClick={onSearch}>Search</button>
           <button className="admin-btn" onClick={onReset}>Reset</button>
         </div>
       </div>
-
-      {success && <div className="form-success">{success}</div>}  
 
       <div className="admin-metrics">
         <div className="metric">
@@ -104,15 +102,17 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
       {selectedAccount && (
         <AccountPopup
           acc={selectedAccount}
-          onClose={() => setSelectedAccount(null)}
+          onClose={async () => {
+            await onSuccess?.();              // ← refetch before closing
+            setSelectedAccount(null);
+          }}
           onSuspend={onSuspend}
           profiles={profiles}
           onSuccess={async (message) => {
-            await onSuccess?.(message);    // ← passes message up to AdminPage
-            setSelectedAccount(null);
+            await onSuccess?.(message);
           }}
         />
-      )}
+      )}    
     </>
   );
 }

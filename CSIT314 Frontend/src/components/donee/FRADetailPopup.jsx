@@ -2,8 +2,9 @@ import { useState } from "react";
 
 export default function FRADetailPopup({ fra, onClose, onSuccess, onFavourited }) {
   const [donationAmt, setDonationAmt] = useState("");
-  const [message, setMessage] = useState("");
   const [error, displayError] = useState("");
+  const [success, displaySuccess] = useState("");
+  const
 
   const handleFavourite = async () => {
     displayError(""); setMessage("");
@@ -51,7 +52,8 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, onFavourited }
 
         {message && <div style={{ background: "#0f2e1a", border: "0.5px solid #1d9e75", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", color: "#5dcaa5", marginBottom: "1rem" }}>{message}</div>}
         {error && <div className="form-error">{error}</div>}
-
+        {success && <div className="form-success">{success}</div>}
+        
         <div className="popup-row">
           <span className="popup-label">Category</span>
           <span className="popup-val">{fra.fraCategoryName}</span>

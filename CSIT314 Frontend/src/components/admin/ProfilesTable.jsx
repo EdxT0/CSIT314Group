@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ProfilePopup from "./ProfilePopup";
 
-export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess, success}) {
+export default function ProfilesTable({ profiles, search, setSearch, onSuspend, onSearch, onReset, onSuccess }) {
   const [selectedProfile, setSelectedProfile] = useState(null);
 
   function capitaliseNames(str) {
@@ -22,14 +22,12 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
             placeholder="Search profiles..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && onSearch()}// ← allows pressing Enter to trigger search
+            onKeyDown={e => e.key === "Enter" && onSearch()}
           />
-          <button className="admin-btn" onClick={onSearch}>Search</button>{/* ← search function in AdminPage: handleSearchProfiles */}
+          <button className="admin-btn" onClick={onSearch}>Search</button>
           <button className="admin-btn" onClick={onReset}>Reset</button>
         </div>
       </div>
-
-      {success && <div className="form-success">{success}</div>}  
 
 
       <div className="admin-metrics">
@@ -100,10 +98,13 @@ export default function ProfilesTable({ profiles, search, setSearch, onSuspend, 
       {selectedProfile && (
         <ProfilePopup
           profile={selectedProfile}
-          onClose={() => setSelectedProfile(null)}
+          onClose={async () => {
+            await onSuccess?.();              // ← refetch before closing
+            setSelectedProfile(null);
+          }}
           onSuspend={onSuspend}
           onSuccess={async (message) => {
-            await onSuccess?.(message); 
+            await onSuccess?.(message);
           }}
         />
       )}

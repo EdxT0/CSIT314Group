@@ -3,6 +3,8 @@ import { useState } from "react";
 export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }) {
   const [isEditing, setIsEditing] = useState(fra.startEditing ?? false);  
   const [error, displayError] = useState("");
+  const [success, displaySuccess] = useState("");
+
   const [form, setForm] = useState({
     Id: fra.id,
     Name: fra.name ?? "",
@@ -15,6 +17,7 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }
 
   const handleUpdate = async () => {
     displayError("");
+    displaySuccess("");
     const payload = {Id: form.Id,};
     
     if (form.Name.trim()) payload.Name = form.Name;
@@ -44,6 +47,7 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }
         </div>
 
         {error && <div className="form-error">{error}</div>}
+        {success && <div className="form-success">{success}</div>}
 
         {!isEditing && (
           <>
