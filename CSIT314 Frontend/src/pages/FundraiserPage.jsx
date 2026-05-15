@@ -223,7 +223,7 @@ export default function FundraiserPage() {
 
         {activeTab === "createFRA" && (
           <CreateFRAForm
-            onSuccess={fetchMyOwnFRAs}
+            onSuccess={() => { fetchMyOwnFRAs(); fetchFRAs(); }}
             onCancel={() => setActiveTab("myFRAs")}
           />
         )}
