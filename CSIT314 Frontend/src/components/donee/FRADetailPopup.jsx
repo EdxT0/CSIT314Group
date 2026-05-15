@@ -82,6 +82,9 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
   const progress = fra.amtRequested > 0
     ? Math.min((localAmtDonated / fra.amtRequested) * 100, 100).toFixed(1)  // ← use localAmtDonated
     : 0;
+
+  const isCompleted = fra.amtRequested > 0 && localAmtDonated >= fra.amtRequested;
+
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card" style={{ maxWidth: "480px" }} onClick={e => e.stopPropagation()}>
@@ -144,8 +147,8 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
         <div className="popup-row" style={{ borderBottom: "none" }}>
           <span className="popup-label">Status</span>
           <span className="popup-val">
-            <span className={`badge ${!fra.status ? "badge-active" : "badge-completed"}`}>
-              {fra.status ? "Completed" : "Active"}
+            <span className={`badge ${!isCompleted && !fra.status ? "badge-active" : "badge-completed"}`}>
+              {isCompleted || fra.status ? "Completed" : "Active"}
             </span>
           </span>
         </div>
@@ -184,7 +187,7 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
         </div>
 
         {/* Donate section — always at the bottom */}
-        {!fra.status && (
+        {!isCompleted && !fra.status && (
           <div style={{ marginTop: "1rem", borderTop: "0.5px solid #2e3240", paddingTop: "0.75rem" }}>
             <div style={{ fontSize: "13px", color: "#9a9daa", fontWeight: "500", marginBottom: "6px" }}>
               Make a donation

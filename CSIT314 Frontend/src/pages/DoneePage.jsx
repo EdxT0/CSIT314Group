@@ -6,7 +6,6 @@ import FRADetailPopup from "../components/donee/FRADetailPopup";
 import FavouritesTable from "../components/donee/FavouritesTable";
 import DonationHistoryTable from "../components/donee/DonationHistoryTable";
 import "../styles/adminpage.css";
-import "../styles/fundraiserpage.css";
 
 export default function DoneePage() {
   const { logout } = useAuth();
@@ -20,7 +19,7 @@ export default function DoneePage() {
   const [favSearch, setFavSearch] = useState("");
   const [donationSearch, setDonationSearch] = useState("");
   const [error, displayError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [success, displaySuccess] = useState("");
   const [favouriteIds, setFavouriteIds] = useState([]);
 
   useEffect(() => {
@@ -38,7 +37,9 @@ export default function DoneePage() {
     const res = await fetch("/api/ViewAllFundraiser", { credentials: "include" });
     if (res.status === 404) { setFras([]); return; }
     if (!res.ok) { displayError("Failed to load activities"); return; }
-    setFras(await res.json());
+    const data = await res.json();
+    console.log("Fetched FRAs:", data.map(f => ({ id: f.id, name: f.name, status: f.status })));  // ← add this
+    setFras(data);
   };
 
   const fetchFavourites = async () => {
@@ -174,19 +175,7 @@ export default function DoneePage() {
       <main className="admin-main">
         {error && <div className="form-error">{error}</div>}
 
-        {successMessage && (
-        <div style={{
-          background: "#0f2e1a",
-          border: "0.5px solid #1d9e75",
-          borderRadius: "8px",
-          padding: "10px 12px",
-          fontSize: "13px",
-          color: "#5dcaa5",
-          marginBottom: "1rem"
-        }}>
-          {successMessage}
-        </div>
-        )}
+        {success && <div className="form-success">{success}</div>}  {/* ← Display success message within the popup */}
       
         {activeTab === "browse" && (
           <DoneeFRATable
@@ -233,19 +222,6 @@ export default function DoneePage() {
               fetchFavourites();
             }}
 
-          />
-        )}
-
-        {selectedFRA && (
-          <FRADetailPopup
-            fra={selectedFRA}
-            onClose={() => setSelectedFRA(null)}
-            isFavourited={favouriteIds.includes(selectedFRA.id)}
-            onSuccess={() => {
-              fetchAllFRAs();           // ← refetch after donate/favourite
-              if (activeTab === "favourites") fetchFavourites();
-              if (activeTab === "history") fetchDonationHistory();
-            }}
           />
         )}
       </main>

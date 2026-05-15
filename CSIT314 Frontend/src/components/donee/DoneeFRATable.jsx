@@ -10,6 +10,21 @@ export default function DoneeFRATable({ fras, search, setSearch, favouriteIds = 
     return str.split(" ").map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(" ");
   }
 
+  const handleSelectFRA = async (f) => {
+    const res = await fetch(`/api/ViewOneFundraiser?fraId=${f.id}`, {
+      credentials: "include",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setSelectedFRA(data);
+    } else {
+      setSelectedFRA(f);
+    }
+  };
+
+// in the table row — replace onClick:
+<tr key={f.id} onClick={() => handleSelectFRA(f)} style={{ cursor: "pointer" }}></tr>
+
   return (
     <>
       <div className="admin-topbar">
@@ -37,8 +52,12 @@ export default function DoneeFRATable({ fras, search, setSearch, favouriteIds = 
         <table>
           <thead>
             <tr>
-              <th>Name</th><th>Category</th><th>Goal ($)</th>
-              <th>Donated ($)</th><th>Deadline</th><th>Status</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Goal ($)</th>
+              <th>Donated ($)</th>
+              <th>Deadline</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -46,7 +65,7 @@ export default function DoneeFRATable({ fras, search, setSearch, favouriteIds = 
               <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No activities found</td></tr>
             )}
             {fras.map(f => (
-              <tr key={f.id} onClick={() => setSelectedFRA(f)} style={{ cursor: "pointer" }}>
+              <tr key={f.id} onClick={() => handleSelectFRA(f)} style={{ cursor: "pointer" }}>
                 <td>{capitaliseNames(f.name)}</td>
                 <td>{capitaliseNames(f.fraCategoryName)}</td>
                 <td>{f.amtRequested?.toLocaleString()}</td>

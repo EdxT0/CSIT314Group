@@ -7,6 +7,7 @@ export default function CreateProfileForm({ onSuccess, onCancel }) {
 
   const handleSubmit = async () => {
     displayError("");
+    displaySuccess("");
     const res = await fetch("/api/CreateUserProfile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

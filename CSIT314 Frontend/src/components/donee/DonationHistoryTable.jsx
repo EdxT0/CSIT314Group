@@ -7,6 +7,17 @@ export default function DonationHistoryTable({ donations, search, setSearch, fav
 
   const totalDonated = donations.reduce((sum, d) => sum + (d.userDonatedAmt ?? 0), 0);
 
+  const handleSelectFRA = async (d) => {
+    const res = await fetch(`/api/ViewOneFundraiser?fraId=${d.id}`, {
+      credentials: "include",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setSelectedFRA(data);
+    } else {
+      setSelectedFRA(d);
+    }
+  }
   return (
     <>
       <div className="admin-topbar">
@@ -42,7 +53,7 @@ export default function DonationHistoryTable({ donations, search, setSearch, fav
               <tr><td colSpan={5} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No donations yet</td></tr>
             )}
             {donations.map((d, i) => (
-              <tr key={i} onClick={() => setSelectedFRA(d)} style={{ cursor: "pointer" }}>
+              <tr key={i} onClick={() => handleSelectFRA(d)} style={{ cursor: "pointer" }}>
                 <td>{d.name}</td>
                 <td>{d.fraCategoryName}</td>
                 <td>${d.userDonatedAmt?.toLocaleString()}</td>

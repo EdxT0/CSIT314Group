@@ -11,15 +11,15 @@ namespace CSIT_314_Group.Data
         private readonly DbConnectionFactory _dbConnectionFactory;
         public int Id { get; set; }
         public string Name { get; set; } = "";
-        public string Description { get;  set; } = "";
-        public DateTime Deadline { get;  set; }
-        public string DeadlineInString { get;  set; } = "";
-        public bool Status { get;  set; }
-        public double? AmtRequested { get;  set; }
-        public double AmtDonated { get;  set; }
-        public int AmtOfViews { get;  set; }
-        public int FraCategoryId { get;  set; }
-        public string FraCategoryName { get;  set; } = "";
+        public string Description { get; set; } = "";
+        public DateTime Deadline { get; set; }
+        public string DeadlineInString { get; set; } = "";
+        public bool Status { get; set; }
+        public double? AmtRequested { get; set; }
+        public double AmtDonated { get; set; }
+        public int AmtOfViews { get; set; }
+        public int FraCategoryId { get; set; }
+        public string FraCategoryName { get; set; } = "";
         public FundraiserActivity(int id, string name, string description, string deadlineInString, double? amtRequested, double amtDonated, int amtOfViews, bool status, string fraCategoryName)
         {
             Id = id;
@@ -63,7 +63,7 @@ namespace CSIT_314_Group.Data
             FraCategoryId = fraCategoryId;
             AmtRequested = amtRequested;
         }
-        public FundraiserActivity( )
+        public FundraiserActivity()
         {
         }
 
@@ -139,7 +139,7 @@ namespace CSIT_314_Group.Data
             updateNameQueryCommand.Parameters.AddWithValue("@id", fraId);
 
             int rowsAffected = await updateNameQueryCommand.ExecuteNonQueryAsync();
-            if(rowsAffected == 1)
+            if (rowsAffected == 1)
             {
                 await transaction.CommitAsync();
                 return true;
@@ -152,7 +152,7 @@ namespace CSIT_314_Group.Data
         {
             FundraiserActivity fundraiser = await GetById(fundraiserId);
             int viewsAfterIncrement = 1 + fundraiser.AmtOfViews;
-            if(fundraiser != null)
+            if (fundraiser != null)
             {
                 using var connection = _dbConnectionFactory.CreateConnection();
                 await connection.OpenAsync();
@@ -165,7 +165,7 @@ namespace CSIT_314_Group.Data
 
                 int rowsAffected = await updateFundraiserViewQueryCommand.ExecuteNonQueryAsync();
 
-                if(rowsAffected == 1)
+                if (rowsAffected == 1)
                 {
                     await transaction.CommitAsync();
                     return true;
@@ -187,7 +187,7 @@ namespace CSIT_314_Group.Data
 
             int rowsAffected = await deleteFundraiserQuerycommand.ExecuteNonQueryAsync();
 
-            if(rowsAffected == 1)
+            if (rowsAffected == 1)
             {
                 await transaction.CommitAsync();
                 return "deleted";
@@ -384,17 +384,17 @@ namespace CSIT_314_Group.Data
                 {
                     throw new Exception("Invalid deadline format in database.");
                 }
-                 result.Add(new FundraiserActivity(
-                            reader.GetInt32(reader.GetOrdinal("Id")),
-                            reader.GetString(reader.GetOrdinal("FraName")),
-                            reader.GetString(reader.GetOrdinal("Description")),
-                            readerDate.ToString("dd-MM-yyyy"),
-                            reader.GetDouble(reader.GetOrdinal("AmtRequested")),
-                            reader.GetDouble(reader.GetOrdinal("AmtDonated")),
-                            reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
-                            reader.GetBoolean(reader.GetOrdinal("Status")),
-                            reader.GetString(reader.GetOrdinal("FraCategoryName"))
-                           ) );
+                result.Add(new FundraiserActivity(
+                           reader.GetInt32(reader.GetOrdinal("Id")),
+                           reader.GetString(reader.GetOrdinal("FraName")),
+                           reader.GetString(reader.GetOrdinal("Description")),
+                           readerDate.ToString("dd-MM-yyyy"),
+                           reader.GetDouble(reader.GetOrdinal("AmtRequested")),
+                           reader.GetDouble(reader.GetOrdinal("AmtDonated")),
+                           reader.GetInt32(reader.GetOrdinal("AmtOfViews")),
+                           reader.GetBoolean(reader.GetOrdinal("Status")),
+                           reader.GetString(reader.GetOrdinal("FraCategoryName"))
+                          ));
             }
             return result;
         }
@@ -435,7 +435,7 @@ namespace CSIT_314_Group.Data
                             reader.GetBoolean(reader.GetOrdinal("Status")),
                             reader.GetString(reader.GetOrdinal("FraCategoryName"))
                             );
-            } 
+            }
             return null;
         }
 
@@ -443,37 +443,66 @@ namespace CSIT_314_Group.Data
         {
             using var connection = _dbConnectionFactory.CreateConnection();
             await connection.OpenAsync();
-            using var transaction =  connection.BeginTransaction();
+
+            // ← fetch current Deadline and FraCategoryId from DB
+            DateTime deadlineToStore = fundraiserActivity.Deadline;
+            int fraCategoryIdToStore = fundraiserActivity.FraCategoryId;
+
+            if (deadlineToStore == DateTime.MinValue || fraCategoryIdToStore <= 0)
+            {
+                using var connCheck = _dbConnectionFactory.CreateConnection();
+                await connCheck.OpenAsync();
+                var checkCmd = new SqliteCommand(
+                    "SELECT Deadline, FraCategoryId FROM FundraiserActivity WHERE Id = @id", connCheck);
+                checkCmd.Parameters.AddWithValue("@id", fundraiserActivity.Id);
+                using var checkReader = await checkCmd.ExecuteReaderAsync();
+                if (await checkReader.ReadAsync())
+                {
+                    if (deadlineToStore == DateTime.MinValue)
+                    {
+                        DateTime.TryParse(
+                            checkReader.GetString(checkReader.GetOrdinal("Deadline")),
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out deadlineToStore);
+                    }
+                    if (fraCategoryIdToStore <= 0)
+                    {
+                        fraCategoryIdToStore = checkReader.GetInt32(checkReader.GetOrdinal("FraCategoryId"));
+                    }
+                }
+            }
+
+            using var transaction = connection.BeginTransaction();
 
             string updateDetailsByIdQuery = @"UPDATE FundraiserActivity 
-                                              SET FraName = @name,
-                                                  Description = @description,
-                                                  Deadline = @deadline,
-                                                  AmtRequested = @amtRequested,
-                                                  Status = @status,
-                                                  FraCategoryId = @fraCategoryId
-                                              WHERE Id = @id";
+                                            SET FraName = @name,
+                                                Description = @description,
+                                                Deadline = @deadline,
+                                                AmtRequested = @amtRequested,
+                                                Status = @status,
+                                                FraCategoryId = @fraCategoryId
+                                            WHERE Id = @id";
 
             using var updateDetailsByIdQueryCommand = new SqliteCommand(updateDetailsByIdQuery, connection, transaction);
 
             updateDetailsByIdQueryCommand.Parameters.AddWithValue("@name", fundraiserActivity.Name);
             updateDetailsByIdQueryCommand.Parameters.AddWithValue("@description", fundraiserActivity.Description);
-            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@deadline", fundraiserActivity.Deadline.ToString("O"));
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@deadline", deadlineToStore.ToString("O"));
             updateDetailsByIdQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiserActivity.AmtRequested);
             updateDetailsByIdQueryCommand.Parameters.AddWithValue("@status", fundraiserActivity.Status);
-            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@fraCategoryId", fundraiserActivity.FraCategoryId);
+            updateDetailsByIdQueryCommand.Parameters.AddWithValue("@fraCategoryId", fraCategoryIdToStore);
             updateDetailsByIdQueryCommand.Parameters.AddWithValue("@id", fundraiserActivity.Id);
 
             int rowsAffected = await updateDetailsByIdQueryCommand.ExecuteNonQueryAsync();
 
-            if(rowsAffected == 1)
+            if (rowsAffected == 1)
             {
                 await transaction.CommitAsync();
                 return "Fundraiser Successfully Updated";
             }
             await transaction.RollbackAsync();
             return "Failed to Update Fundraiser";
-
         }
         public async Task<string> createFundraiser(FundraiserActivity fundraiser)
         {
@@ -499,7 +528,7 @@ namespace CSIT_314_Group.Data
                 createFundraiserQueryCommand.Parameters.AddWithValue("@status", fundraiser.Status);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@amtOfViews", fundraiser.AmtOfViews);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@amtDonated", fundraiser.AmtDonated);
-                createFundraiserQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiser.AmtRequested); 
+                createFundraiserQueryCommand.Parameters.AddWithValue("@amtRequested", fundraiser.AmtRequested);
                 createFundraiserQueryCommand.Parameters.AddWithValue("@fraCategoryId", fundraiser.FraCategoryId);
 
                 int rowsAffected = await createFundraiserQueryCommand.ExecuteNonQueryAsync();

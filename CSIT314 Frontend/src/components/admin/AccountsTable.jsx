@@ -88,7 +88,7 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
                     className={`action-btn ${!account.isSuspended ? "danger" : ""}`}
                     onClick={e => {
                       e.stopPropagation();
-                      onSuspend(account.id, !account.isSuspended);
+                      onSuspend(account.id, !account.isSuspended); // Pass the account ID and the new suspension status to admin page
                     }}>
                     {account.isSuspended ? "Unsuspend" : "Suspend"}
                   </button>
@@ -103,10 +103,9 @@ export default function AccountsTable({ accounts, profiles, search, setSearch, o
         <AccountPopup
           acc={selectedAccount}
           onClose={async () => {
-            await onSuccess?.();              // ← refetch before closing
+            await onSuccess?.();  
             setSelectedAccount(null);
           }}
-          onSuspend={onSuspend}
           profiles={profiles}
           onSuccess={async (message) => {
             await onSuccess?.(message);

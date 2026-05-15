@@ -5,6 +5,18 @@ import { formatDeadline } from "../../utils/formatDeadline";
 export default function FavouritesTable({ favourites, search, setSearch, onUnfavourite, favouriteIds = [], onSearch, onReset, onSuccess }) {
   const [selectedFRA, setSelectedFRA] = useState(null);
 
+  const handleSelectFRA = async (f) => {
+    const res = await fetch(`/api/ViewOneFundraiser?fraId=${f.id}`, {
+      credentials: "include",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setSelectedFRA(data);
+    } else {
+      setSelectedFRA(f);
+    }
+  };
+
   return (
     <>
       <div className="admin-topbar">
@@ -41,7 +53,7 @@ export default function FavouritesTable({ favourites, search, setSearch, onUnfav
               <tr><td colSpan={6} style={{ textAlign: "center", color: "#7a7d8a", padding: "2rem" }}>No favourites yet</td></tr>
             )}
             {favourites.map(f => (
-              <tr key={f.id} onClick={() => setSelectedFRA(f)} style={{ cursor: "pointer" }}>
+              <tr key={f.id} onClick={() => handleSelectFRA(f)} style={{ cursor: "pointer" }}>
                 <td>{f.name}</td>
                 <td>{f.fraCategoryName}</td>
                 <td>{f.amtRequested?.toLocaleString()}</td>

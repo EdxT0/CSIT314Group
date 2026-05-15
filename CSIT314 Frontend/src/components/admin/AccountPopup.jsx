@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSuccess }) {
+export default function AccountPopup({ acc, profiles, onClose, onSuccess }) {
   const [isEditing, setIsEditing] = useState(acc.startEditing ?? false);
   const [error, displayError] = useState("");// ← for displaying errors within the popup
   const [success, displaySuccess] = useState("");// ← for displaying success messages within the popup
@@ -16,6 +16,7 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
 
   const handleUpdate = async () => {
     displayError("");
+    displaySuccess("");
     const res = await fetch("/api/UpdateUserAccount", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -35,14 +36,21 @@ export default function AccountPopup({ acc, profiles, onClose, onSuspend, onSucc
     displaySuccess("Account updated successfully!");
     onSuccess?.("Account updated successfully!");  // ← refetches table in background
   };
+
   const handleSuspend = async () => {
-    await onSuspend(localAccount.id, !localAccount.isSuspended);
+    displayError("");
+    displaySuccess("");
+    const res = await fetch(`/api/SuspendUserAccount?userId=${encodeURIComponent(localAccount.id)}&suspendUser=${encodeURIComponent(!localAccount.isSuspended)}`, {
+      method: "PUT",
+      credentials: "include",
+    });
+    const text = await res.text();
+    if (!res.ok) { displayError(text); return; }
     const newSuspended = !localAccount.isSuspended;
-      setLocalAccount({ ...localAccount, isSuspended: newSuspended });
-      displaySuccess(newSuspended ? "Account suspended" : "Account unsuspended");
-      await onSuccess?.();
-  };
-  
+    setLocalAccount({ ...localAccount, isSuspended: newSuspended });
+    displaySuccess(newSuspended ? "Account suspended" : "Account unsuspended");
+    await onSuccess?.();
+  };  
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card" style={{ maxWidth: "440px" }} onClick={e => e.stopPropagation()}>

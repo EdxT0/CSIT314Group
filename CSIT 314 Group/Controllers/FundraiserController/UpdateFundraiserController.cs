@@ -22,30 +22,24 @@ namespace CSIT_314_Group.Controllers.FundraiserController
             _categoryRepository = categoryRepository;
         }
 
-       
 
-        [Authorize(Roles = "fundraiser manager, admin")]
+
+        [Authorize(Roles = "fundraiser manager,admin")]  // ← fix: no spaces after comma
         [HttpPut]
         public async Task<IActionResult> UpdateFundraiser([FromBody] FundraiserActivity updateFundraiserDTO)
         {
             var userExist = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userExist == null)
-            {
                 return BadRequest("please log in as fundraiser manager or admin");
-            }
 
             var fundraiser = await _fundraiserActivityRepository.GetById(updateFundraiserDTO.Id);
             if (fundraiser == null)
-            {
                 return BadRequest("no such Fundraiser exists");
-            }
 
             int userId = Convert.ToInt32(userExist.Value);
 
-            if(!await _userFundraiserRepository.validateUserAndFundraiser(userId, updateFundraiserDTO.Id)){
+            if (!await _userFundraiserRepository.validateUserAndFundraiser(userId, updateFundraiserDTO.Id))
                 return BadRequest($"Fundraiser Activity {fundraiser.Name} doesnt belong to {User.FindFirstValue(ClaimTypes.Name)}");
-
-            }
 
             List<string> itemsUpdated = new List<string>();
 
@@ -61,32 +55,34 @@ namespace CSIT_314_Group.Controllers.FundraiserController
             }
             if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.DeadlineInString))
             {
-                DateTime.TryParseExact(updateFundraiserDTO.DeadlineInString, "dd-MM-yyyy",
-                                        null,
-                                        System.Globalization.DateTimeStyles.None,
-                                        out DateTime parsedDeadline);
+                bool parsed = DateTime.TryParseExact(updateFundraiserDTO.DeadlineInString, "dd-MM-yyyy",
+                    null, System.Globalization.DateTimeStyles.None, out DateTime parsedDeadline);
+                if (!parsed)
+                    return BadRequest("Deadline must be in dd-MM-yyyy format");
                 fundraiser.Deadline = parsedDeadline;
                 itemsUpdated.Add("Deadline");
             }
-
-            if (!string.IsNullOrWhiteSpace(updateFundraiserDTO.Status.ToString()))
+            if (updateFundraiserDTO.AmtRequested.HasValue && updateFundraiserDTO.AmtRequested != fundraiser.AmtRequested)
             {
-                fundraiser.Status = updateFundraiserDTO.Status;
-                itemsUpdated.Add("Status");
-            }
-            if(fundraiser.AmtRequested == updateFundraiserDTO.AmtRequested)
-            {
+                fundraiser.AmtRequested = updateFundraiserDTO.AmtRequested;
                 itemsUpdated.Add("AmtRequested");
             }
-            if (fundraiser.FraCategoryId == updateFundraiserDTO.FraCategoryId)
+
+            // ← only update FraCategoryId if it was actually provided and is valid
+            if (updateFundraiserDTO.FraCategoryId > 0 && updateFundraiserDTO.FraCategoryId != fundraiser.FraCategoryId)
             {
+                var categoryExists = await _categoryRepository.GetById(updateFundraiserDTO.FraCategoryId);
+                if (categoryExists == null)
+                    return BadRequest("no such fundraiser category");
+                fundraiser.FraCategoryId = updateFundraiserDTO.FraCategoryId;
                 itemsUpdated.Add("FraCategoryId");
             }
-            fundraiser.AmtRequested = updateFundraiserDTO.AmtRequested;
-            fundraiser.FraCategoryId = updateFundraiserDTO.FraCategoryId;
-            var result = await _fundraiserActivityRepository.UpdateDetailsById(fundraiser);
 
-            return Ok($"{result}");
+            if (itemsUpdated.Count == 0)
+                return BadRequest("No fields provided to update");
+
+            var result = await _fundraiserActivityRepository.UpdateDetailsById(fundraiser);
+            return Ok($"{result} - Updated: {string.Join(", ", itemsUpdated)}");
         }
     }
 }

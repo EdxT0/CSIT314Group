@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
-import "../styles/loginpage.css";
+import "../styles/adminpage.css";
 
 export default function LoginPage() {
-  const { login, user } = useAuth(); // ← add user
+  const { login, user } = useAuth(); 
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, displayError] = useState("");
 
-  // ← add this
-  useEffect(() => {
+  useEffect(() => {// ← useEffect handles navigation when user is set
     if (user) {
       switch (user.role) {
         case "admin":
@@ -35,28 +34,12 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const userData = await login(email, password);
-      switch (userData.role) {
-        case "admin":
-          navigate("/admin", { replace: true });
-          break;
-        case "donee":
-          navigate("/donee", { replace: true });
-          break;
-        case "fundraiser manager":
-          navigate("/fundraiser", { replace: true });
-          break;
-        case "platform manager":
-          navigate("/platform", { replace: true });
-          break;
-        default:
-          navigate("/", { replace: true });
-      }
+      await login(email, password);
     } catch (err) {
       displayError(err.message);
     }
   };
-
+  
   return (
     <div className="login-page">
       <div className="login-card">

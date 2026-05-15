@@ -1,17 +1,27 @@
 import { useState } from "react";
 import FRAPopup from "./FRAPopup";
 
-export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelete, onSearch, onReset }) {
+export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelete, onSearch, onReset, favouriteCounts = {} }) {
   const [selectedFRA, setSelectedFRA] = useState(null);
-  const [success, displaySuccess] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");  // ← fix: was displaySuccess
 
   function capitaliseNames(str) {
     if (!str) return str;
-    return str
-      .split(" ")
-      .map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
-      .join(" ");
+    return str.split(" ").map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()).join(" ");
   }
+
+  const handleSelectFRA = async (f) => {
+    // ← connect to ViewOneFundraiser to get updated views
+    const res = await fetch(`/api/ViewOneFundraiser?fraId=${f.id}`, {
+      credentials: "include",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setSelectedFRA(data);
+    } else {
+      setSelectedFRA(f);  // fallback
+    }
+  };
 
   const active = fras.filter(f => f.status === false || f.status === 0);
   const completed = fras.filter(f => f.status === true || f.status === 1);
@@ -34,28 +44,18 @@ export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelet
         </div>
       </div>
 
-        {success && <div className="form-success">{success}</div>}  {/* ← Display success message within the popup */}
+      {successMessage && (
+        <div className="form-success">{successMessage}</div>
+      )}
 
       <div className="admin-metrics">
-        <div className="metric">
-          <div className="metric-label">Total</div>
-          <div className="metric-val">{fras.length}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Active</div>
-          <div className="metric-val">{active.length}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Completed</div>
-          <div className="metric-val">{completed.length}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Total views</div>
-          <div className="metric-val">{totalViews}</div>
-        </div>
+        <div className="metric"><div className="metric-label">Total</div><div className="metric-val">{fras.length}</div></div>
+        <div className="metric"><div className="metric-label">Active</div><div className="metric-val">{active.length}</div></div>
+        <div className="metric"><div className="metric-label">Completed</div><div className="metric-val">{completed.length}</div></div>
+        <div className="metric"><div className="metric-label">Total views</div><div className="metric-val">{totalViews}</div></div>
       </div>
 
-      <div className="admin-table-card">
+      <div className="admin-table-card fra-table-card">
         <table>
           <thead>
             <tr>
@@ -64,6 +64,7 @@ export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelet
               <th>Goal ($)</th>
               <th>Deadline</th>
               <th>Views</th>
+              <th>Favourited</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -73,16 +74,13 @@ export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelet
               <tr><td colSpan={7} style={{ textAlign: "center", color: "#7a7d8a" }}>No activities found</td></tr>
             )}
             {fras.map(f => (
-              <tr
-                key={f.id}
-                onClick={() => setSelectedFRA(f)}
-                style={{ cursor: "pointer" }}
-              >
+              <tr key={f.id} onClick={() => handleSelectFRA(f)} style={{ cursor: "pointer" }}>
                 <td>{capitaliseNames(f.name)}</td>
                 <td>{capitaliseNames(f.fraCategoryName)}</td>
                 <td>{f.amtRequested?.toLocaleString()}</td>
-                <td>{f.deadline}</td>
+                <td>{f.deadlineInString}</td>
                 <td>{f.amtOfViews}</td>
+                <td>{favouriteCounts[f.id] ?? "—"}</td>
                 <td>
                   <span className={`badge ${!f.status ? "badge-active" : "badge-completed"}`}>
                     {f.status ? "Completed" : "Active"}
@@ -115,8 +113,10 @@ export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelet
           onSuccess={async (message) => {
             await onSuccess?.();
             setSelectedFRA(null);
-            setSuccessMessage(message);
-            setTimeout(() => setSuccessMessage(""), 3000);
+            if (message) {
+              setSuccessMessage(message);
+              setTimeout(() => setSuccessMessage(""), 3000);
+            }
           }}
         />
       )}

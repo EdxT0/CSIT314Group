@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import CategoryTable from "../components/platformmanager/CategoryTable";
 import CreateCategoryForm from "../components/platformmanager/CreateCategoryForm";
 import "../styles/adminpage.css";
-import "../styles/fundraiserpage.css";
 
 export default function PlatformManagerPage() {
   const { logout } = useAuth();

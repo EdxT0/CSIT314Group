@@ -22,6 +22,7 @@ export default function AdminPage() {
     fetchProfiles();
   }, []);
 
+  // Function to fetch accounts for AccountsTable
   const fetchAccounts = async () => {
     displayError("");
     const res = await fetch("/api/ViewAllUserAccount", { credentials: "include" });
@@ -29,12 +30,14 @@ export default function AdminPage() {
     setAccounts(await res.json());
   };
 
+  // Function to fetch profiles for both AccountsTable and ProfilesTable
   const fetchProfiles = async () => {
     const res = await fetch("/api/ViewAllUserProfile", { credentials: "include" });
     if (!res.ok) { displayError("Failed to load profiles"); return; }
     setProfiles(await res.json());
   };
 
+  // Function to handle account suspension/unsuspension for AccountsTable
   const handleSuspendAccount = async (id, suspend) => {
     displayError("");
     const res = await fetch(`/api/SuspendUserAccount?userId=${encodeURIComponent(id)}&suspendUser=${encodeURIComponent(suspend)}`, {
@@ -45,6 +48,7 @@ export default function AdminPage() {
     fetchAccounts();
   };
 
+  // Function to handle search for accounts in AccountsTable
   const handleSearchAccounts = async () => {
     if (!accountSearch.trim()) { fetchAccounts(); return; }
     displayError("");

@@ -21,7 +21,7 @@ namespace CSIT_314_Group.Controllers.DonationController
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddDonation( [FromBody] FundraiserDonations fundraiserDonations)
+        public async Task<IActionResult> AddDonation([FromBody] FundraiserDonations fundraiserDonations)
         {
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             if (user == null)
@@ -49,6 +49,12 @@ namespace CSIT_314_Group.Controllers.DonationController
                 bool updateToFundraiserActivitySuccess = await _fundraiserActivity.UpdateAmtDonated(newAmountDonated, fundraiserDonations.Id);
                 if (updateToFundraiserActivitySuccess)
                 {
+                    Console.WriteLine($"newAmountDonated: {newAmountDonated}, amtRequested: {amtRequested}");  // ← add
+                    if (newAmountDonated >= amtRequested)
+                    {
+                        bool statusUpdated = await _fundraiserActivity.UpdateStatus(true, fundraiserDonations.Id);
+                        Console.WriteLine($"Goal reached! Status update result: {statusUpdated} for FRA {fundraiserDonations.Id}");  // ← add
+                    }
                     return Ok("amount donated successfully");
 
                 }

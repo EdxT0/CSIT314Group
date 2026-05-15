@@ -13,6 +13,7 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
   // Function to handle profile update
   const handleUpdate = async () => {
     displayError("");
+    displaySuccess("");
     const res = await fetch("/api/UpdateUserProfile", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -27,8 +28,10 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
     await onSuccess?.();
   };
 
+  // Function to handle profile suspension/unsuspension that 
   const handleSuspend = async () => {
     displayError("");
+    displaySuccess("");
     await onSuspend(localProfile.id, localProfile.status == 0);  // ← was profile.id, profile.status
 
     const newStatus = localProfile.status == 0 ? 1 : 0;

@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { formatDeadline } from "../../utils/formatDeadline";
 
 export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }) {
-  const [isEditing, setIsEditing] = useState(fra.startEditing ?? false);  
+  const [isEditing, setIsEditing] = useState(fra.startEditing ?? false);
   const [error, displayError] = useState("");
   const [success, displaySuccess] = useState("");
+  const [localViews, setLocalViews] = useState(fra.amtOfViews ?? 0);
+  const [categories, setCategories] = useState([]);
 
   const [form, setForm] = useState({
     Id: fra.id,
@@ -15,16 +18,54 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }
     FraCategoryId: fra.fraCategoryId ?? "",
   });
 
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const res = await fetch(`/api/ViewOneFundraiser?fraId=${fra.id}`, {
+        credentials: "include",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLocalViews(data.amtOfViews ?? fra.amtOfViews ?? 0);
+      }
+    };
+
+    const fetchCategories = async () => {
+      const res = await fetch("/api/ViewAllCategory", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    };
+
+    fetchDetails();
+    fetchCategories();
+  }, [fra.id]);
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this activity?")) return;
+    displayError("");
+    const res = await fetch(`/api/DeleteFundraiser?fundraiserId=${fra.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    const text = await res.text();
+    if (!res.ok) { displayError(text); return; }
+    onDelete?.();
+    onClose();
+  };
+
   const handleUpdate = async () => {
     displayError("");
     displaySuccess("");
-    const payload = {Id: form.Id,};
-    
+    const payload = { Id: form.Id };
+
     if (form.Name.trim()) payload.Name = form.Name;
     if (form.Description.trim()) payload.Description = form.Description;
     if (form.DeadlineInString.trim()) payload.DeadlineInString = form.DeadlineInString;
     if (form.AmtRequested) payload.AmtRequested = parseFloat(form.AmtRequested);
-    //if (form.FraCategoryId) payload.FraCategoryId = parseInt(form.FraCategoryId);
+    if (form.FraCategoryId && !isNaN(parseInt(form.FraCategoryId))) {
+      payload.FraCategoryId = parseInt(form.FraCategoryId);
+    }
     if (form.Status !== null && form.Status !== undefined) payload.Status = form.Status;
 
     const res = await fetch("/api/UpdateFundraiser", {
@@ -35,7 +76,9 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }
     });
     const text = await res.text();
     if (!res.ok) { displayError(text); return; }
-    await onSuccess?.("Activity updated successfully!");
+    displaySuccess("Activity updated successfully!");
+    setIsEditing(false);           // ← exit edit mode but popup stays open
+    await onSuccess?.();           // ← refetch table in background
   };
 
   return (
@@ -69,13 +112,13 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }
             </div>
             <div className="popup-row">
               <span className="popup-label">Deadline</span>
-              <span className="popup-val">{fra.deadline}</span>
+              <span className="popup-val">{formatDeadline(fra.deadlineInString)}</span>
             </div>
             <div className="popup-row">
               <span className="popup-label">Views</span>
-              <span className="popup-val">{fra.amtOfViews}</span>
+              <span className="popup-val">{localViews}</span>
             </div>
-            <div className="popup-row">
+            <div className="popup-row" style={{ borderBottom: "none" }}>
               <span className="popup-label">Status</span>
               <span className="popup-val">
                 <span className={`badge ${!fra.status ? "badge-active" : "badge-completed"}`}>
@@ -85,17 +128,18 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }
             </div>
 
             <div className="popup-actions">
-              {!readOnly && (                              
-                <button className="popup-edit-btn" onClick={() => setIsEditing(true)}>
+              {!readOnly && (
+                <button className="popup-edit-btn"
+                  onClick={() => { setIsEditing(true); displaySuccess(""); displayError(""); }}>
                   Edit
                 </button>
               )}
-              {!readOnly && onDelete && (                 
-                <button className="popup-delete-btn" onClick={onDelete}>
+              {!readOnly && (
+                <button className="popup-delete-btn" onClick={handleDelete}>
                   Delete
                 </button>
               )}
-              {readOnly && (                              
+              {readOnly && (
                 <button className="popup-edit-btn" onClick={onClose}>
                   Close
                 </button>
@@ -140,20 +184,27 @@ export default function FRAPopup({ fra, onClose, onDelete, onSuccess, readOnly }
               </select>
             </div>
             <div className="form-field">
-              <label>Category ID</label>
-              <input type="number" value={form.FraCategoryId}
-                onChange={e => setForm({ ...form, FraCategoryId: e.target.value })} />
+              <label>Category</label>
+              <select
+                value={form.FraCategoryId}
+                onChange={e => setForm({ ...form, FraCategoryId: e.target.value })}>
+                <option value="">Keep current ({fra.fraCategoryName})</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
             </div>
 
             <div className="popup-actions">
               <button className="popup-edit-btn" onClick={handleUpdate}>Save changes</button>
-              <button className="admin-btn" onClick={() => { setIsEditing(false); displayError(""); }}>
+              <button className="admin-btn"
+                onClick={() => { setIsEditing(false); displayError(""); displaySuccess(""); }}>
                 Cancel
               </button>
             </div>
           </>
-        )}      
-        </div>
+        )}
+      </div>
     </div>
   );
 }
