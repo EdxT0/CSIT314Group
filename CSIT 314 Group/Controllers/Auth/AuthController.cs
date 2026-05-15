@@ -29,6 +29,8 @@ namespace CSIT_314_Group.Controllers.Auth
         {
 
             var success = await _userAccountRepository.Login(email, password);
+
+
             if (success)
             {
                 var user = await _userAccountRepository.GetByEmail(email);
@@ -37,7 +39,7 @@ namespace CSIT_314_Group.Controllers.Auth
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.ProfileName?.ToLower() ?? "")
+                    new Claim(ClaimTypes.Role, user.ProfileName.ToLower())
                  };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -52,22 +54,10 @@ namespace CSIT_314_Group.Controllers.Auth
             }
 
             return BadRequest(false);
-
+            
         }
 
-        [HttpGet("Me")]
-        public IActionResult Me()
-        {
-            if (!User.Identity?.IsAuthenticated ?? true)
-                return Unauthorized();
 
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            var name = User.FindFirstValue(ClaimTypes.Name);
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            return Ok(new { id, name, email, role });
-        }
 
 
 
