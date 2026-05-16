@@ -71,7 +71,7 @@ namespace CSIT_314_Group.Controllers.Auth
 
 
 
-        [HttpPost("Logout")]
+        [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

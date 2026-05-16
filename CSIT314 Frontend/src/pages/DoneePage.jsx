@@ -43,9 +43,10 @@ export default function DoneePage() {
   };
 
   const fetchFavourites = async () => {
+    displayError("");
     const res = await fetch("/api/ViewFundraiserFavourites", { credentials: "include" });
     if (res.status === 404) { setFavourites([]); setFavouriteIds([]); return; }
-    if (!res.ok) return;
+    if (!res.ok) { displayError("Failed to load favourites"); return; }
     const data = await res.json();
     setFavourites(data);
     setFavouriteIds(data.map(f => f.id));  // ← extract just the IDs

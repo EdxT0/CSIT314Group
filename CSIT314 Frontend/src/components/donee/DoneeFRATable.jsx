@@ -22,7 +22,7 @@ export default function DoneeFRATable({ fras, search, setSearch, favouriteIds = 
     }
   };
 
-// in the table row — replace onClick:
+
 <tr key={f.id} onClick={() => handleSelectFRA(f)} style={{ cursor: "pointer" }}></tr>
 
   return (
