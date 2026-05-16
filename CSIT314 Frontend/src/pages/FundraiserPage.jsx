@@ -50,7 +50,11 @@ export default function FundraiserPage() {
 
   const fetchCompleted = () => { // ← #29 fetch all FRAs then filter for the completed tab
     const completed = myFras.filter(f => f.status === true || f.status === 1); // ← #29 filtering
-    if (completed.length === 0) { displayError("No completed activities found"); return; } // ← #29 if no completed activities, display error
+    if (completed.length === 0) { 
+      if (activeTab === "completed") { // ← #29 if no completed activities, display error
+        displayError("No completed activities found"); } // only on completed tab though
+        return; 
+      } 
     setCompletedFras(completed); // ← #29 set the list of completed FRAs
   };
 
