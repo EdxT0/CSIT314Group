@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import DoneeFRATable from "../components/donee/DoneeFRATable";
-import FRADetailPopup from "../components/donee/FRADetailPopup";
 import FavouritesTable from "../components/donee/FavouritesTable";
 import DonationHistoryTable from "../components/donee/DonationHistoryTable";
 import "../styles/adminpage.css";
@@ -12,15 +11,23 @@ export default function DoneePage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("browse");
   const [fras, setFras] = useState([]);
-  const [favourites, setFavourites] = useState([]);
-  const [donations, setDonations] = useState([]);
-  const [selectedFRA, setSelectedFRA] = useState(null);
+  const [favourites, displayFavourites] = useState([]);
+  const [donations, displayDonations] = useState([]);
   const [browseSearch, setBrowseSearch] = useState("");
   const [favSearch, setFavSearch] = useState("");
   const [donationSearch, setDonationSearch] = useState("");
-  const [error, displayError] = useState("");
-  const [success, displaySuccess] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [favouriteIds, setFavouriteIds] = useState([]);
+
+  // Proper named functions for BCE diagram
+  const displayError = (msg) => setErrorMessage(msg); // ← #23, #24, #31, #32 displayError()
+  const clearErrorMessage = () => setErrorMessage("");
+  const updateFRAs = (data) => setFras(data);
+  const clearFRAs = () => setFras([]);
+  const setFavourites = (data) => { displayFavourites(data); setFavouriteIds(data.map(f => f.id)); }; // ← #23, #24 setFavourites()
+  const clearFavourites = () => { displayFavourites([]); setFavouriteIds([]); };
+  const setDonations = (data) => displayDonations(data); // ← #31, #32 setDonations()
+  const clearDonations = () => displayDonations([]);
 
   useEffect(() => {
     fetchAllFRAs();
@@ -28,32 +35,28 @@ export default function DoneePage() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === "favourites") fetchFavourites();
-    if (activeTab === "history") fetchDonationHistory();
+    if (activeTab === "favourites") fetchFavourites(); // ← #24 call fetchFavourites() when switching to favourites tab
+    if (activeTab === "history") fetchDonationHistory(); // ← #31 call fetchDonationHistory() when switching to history tab
   }, [activeTab]);
 
   const fetchAllFRAs = async () => {
-    displayError("");
+    clearErrorMessage();
     const res = await fetch("/api/ViewAllFundraiser", { credentials: "include" });
-    if (res.status === 404) { setFras([]); return; }
+    if (res.status === 404) { clearFRAs(); return; }
     if (!res.ok) { displayError("Failed to load activities"); return; }
-    const data = await res.json();
-    console.log("Fetched FRAs:", data.map(f => ({ id: f.id, name: f.name, status: f.status })));  // ← add this
-    setFras(data);
+    updateFRAs(await res.json());
   };
 
-  const fetchFavourites = async () => {
-    displayError("");
+  const fetchFavourites = async () => { // ← #24 fetchFavourites()
+    clearErrorMessage();
     const res = await fetch("/api/ViewFundraiserFavourites", { credentials: "include" });
-    if (res.status === 404) { setFavourites([]); setFavouriteIds([]); return; }
+    if (res.status === 404) { clearFavourites(); return; }
     if (!res.ok) { displayError("Failed to load favourites"); return; }
-    const data = await res.json();
-    setFavourites(data);
-    setFavouriteIds(data.map(f => f.id));  // ← extract just the IDs
+    setFavourites(await res.json());
   };
 
-  const fetchDonationHistory = async () => {
-    displayError("");
+  const fetchDonationHistory = async () => { // ← #31 fetchDonationHistory()
+    clearErrorMessage();
     const res = await fetch("/api/ViewDonationHistory", { credentials: "include" });
     if (!res.ok) { displayError("Failed to load donation history"); return; }
     setDonations(await res.json());
@@ -61,15 +64,15 @@ export default function DoneePage() {
 
   const handleBrowseSearch = async () => {
     if (!browseSearch.trim()) { fetchAllFRAs(); return; }
-    displayError("");
-    setFras([]);
+    clearErrorMessage();
+    clearFRAs();
     const res = await fetch(`/api/SearchFundraiser?name=${encodeURIComponent(browseSearch)}`, {
-      credentials: "include",                           // ← param is "name" not "fraName"
+      credentials: "include",
     });
-    if (res.status === 404) { setFras([]); return; }
+    if (res.status === 404) { clearFRAs(); return; }
     if (!res.ok) { displayError(await res.text()); return; }
     const data = await res.json();
-    setFras(Array.isArray(data) ? data : [data]);
+    updateFRAs(Array.isArray(data) ? data : [data]);
   };
 
   const handleBrowseReset = () => {
@@ -77,20 +80,20 @@ export default function DoneePage() {
     fetchAllFRAs();
   };
 
-  const handleFavSearch = async () => {
+  const handleFavSearch = async () => { // ← #23 handleFavSearch()
     if (!favSearch.trim()) { fetchFavourites(); return; }
-    displayError("");
-    setFavourites([]);
+    clearErrorMessage();
+    clearFavourites();
     const res = await fetch(`/api/SearchFavourite?fraName=${encodeURIComponent(favSearch)}`, {
       credentials: "include",
     });
-    if (!res.ok) { setFavourites([]); return; }
+    if (!res.ok) { clearFavourites(); return; }
     const text = await res.text();
     try {
       const data = JSON.parse(text);
       setFavourites(Array.isArray(data) ? data : [data]);
     } catch {
-      setFavourites([]);  // ← handles "No favourites found" plain string
+      clearFavourites();
     }
   };
 
@@ -99,14 +102,14 @@ export default function DoneePage() {
     fetchFavourites();
   };
 
-  const handleDonationSearch = async () => {
+  const handleDonationSearch = async () => { // ← #32 handleDonationSearch()
     if (!donationSearch.trim()) { fetchDonationHistory(); return; }
-    displayError("");
-    setDonations([]);
+    clearErrorMessage();
+    clearDonations();
     const res = await fetch(`/api/SearchDonationHistory?fraName=${encodeURIComponent(donationSearch)}`, {
-      credentials: "include",                           // ← param is "fraName"
+      credentials: "include",
     });
-    if (!res.ok) { setDonations([]); return; }
+    if (!res.ok) { clearDonations(); return; }
     const data = await res.json();
     setDonations(Array.isArray(data) ? data : [data]);
   };
@@ -116,25 +119,13 @@ export default function DoneePage() {
     fetchDonationHistory();
   };
 
-  const handleSelectFRA = async (fra) => {
-    const res = await fetch(`/api/ViewOneFundraiser?fraId=${fra.id}`, {
-      credentials: "include"
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setSelectedFRA(data);
-    } else {
-      setSelectedFRA(fra);
-    }
-  };
-
   const handleUnfavourite = async (fraId) => {
-    displayError("");
+    clearErrorMessage();
     const res = await fetch("/api/UnfavouriteFundraiser", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ FraId: fraId }),  // ← capital F
+      body: JSON.stringify({ FraId: fraId }),
     });
     if (!res.ok) { displayError(await res.text()); return; }
     fetchFavourites();
@@ -174,19 +165,17 @@ export default function DoneePage() {
       </aside>
 
       <main className="admin-main">
-        {error && <div className="form-error">{error}</div>}
+        {errorMessage && <div className="form-error">{errorMessage}</div>}
 
-        {success && <div className="form-success">{success}</div>}  {/* ← Display success message within the popup */}
-      
         {activeTab === "browse" && (
           <DoneeFRATable
             fras={fras}
             search={browseSearch}
             setSearch={setBrowseSearch}
-            favouriteIds={favouriteIds}   // ← add this
-            onSearch={handleBrowseSearch}    // ← add
+            favouriteIds={favouriteIds}
+            onSearch={handleBrowseSearch}
             onReset={handleBrowseReset}
-            onSuccess={() => {           // ← add this
+            onSuccess={() => {
               fetchAllFRAs();
               fetchFavourites();
             }}
@@ -199,10 +188,10 @@ export default function DoneePage() {
             search={favSearch}
             setSearch={setFavSearch}
             onUnfavourite={handleUnfavourite}
-            favouriteIds={favouriteIds}   // ← add this
-            onSearch={handleFavSearch}    // ← add
+            favouriteIds={favouriteIds}
+            onSearch={handleFavSearch} // ← #23 call handleFavSearch()
             onReset={handleFavReset}
-            onSuccess={() => {           // ← add this
+            onSuccess={() => {
               fetchAllFRAs();
               fetchFavourites();
             }}
@@ -214,15 +203,14 @@ export default function DoneePage() {
             donations={donations}
             search={donationSearch}
             setSearch={setDonationSearch}
-            favouriteIds={favouriteIds}   // ← add this
-            onSearch={handleDonationSearch}    // ← add
+            favouriteIds={favouriteIds}
+            onSearch={handleDonationSearch} // ← #32 call handleDonationSearch()
             onReset={handleDonationReset}
-            onSuccess={() => {       
-              fetchDonationHistory();    // ← add this
+            onSuccess={() => {
+              fetchDonationHistory();  
               fetchAllFRAs();
               fetchFavourites();
             }}
-
           />
         )}
       </main>

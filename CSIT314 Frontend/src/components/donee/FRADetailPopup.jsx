@@ -3,12 +3,20 @@ import { formatDeadline } from "../../utils/formatDeadline";
 
 export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: initialFavourited = false }) {
   const [donationAmt, setDonationAmt] = useState("");
-  const [error, displayError] = useState("");
-  const [success, displaySuccess] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isFavourited, setIsFavourited] = useState(initialFavourited);
   const [donations, setDonations] = useState([]);
   const [loadingDonations, setLoadingDonations] = useState(true);
   const [localAmtDonated, setLocalAmtDonated] = useState(fra.amtDonated ?? 0);
+
+  // ← proper named functions for BCE diagram
+  const displayErrorMessage = (msg) => setErrorMessage(msg);
+  const clearErrorMessage = () => setErrorMessage("");
+  const displaySuccessMessage = (msg) => setSuccessMessage(msg);
+  const clearSuccessMessage = () => setSuccessMessage("");
+  const updateDonations = (data) => setDonations(data);
+  const clearDonations = () => setDonations([]);
 
   useEffect(() => {
     fetchDonationHistory();
@@ -21,15 +29,16 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
     });
     if (res.ok) {
       const data = await res.json();
-      setDonations(Array.isArray(data) ? data : [data]);
+      updateDonations(Array.isArray(data) ? data : [data]);
     } else {
-      setDonations([]);
+      clearDonations();
     }
     setLoadingDonations(false);
   };
 
   const handleFavourite = async () => {
-    displayError("");
+    clearErrorMessage();
+    clearSuccessMessage();
     if (isFavourited) {
       const res = await fetch("/api/UnfavouriteFundraiser", {
         method: "POST",
@@ -38,11 +47,10 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
         body: JSON.stringify({ FraId: fra.id }),
       });
       const text = await res.text();
-      if (!res.ok) { displayError(text); return; }
+      if (!res.ok) { displayErrorMessage(text); return; }
       setIsFavourited(false);
-      displaySuccess("Removed from favourites!");
-    } 
-    else {
+      displaySuccessMessage("Removed from favourites!");
+    } else {
       const res = await fetch("/api/FavouriteFundraiser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,17 +58,18 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
         body: JSON.stringify({ FraId: fra.id }),
       });
       const text = await res.text();
-      if (!res.ok) { displayError(text); return; }
+      if (!res.ok) { displayErrorMessage(text); return; }
       setIsFavourited(true);
-      displaySuccess("Added to favourites!");
+      displaySuccessMessage("Added to favourites!");
     }
     onSuccess?.();
   };
 
   const handleDonate = async () => {
-    displayError("");
+    clearErrorMessage();
+    clearSuccessMessage();
     if (!donationAmt || parseFloat(donationAmt) <= 0) {
-      displayError("Please enter a valid donation amount");
+      displayErrorMessage("Please enter a valid donation amount");
       return;
     }
     const res = await fetch("/api/AddDonation", {
@@ -70,17 +79,16 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
       body: JSON.stringify({ id: fra.id, amtDonated: parseFloat(donationAmt) }),
     });
     const text = await res.text();
-    if (!res.ok) { displayError(text); return; }
-    
-    setLocalAmtDonated(prev => prev + parseFloat(donationAmt));  // ← update locally
-    displaySuccess("Donation successful!");
+    if (!res.ok) { displayErrorMessage(text); return; }
+    setLocalAmtDonated(prev => prev + parseFloat(donationAmt));
+    displaySuccessMessage("Donation successful!");
     setDonationAmt("");
     fetchDonationHistory();
     onSuccess?.();
   };
 
   const progress = fra.amtRequested > 0
-    ? Math.min((localAmtDonated / fra.amtRequested) * 100, 100).toFixed(1)  // ← use localAmtDonated
+    ? Math.min((localAmtDonated / fra.amtRequested) * 100, 100).toFixed(1)
     : 0;
 
   const isCompleted = fra.amtRequested > 0 && localAmtDonated >= fra.amtRequested;
@@ -89,7 +97,6 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card" style={{ maxWidth: "480px" }} onClick={e => e.stopPropagation()}>
 
-        {/* Header with X and heart button */}
         <div className="popup-header">
           <h2>{fra.name}</h2>
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -115,11 +122,9 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
           </div>
         </div>
 
-        {/* Messages */}
-        {success && <div className="form-success">{success}</div>}
-        {error && <div className="form-error">{error}</div>}
+        {successMessage && <div className="form-success">{successMessage}</div>}
+        {errorMessage && <div className="form-error">{errorMessage}</div>}
 
-        {/* Details */}
         <div className="popup-row">
           <span className="popup-label">Category</span>
           <span className="popup-val">{fra.fraCategoryName}</span>
@@ -153,13 +158,12 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
           </span>
         </div>
 
-        {/* Donation history — scrollable, fixed height */}
         <div style={{ marginTop: "1rem", borderTop: "0.5px solid #2e3240", paddingTop: "0.75rem" }}>
           <div style={{ fontSize: "13px", color: "#9a9daa", fontWeight: "500", marginBottom: "6px" }}>
             Donation history
           </div>
           <div style={{
-            height: "100px",        // ← fixed height, never grows
+            height: "100px",
             overflowY: "auto",
             border: "0.5px solid #2e3240",
             borderRadius: "8px",
@@ -186,7 +190,6 @@ export default function FRADetailPopup({ fra, onClose, onSuccess, isFavourited: 
           </div>
         </div>
 
-        {/* Donate section — always at the bottom */}
         {!isCompleted && !fra.status && (
           <div style={{ marginTop: "1rem", borderTop: "0.5px solid #2e3240", paddingTop: "0.75rem" }}>
             <div style={{ fontSize: "13px", color: "#9a9daa", fontWeight: "500", marginBottom: "6px" }}>

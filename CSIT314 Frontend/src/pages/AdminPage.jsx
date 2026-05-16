@@ -22,6 +22,10 @@ export default function AdminPage() {
     fetchProfiles();
   }, []);
 
+  //Renaming existing logic into proper named functions so that it can be placed into the boundary
+  
+
+  
   // Function to fetch accounts for AccountsTable
   const fetchAccounts = async () => {
     displayError("");

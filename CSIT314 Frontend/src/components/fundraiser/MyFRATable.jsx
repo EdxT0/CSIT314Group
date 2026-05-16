@@ -105,10 +105,14 @@ export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelet
       {selectedFRA && (
         <FRAPopup
           fra={selectedFRA}
-          onClose={() => setSelectedFRA(null)}
-          onDelete={() => {
-            onDelete?.(selectedFRA.id);
+          onClose={async () => {
             setSelectedFRA(null);
+          }}
+          onDelete={() => {
+            setSelectedFRA(null);
+            onSuccess?.();
+            setSuccessMessage("Activity deleted successfully!");        
+            setTimeout(() => setSuccessMessage(""), 3000);             
           }}
           onSuccess={async (message) => {
             await onSuccess?.();

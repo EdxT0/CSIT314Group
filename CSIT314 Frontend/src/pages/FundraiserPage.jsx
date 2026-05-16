@@ -74,17 +74,6 @@ export default function FundraiserPage() {
     setFavouriteCounts(counts); // ← #28 set the favourite counts state after fetching counts for all FRAs in the list
   };
 
-  const handleDelete = async (fraId) => {
-    if (!window.confirm("Are you sure you want to delete this activity?")) return;
-    displayError("");
-    const res = await fetch(`/api/DeleteFundraiser?fundraiserId=${fraId}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-    if (!res.ok) { displayError(await res.text()); return; }
-    fetchMyOwnFRAs();
-  };
-
   const handleSearchFRA = async () => { // ← #19 search function for the browse tab
     if (!search.trim()) { fetchFRAs(); return; }
     displayError("");
@@ -200,7 +189,6 @@ export default function FundraiserPage() {
             fras={myFras}
             search={myFraSearch}
             setSearch={setMyFraSearch}
-            onDelete={handleDelete}
             onSuccess={fetchMyOwnFRAs}
             onSearch={handleMyFRASearch}
             onReset={handleMyFRAReset}
@@ -213,7 +201,6 @@ export default function FundraiserPage() {
             fras={completedFras}
             search={completedSearch}
             setSearch={setCompletedSearch}
-            onDelete={handleDelete}
             onSuccess={fetchMyOwnFRAs}
             onSearch={handleCompletedSearch}
             onReset={handleCompletedReset}

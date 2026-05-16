@@ -7,17 +7,10 @@ export default function DonationHistoryTable({ donations, search, setSearch, fav
 
   const totalDonated = donations.reduce((sum, d) => sum + (d.userDonatedAmt ?? 0), 0);
 
-  const handleSelectFRA = async (d) => {
-    const res = await fetch(`/api/ViewOneFundraiser?fraId=${d.id}`, {
-      credentials: "include",
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setSelectedFRA(data);
-    } else {
-      setSelectedFRA(d);
-    }
-  }
+const handleSelectFRA = (d) => {
+  setSelectedFRA(d);  // ← just use donation record directly, no fetch needed
+};
+
   return (
     <>
       <div className="admin-topbar">
