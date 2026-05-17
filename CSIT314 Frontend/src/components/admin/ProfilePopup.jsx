@@ -28,11 +28,11 @@ export default function ProfilePopup({ profile, onClose, onSuspend, onSuccess })
     await onSuccess?.();
   };
 
-  // Function to handle profile suspension/unsuspension that 
+  // Function to handle profile suspension/unsuspension 
   const handleSuspend = async () => {
     displayError("");
     displaySuccess("");
-    await onSuspend(localProfile.id, localProfile.status == 0);  // ← was profile.id, profile.status
+    await onSuspend(localProfile.id, localProfile.status == 0);  
 
     const newStatus = localProfile.status == 0 ? 1 : 0;
     setLocalProfile({ ...localProfile, status: newStatus });

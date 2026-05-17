@@ -19,6 +19,7 @@ body {
   min-width: 800px;
   background-color: #111318;
   overflow-x: auto;
+  height: 100vh;
 }
 
 /* ─── Login ─── */
@@ -141,6 +142,10 @@ body {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
 }
 
 .sidebar-logo {
@@ -199,7 +204,8 @@ body {
 .admin-main {
   flex: 1;
   padding: 1.5rem 2rem;
-  overflow: auto;
+  overflow-y: auto;
+  height: 100vh;
 }
 
 .admin-topbar {

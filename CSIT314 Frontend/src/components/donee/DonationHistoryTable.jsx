@@ -8,7 +8,7 @@ export default function DonationHistoryTable({ donations, search, setSearch, fav
   const totalDonated = donations.reduce((sum, d) => sum + (d.userDonatedAmt ?? 0), 0);
 
 const handleSelectFRA = (d) => {
-  setSelectedFRA(d);  // ← just use donation record directly, no fetch needed
+  setSelectedFRA(d);  
 };
 
   return (

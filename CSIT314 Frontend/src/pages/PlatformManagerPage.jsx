@@ -9,10 +9,16 @@ export default function PlatformManagerPage() {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("categories");
-  const [categories, setCategories] = useState([]);
-  const [fras, setFras] = useState([]);
+  const [categories, updateCategories] = useState([]);
+  const [fras, updateFRAs] = useState([]);
   const [categorySearch, setCategorySearch] = useState("");
-  const [error, displayError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // ← proper named functions for BCE diagram
+  const displayError = (msg) => setErrorMessage(msg);
+  const setCategories = (data) => updateCategories(data);
+  const clearCategories = () => updateCategories([]);
+  const setFRAs = (data) => updateFRAs(data);
 
   useEffect(() => {
     fetchCategories();
@@ -28,6 +34,7 @@ export default function PlatformManagerPage() {
   };
 
   const fetchFRAs = async () => {
+    displayError("");
     const res = await fetch("/api/ViewAllFundraiser", { credentials: "include" });
     if (!res.ok) return;
     setFras(await res.json());
@@ -87,7 +94,7 @@ export default function PlatformManagerPage() {
       </aside>
 
       <main className="admin-main">
-        {error && <div className="form-error">{error}</div>}
+        {errorMessage && <div className="form-error">{errorMessage}</div>}
 
         {activeTab === "categories" && (
           <CategoryTable

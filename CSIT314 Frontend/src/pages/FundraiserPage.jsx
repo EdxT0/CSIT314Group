@@ -10,14 +10,21 @@ export default function FundraiserPage() {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("myFRAs");
-  const [favouriteCounts, setFavouriteCounts] = useState({});
-  const [fras, setFras] = useState([]);
-  const [myFras, setMyFras] = useState([]);
-  const [completedFras, setCompletedFras] = useState([]);
+  const [favouriteCounts, updateFavouriteCounts] = useState({});
+  const [fras, updateFras] = useState([]);
+  const [myFras, updateMyFras] = useState([]);
+  const [completedFras, updateCompletedFras] = useState([]);
   const [search, setSearch] = useState("");
   const [myFraSearch, setMyFraSearch] = useState("");
   const [completedSearch, setCompletedSearch] = useState("");
-  const [error, displayError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  
+  // ← proper named functions for BCE diagram
+  const displayError = (msg) => setErrorMessage(msg);
+  const setFras = (data) => updateFras(data);
+  const setMyFras = (data) => updateMyFras(data);
+  const setCompletedFras = (data) => updateCompletedFras(data);
+  const setFavouriteCounts = (data) => updateFavouriteCounts(data);
 
   useEffect(() => {
     fetchFRAs();
@@ -174,7 +181,7 @@ export default function FundraiserPage() {
 {/* -----------------------------------------Main content area with conditional rendering based on activeTab--------------------------------------------------------*/}
 
       <main className="admin-main">
-        {error && <div className="form-error">{error}</div>} 
+        {errorMessage && <div className="form-error">{errorMessage}</div>} 
 
         {activeTab === "allFRAs" && (
           <FRATable

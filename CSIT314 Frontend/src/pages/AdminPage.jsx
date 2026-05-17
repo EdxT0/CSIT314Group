@@ -11,20 +11,21 @@ export default function AdminPage() {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("accounts");
-  const [accounts, setAccounts] = useState([]);
-  const [profiles, setProfiles] = useState([]);
+  const [accounts, updateAccounts] = useState([]);
+  const [profiles, updateProfiles] = useState([]);
   const [accountSearch, setAccountSearch] = useState("");
   const [profileSearch, setProfileSearch] = useState("");
-  const [error, displayError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // ← proper named functions for BCE diagram
+  const displayError = (msg) => setErrorMessage(msg);
+  const setAccounts = (data) => updateAccounts(data);
+  const setProfiles = (data) => updateProfiles(data);
 
   useEffect(() => {
     fetchAccounts();
     fetchProfiles();
   }, []);
-
-  //Renaming existing logic into proper named functions so that it can be placed into the boundary
-  
-
   
   // Function to fetch accounts for AccountsTable
   const fetchAccounts = async () => {
@@ -137,7 +138,7 @@ export default function AdminPage() {
       </aside>
 
       <main className="admin-main">
-        {error && <div className="form-error">{error}</div>}
+        {errorMessage && <div className="form-error">{errorMessage}</div>}
 
         {activeTab === "accounts" && (
           <AccountsTable

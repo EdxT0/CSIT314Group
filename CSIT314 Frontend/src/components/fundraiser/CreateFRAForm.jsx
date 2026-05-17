@@ -10,7 +10,7 @@ export default function CreateFRAForm({ onSuccess, onCancel }) {
   });
   const [error, displayError] = useState("");
   const [success, displaySuccess] = useState("");
-  const [categories, setCategories] = useState([]);  // ← add this
+  const [categories, setCategories] = useState([]);  
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -65,7 +65,7 @@ export default function CreateFRAForm({ onSuccess, onCancel }) {
           onChange={e => setForm({ ...form, DeadlineInString: e.target.value })} />
       </div>
 
-      {/* ← replace Category ID input with dropdown */}
+
       <div className="form-field">
         <label>Category</label>
         <select

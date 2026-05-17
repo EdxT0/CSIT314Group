@@ -3,7 +3,7 @@ import FRAPopup from "./FRAPopup";
 
 export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelete, onSearch, onReset, favouriteCounts = {} }) {
   const [selectedFRA, setSelectedFRA] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");  // ← fix: was displaySuccess
+  const [successMessage, setSuccessMessage] = useState(""); 
 
   function capitaliseNames(str) {
     if (!str) return str;
@@ -11,7 +11,6 @@ export default function MyFRATable({ fras, search, setSearch, onSuccess, onDelet
   }
 
   const handleSelectFRA = async (f) => {
-    // ← connect to ViewOneFundraiser to get updated views
     const res = await fetch(`/api/ViewOneFundraiser?fraId=${f.id}`, {
       credentials: "include",
     });

@@ -4,7 +4,7 @@ export const authFetch = (url, options = {}) => {
         ...options,
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,   // ← sent on every request
+            Authorization: `Bearer ${token}`,   
             ...options.headers,
         },
     });

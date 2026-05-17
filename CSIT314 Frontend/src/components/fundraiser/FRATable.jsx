@@ -59,7 +59,7 @@ export default function FRATable({ fras, search, setSearch, onSuccess, onSearch,
               <th>Deadline</th>
               <th>Views</th>
               <th>Favourited</th>
-              <th>Status</th>  {/* ← add Favourited */}
+              <th>Status</th>  
             </tr>
           </thead>
           <tbody>

@@ -8,7 +8,9 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, displayError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const displayError = (msg) => setErrorMessage(msg);
 
   useEffect(() => {// ← useEffect handles navigation when user is set
     if (user) {
@@ -46,7 +48,7 @@ export default function LoginPage() {
         <h2>Welcome back</h2>
         <p>Sign in to your account</p>
 
-        {error && <div className="login-error">{error}</div>}
+        {errorMessage && <div className="login-error">{errorMessage}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="login-field">

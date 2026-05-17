@@ -67,19 +67,19 @@ export default function AccountPopup({ acc, profiles, onClose, onSuccess }) {
           <>
             <div className="popup-row">
               <span className="popup-label">Name</span>
-              <span className="popup-val">{localAccount.name}</span>       {/* ← was acc.name */}
+              <span className="popup-val">{localAccount.name}</span>      
             </div>
             <div className="popup-row">
               <span className="popup-label">Email</span>
-              <span className="popup-val">{localAccount.email}</span>      {/* ← was acc.email */}
+              <span className="popup-val">{localAccount.email}</span>      
             </div>
             <div className="popup-row">
               <span className="popup-label">Phone</span>
-              <span className="popup-val">{localAccount.phoneNumber}</span> {/* ← was acc.phoneNumber */}
+              <span className="popup-val">{localAccount.phoneNumber}</span> 
             </div>
             <div className="popup-row">
               <span className="popup-label">Profile</span>
-              <span className="popup-val">{localAccount.profileName}</span> {/* ← was acc.profileName */}
+              <span className="popup-val">{localAccount.profileName}</span> 
             </div>
             <div className="popup-row">
               <span className="popup-label">Status</span>
