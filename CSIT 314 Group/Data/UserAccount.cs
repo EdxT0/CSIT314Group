@@ -284,7 +284,6 @@ namespace CSIT_314_Group.Data
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine(ex);
                 await transaction.RollbackAsync();
                 return "failed to create user";
             }

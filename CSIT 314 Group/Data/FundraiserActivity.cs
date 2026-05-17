@@ -541,9 +541,8 @@ namespace CSIT_314_Group.Data
                 }
 
             }
-            catch (SqliteException ex)
+            catch (SqliteException)
             {
-                Console.WriteLine(ex);
                 await transaction.RollbackAsync();
                 return "failed to create Fundraiser";
             }

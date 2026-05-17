@@ -69,11 +69,9 @@ public class UserProfile
             await transaction.CommitAsync();
             return true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await transaction.RollbackAsync();
-            Console.WriteLine("CreateUserProfile Error: " + ex.Message);
-            Console.WriteLine(ex.StackTrace);
             throw;
         }
     }
