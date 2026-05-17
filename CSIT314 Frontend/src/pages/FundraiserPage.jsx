@@ -40,7 +40,7 @@ export default function FundraiserPage() {
 
   const fetchMyOwnFRAs = async () => {
     displayError("");
-    const res = await fetch("/api/ViewMyFundraisers", { credentials: "include" });
+    const res = await fetch("/api/ViewMyFundraisers", { credentials: "include" });// ← #29 Controller for my activities tab
     if (res.status === 404) { setMyFras([]); displayError("No activities found"); return; }
     if (!res.ok) { displayError("Failed to load my activities"); return; }
     const data = await res.json();
